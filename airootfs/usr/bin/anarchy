@@ -1,0 +1,118 @@
+#!/bin/sh
+# Copyright (C) 2017 Dylan Schacht
+# Copyright (C) 2020 Erazem Kokot
+
+VERSION='1.1.0'
+
+. libanarchy.sh
+. /etc/anarchy.conf
+
+init() {
+	# Prevents the installer from exiting if Ctrl-C is pressed
+	trap '' 2
+
+	anarchy_directory='/usr/share/anarchy'
+
+	for library in /usr/lib/anarchy/*; do
+		. "${library}"
+	done
+
+	language
+	. "${lang_file}"
+	export reload=true
+}
+
+main() {
+	if [ "$(id -u)" -ne 0 ]; then
+		echo 'Error: anarchy requires root privileges'
+		echo '    Use: sudo anarchy'
+		exit 1
+	fi
+
+	set_keys
+	update_mirrors
+	check_connection
+	set_locale
+	set_zone
+	prepare_drives
+	install_options
+	set_hostname
+	set_user
+	add_software
+	install_base
+	configure_system
+	add_user
+	reboot_system
+}
+
+dialog() {
+	# If terminal height is more than 25 lines add extra info at the top
+	if "${screen_h}" ; then
+		if "${LAPTOP}" ; then
+			# Show battery charge next to Anarchy heading
+			backtitle="${backtitle} $(acpi)"
+		fi
+
+		# op_title is the current menu title
+		/usr/bin/dialog --colors --backtitle "${backtitle}" \
+				--title "${op_title}" "$@"
+	else
+		# title is the main title (Anarchy)
+		/usr/bin/dialog --colors --title "${title}" "$@"
+	fi
+}
+
+usage() {
+	echo 'Usage: anarchy [option]'
+	echo '    -h | --help      Show this message'
+	echo '    -k | --keys      Update pacman keys'
+	echo '    -u | --update    Update Anarchy'
+	echo '    -v | --version   Show the current Anarchy version'
+}
+
+if [ $# -eq 0 ]; then
+	init
+	main
+else
+	case "$1" in
+		-h|--help) usage; exit 0 ;;
+		-k|--keys) if is_online; then
+			echo 'Updating pacman keys'
+			pacman-db-upgrade || { echo 'Failed to update database'; exit 1; }
+			pacman-key --init || { echo 'Failed to initialize keys'; exit 1; }
+			pacman-key --populate archlinux || \
+					{ echo 'Failed to populate keystore'; exit 1; }
+			pacman-key --refresh-keys || \
+					{ echo 'Failed to refresh keys'; exit 1; }
+			echo 'Finished updating keys'
+		else
+			# Assume that user is using wifi to connect, since ethernet
+			# would already be connected
+			wifi-menu -o
+		fi
+		;;
+		-u|--update) if is_online; then
+			tmp_dir="$(mktemp -d)"
+			echo 'Updating Anarchy'
+			git clone https://gitlab.com/anarchyinstaller/installer \
+					"${tmp_dir}" || { echo 'Failed to clone git repo'; exit 1; }
+			cp -f "${tmp_dir}"/airootfs/usr/bin/* /usr/bin/ || exit 1
+			cp -f "${tmp_dir}"/airootfs/etc/anarchy.conf /etc/anarchy.conf || \
+					exit 1
+			cp -f "${tmp_dir}"/airootfs/usr/lib/anarchy/* /usr/lib/anarchy/ || \
+					exit 1
+			cp -f "${tmp_dir}"/airootfs/usr/share/anarchy/lang/* \
+					/usr/share/anarchy/lang/ || exit 1
+			cp -f "${tmp_dir}"/airootfs/usr/share/anarchy/extra/wallpapers/* \
+					/usr/share/anarchy/extra/wallpapers/ || exit 1
+			cp -rf "${tmp_dir}"/airootfs/usr/share/anarchy/extra/* \
+					/usr/share/anarchy/extra/ || exit 1
+			echo 'Finished updating Anarchy'
+		else
+			wifi-menu -o
+		fi
+		;;
+		-v|--version) echo "Anarchy Installer v${VERSION}"; exit 0 ;;
+		*) usage; exit 1 ;;
+	esac
+fi

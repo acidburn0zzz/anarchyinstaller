@@ -1,0 +1,16 @@
+# Anarchy Linux's EditorConfig specification
+# More info at https://editorconfig.com
+
+# Specify this is the top-most config
+root = true
+
+# Use Unix-style newlines and a newline at the end of every file
+[*]
+end_of_line = lf
+insert_final_newline = true
+charset = utf-8
+trim_trailing_whitespace = true
+
+[airootfs/usr/{bin,lib}/*]
+indent_style = tab
+max_line_length = 80

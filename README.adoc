@@ -1,0 +1,56 @@
+image::assets/banner.svg[Anarchy Installer's banner]
+
+= About
+
+Anarchy is a simple and intuitive Terminal based (TUI)
+https://archlinux.org[Arch Linux] installer.
+It guides you through every aspect of the installation procedure, from
+partitioning to installing your favorite DE/WM.
+
+= Installation
+
+==== Linux
+
+The easiest way to flash Anarchy onto a USB drive is to use `dd`:
+
+[source,shell]
+----
+# Do NOT copy and paste the following, manually type the command, filling in
+# the appropriate information
+# Replace sdx with the name of your USB
+dd if=anarchy-<version>-x86_64.iso of=/dev/sdx status=progress conv=fsync
+----
+
+If you're more comfortable with GUI programs, you can use
+https://www.balena.io/etcher/[Etcher].
+
+==== Windows
+
+Use https://sourceforge.net/projects/win32diskimager/[Win32DiskImager] or
+https://rufus.ie/[Rufus].
+
+= Reporting issues
+
+Before
+https://gitlab.com/anarchyinstaller/installer/issues[reporting an issue]
+do the following:
+
+* Check if you've updated Anarchy (`anarchy -u` before starting the
+installation)
+* Share the logs in the issue report
+(Run `cat /tmp/anarchy.log | nc termbin.com 9999` in the terminal and
+share the url you get returned - e.g. `https://termbin.com/xxxx`)
+* If it's a post-installation issue check the
+https://wiki.archlinux.org/[Arch Wiki] and
+https://bbs.archlinux.org/[Arch Forums], since it's most likely an
+Arch-related issue, not Anarchy's
+
+= Contributing
+
+We're always looking for new contributors to the project,
+so check out our link:CONTRIBUTING.adoc[contributing guide] for more info.
+
+= License
+
+The project is licensed under the link:LICENSE[GNU GPLv2 license].
+
