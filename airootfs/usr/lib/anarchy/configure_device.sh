@@ -67,7 +67,7 @@ prepare_drives() {
                 echo "$(date -u "+%F %H:%M") : F2FS state: $f2fs" >> "$log"
                 fs_select
 
-                if (dialog --yes-button "$yes" --no-button "$no" --yesno "\n$swap_msg0" 10 60) then
+                if (yesno "\n$swap_msg0" "${yes}" "${no}") then
                     while (true)
                       do
                         SWAPSPACE=$(dialog --ok-button "$ok" --cancel-button "$cancel" --inputbox "\n$swap_msg1" 11 55 "512M" 3>&1 1>&2 2>&3)
@@ -80,17 +80,17 @@ prepare_drives() {
                                 if [ "$SWAPSPACE" -lt "$(echo "$drive_mib-5120" | bc)" ]; then
                                     SWAP=true ; break
                                 else
-                                    dialog --ok-button "$ok" --msgbox "\n$swap_err_msg0" 10 60
+                                    msg "\n${swap_err_msg0}"
                                 fi
                             elif [ "$(grep -o ".$" <<< "$SWAPSPACE")" == "G" ]; then
                                 SWAPSPACE=$(echo "$(<<<$SWAPSPACE sed 's/G//')*1024" | bc | sed 's/\..*//')
                                 if [ "$SWAPSPACE" -lt "$(echo "$drive_mib-5120" | bc)" ]; then
                                     SWAP=true ; break
                                 else
-                                    dialog --ok-button "$ok" --msgbox "\n$swap_err_msg0" 10 60
+                                    msg "\n${swap_err_msg0}"
                                 fi
                             else
-                                dialog --ok-button "$ok" --msgbox "\n$swap_err_msg1" 10 60
+                                msg "\n${swap_err_msg1}"
                             fi
                         fi
                     done
@@ -99,7 +99,7 @@ prepare_drives() {
                 fi
 
                 if (efivar -l &> /dev/null); then
-                    if (dialog --yes-button "$yes" --no-button "$no" --yesno "\n$efi_msg0" 10 60) then
+                    if (yesno "\n${efi_msg0}" "${yes}" "${no}") then
                         GPT=true
                         UEFI=true
                         echo "$(date -u "+%F %H:%M") : UEFI boot activated" >> "$log"
@@ -107,7 +107,7 @@ prepare_drives() {
                 fi
 
                 if ! "$UEFI" ; then
-                    if (dialog --defaultno --yes-button "$yes" --no-button "$no" --yesno "\n$gpt_msg" 10 60) then
+                    if (yesno "\n${gpt_msg}" "${yes}" "${no}" 1) then
                         GPT=true
                         echo "$(date -u "+%F %H:%M") : GPT partition scheme activated" >> "$log"
                     fi
@@ -129,7 +129,7 @@ prepare_drives() {
                     height=11
                 fi
 
-                if (dialog --defaultno --yes-button "$write" --no-button "$cancel" --yesno "\n$drive_var" "$height" 60) then
+                if (yesno "\n${drive_var}" "${write}" "${cancel}" 1) then
                     (sgdisk --zap-all /dev/"$DRIVE"
                     wipefs -a /dev/"$DRIVE") &> /dev/null &
                     pid=$! pri=0.1 msg="\n$frmt_load \n\n \Z1> \Z2sgdisk --zap-all /dev/$DRIVE\Zn" load
@@ -146,13 +146,13 @@ prepare_drives() {
             "$method0")
                     auto_part
                     if ! "$mounted" ; then
-                        dialog --ok-button "$ok" --msgbox "\n$part_err_msg" 10 60
+                        msg "\n${part_err_msg}"
                     fi
             ;;
             "$method1")
                     auto_encrypt
                     if ! "$mounted" ; then
-                        dialog --ok-button "$ok" --msgbox "\n$part_err_msg" 10 60
+                        msg "\n${part_err_msg}"
                     fi
             ;;
             "$method2")
@@ -274,17 +274,17 @@ auto_part() {
 auto_encrypt() {
 
     op_title="$partload_op_msg"
-    if (dialog --defaultno --yes-button "$yes" --no-button "$no" --yesno "\n$encrypt_var0" 10 60) then
+    if (yesno "\n${encrypt_var0}" "${yes}" "${no}" 1) then
         while [ "$input" != "$input_chk" ]
           do
             input=$(dialog --nocancel --clear --insecure --passwordbox "$encrypt_var1" 12 55 --stdout)
             input_chk=$(dialog --nocancel --clear --insecure --passwordbox "$encrypt_var2" 12 55 --stdout)
 
             if [ -z "$input" ]; then
-                dialog --ok-button "$ok" --msgbox "\n$passwd_msg0" 10 60
+                msg "\n${passwd_msg0}"
                 input_chk=default
             elif [ "$input" != "$input_chk" ]; then
-                dialog --ok-button "$ok" --msgbox "\n$passwd_msg1" 10 60
+                msg "\n${passwd_msg1}"
             fi
          done
     else
@@ -467,7 +467,7 @@ part_class() {
         source "$lang_file"
 
         if (df | grep -w "$part" | grep "$ARCH" &> /dev/null); then
-            if (dialog --yes-button "$edit" --no-button "$cancel" --defaultno --yesno "\n$mount_warn_var" 10 60) then
+            if (yesno "\n${mount_warn_var}" "${edit}" "${cancel}" 1) then
                 points=$(echo -e "$points_orig\n$custom $custom-mountpoint")
                 (umount -R "$ARCH"
                 swapoff -a) &> /dev/null &
@@ -483,7 +483,7 @@ part_class() {
                 sleep 0.5
                 clear
             fi
-        elif (dialog --yes-button "$edit" --no-button "$cancel" --yesno "\n$manual_part_var3" 12 60) then
+        elif (yesno "\n${manual_part_var3}" "${edit}" "${cancel}") then
             select_util
             if "$gpart" ; then
                 $UTIL /dev/"$part" &>/dev/null
@@ -499,7 +499,7 @@ part_class() {
     elif [ "$part" == "$done_msg" ]; then # Done
 
         if ! "$mounted" ; then
-            dialog --ok-button "$ok" --msgbox "\n$root_err_msg1" 10 60
+            msg "\n${root_err_msg1}"
             part_menu
         else
             if [ -z "$BOOT" ]; then
@@ -521,16 +521,16 @@ part_class() {
 
             part_menu="$partition: $size: $mountpoint:"
 
-            if (dialog --yes-button "$write" --no-button "$cancel" --defaultno --yesno "\n$write_confirm_msg \n\n $part_menu \n\n$final_part \n\n $write_confirm" "$height" 50) then
+            if (yesno "\n$write_confirm_msg \n\n $part_menu \n\n$final_part \n\n $write_confirm" "${write}" "${cancel}" 1); then
                 if (efivar -l &>/dev/null); then
                     if (fdisk -l | grep "EFI" &>/dev/null); then
-                        if (dialog --yes-button "$yes" --no-button "$no" --yesno "\n$efi_man_msg" 11 60) then
+                        if (yesno "\n$efi_man_msg" "${yes}" "${no}") then
                             if [ "$(fdisk -l | grep "EFI" | wc -l)" -gt "1" ]; then
                                 efint=1
                                 while (true)
                                   do
                                     if [ "$(fdisk -l | grep "EFI" | awk "NR==$efint {print \$1}")" == "" ]; then
-                                        dialog --ok-button "$ok" --msgbox "$efi_err_msg1" 10 60
+                                        msg "${efi_err_msg1}"
                                         part_menu
                                     fi
                                     esp_part=$(fdisk -l | grep "EFI" | awk "NR==$efint {print \$1}")
@@ -545,12 +545,12 @@ part_class() {
                                 esp_part=$(fdisk -l | grep "EFI" | awk '{print $1}')
                                 if ! (df -T | grep "$esp_part" &> /dev/null); then
                                     source "$lang_file"
-                                    if (dialog --yes-button "$yes" --no-button "$no" --yesno "\n$efi_mnt_var" 11 60) then
+                                    if (yesno "\n$efi_mnt_var" "${yes}" "${no}") then
                                         if ! (mountpoint "$ARCH"/boot &> /dev/null); then
                                             mkdir "$ARCH"/boot &> /dev/null
                                             mount "$esp_part" "$ARCH"/boot
                                         else
-                                            dialog --ok-button "$ok" --msgbox "\n$efi_err_msg" 10 60
+                                            msg "\n${efi_err_msg}"
                                             part_menu
                                         fi
                                     else
@@ -561,8 +561,8 @@ part_class() {
                                 fi
                             fi
                             source "$lang_file"
-                            if ! (df -T | grep "$esp_part" | grep "vfat" &>/dev/null) then
-                                if (dialog --yes-button "$yes" --no-button "$no" --yesno "\n$vfat_var" 11 60) then
+                            if ! (df -T | grep "$esp_part" | grep "vfat" &>/dev/null); then
+                                if (yesno "\n${vfat_var}" "${yes}" "${no}"); then
                                         (umount -R "$esp_mnt"
                                         mkfs.vfat -F32 "$esp_part"
                                         mount "$esp_part" "$esp_mnt") &> /dev/null &
@@ -582,13 +582,13 @@ part_class() {
                 if "$enable_f2fs" ; then
                     if ! (df | grep "$ARCH/boot\|$ARCH/boot/efi" &> /dev/null) then
                         FS="f2fs" source "$lang_file"
-                        dialog --ok-button "$ok" --msgbox "\n$fs_err_var" 10 60
+                        msg "\n${fs_err_var}"
                         part_menu
                     fi
                 elif "$enable_btrfs" ; then
                     if ! (df | grep "$ARCH/boot\|$ARCH/boot/efi" &> /dev/null) then
                         FS="btrfs" source "$lang_file"
-                        dialog --ok-button "$ok" --msgbox "\n$fs_err_var" 10 60
+                        msg "\n${fs_err_var}"
                         part_menu
                     fi
                 fi
@@ -608,7 +608,7 @@ part_class() {
         if [ -z "$ROOT" ]; then
             case "$part_size" in
                 [1-9]T|[4-9]G|[1-9][0-9]*[GT]|[4-9].*[GT]|[4-9],*[GT])
-                    if (dialog --yes-button "$yes" --no-button "$no" --defaultno --yesno "\n$root_var" 13 60) then
+                    if (yesno "\n$root_var" "${yes}" "${no}" 1) then
                         f2fs=$(lsblk -dnro ROTA /dev/$part)
                         fs_select
 
@@ -618,7 +618,7 @@ part_class() {
 
                         source "$lang_file"
 
-                        if (dialog --yes-button "$write" --no-button "$cancel" --defaultno --yesno "\n$root_confirm_var" 14 50) then
+                        if (yesno "\n$root_confirm_var" "${write}" "${cancel}" 1) then
                             (sgdisk --zap-all /dev/"$part"
                             wipefs -a /dev/"$part") &> /dev/null &
                             pid=$! pri=0.1 msg="\n$frmt_load \n\n \Z1> \Z2wipefs -a /dev/$part\Zn" load
@@ -647,7 +647,7 @@ part_class() {
                                     DRIVE=$(lsblk -dnro PKNAME /dev/$part)
                                 fi
                             else
-                                dialog --ok-button "$ok" --msgbox "\n$part_err_msg1" 10 60
+                                msg "\n${part_err_msg1}"
                                 return
                             fi
                         fi
@@ -656,13 +656,13 @@ part_class() {
                     fi
                 ;;
                 *)
-                    dialog --ok-button "$ok" --msgbox "\n$root_err_msg" 10 60
+                    msg "\n${root_err_msg}"
                 ;;
             esac
         elif [ -n "$part_mount" ]; then
-            if (dialog --yes-button "$edit" --no-button "$back" --defaultno --yesno "\n$manual_part_var0" 13 60) then
+            if (yesno "\n$manual_part_var0" "${edit}" "${back}" 1) then
                 if [ "$part" == "$ROOT" ]; then
-                    if (dialog --yes-button "$yes" --no-button "$no" --defaultno --yesno "\n$manual_part_var2" 11 60) then
+                    if (yesno "\n$manual_part_var2" "${yes}" "${no}" 1) then
                         mounted=false
                         unset ROOT DRIVE
                         umount -R "$ARCH" &> /dev/null &
@@ -670,11 +670,11 @@ part_class() {
                     fi
                 else
                     if [ "$part_mount" == "[SWAP]" ]; then
-                        if (dialog --yes-button "$yes" --no-button "$no" --defaultno --yesno "\n$manual_swap_var" 10 60) then
+                        if (yesno "\n$manual_swap_var" "${yes}" "${no}" 1) then
                             swapoff /dev/"$part" &> /dev/null &
                             pid=$! pri=0.1 msg="$wait_load \n\n \Z1> \Z2swapoff /dev/$part\Zn" load
                         fi
-                    elif (dialog --yes-button "$yes" --no-button "$no" --defaultno --yesno "\n$manual_part_var1" 10 60) then
+                    elif (yesno "\n$manual_part_var1" "${yes}" "${no}" 1) then
                         umount  "$ARCH"/"$part_mount" &> /dev/null &
                         pid=$! pri=0.1 msg="$wait_load \n\n \Z1> \Z2umount ${ARCH}${part_mount}\Zn" load
                         rm -r "$ARCH"/"$part_mount"
@@ -682,7 +682,7 @@ part_class() {
                     fi
                 fi
             fi
-        elif (dialog --yes-button "$edit" --no-button "$back" --yesno "\n$manual_new_part_var" 12 60) then
+        elif (yesno "\n$manual_new_part_var" "${edit}" "${back}") then
             part_swap=false
             if (fdisk -l /dev/$(lsblk -dnro PKNAME /dev/$part) | grep "gpt" &>/dev/null) then
                 part_type_uuid=$(fdisk -l -o Device,Size,Type-UUID | grep -w "$part" | awk '{print $3}')
@@ -715,9 +715,9 @@ part_class() {
                     if [ "$?" -gt "0" ]; then
                         part_menu ; break
                     elif (<<<$mnt grep "[\[\$\!\'\"\`\\|%&#@()+=<>~;:?.,^{}]\|]" &> /dev/null); then
-                        dialog --ok-button "$ok" --msgbox "\n$custom_err_msg0" 10 60
+                        msg "\n${custom_err_msg0}"
                     elif (<<<$mnt grep "^[/]$" &> /dev/null); then
-                        dialog --ok-button "$ok" --msgbox "\n$custom_err_msg1" 10 60
+                        msg "\n${custom_err_msg1}"
                     else
                         break
                     fi
@@ -725,7 +725,7 @@ part_class() {
             fi
 
             if [ "$mnt" != "SWAP" ]; then
-                if (dialog --yes-button "$yes" --no-button "$no" --defaultno --yesno "\n$part_frmt_msg" 11 50) then
+                if (yesno "\n$part_frmt_msg" "${yes}" "${no}" 1) then
                     f2fs=$(lsblk -dnro ROTA /dev/$part)
 
                     if [ "$mnt" == "/boot/EFI" ] || [ "$mnt" == "/boot/efi" ]; then
@@ -757,7 +757,7 @@ part_class() {
             source "$lang_file"
 
             if [ "$mnt" == "SWAP" ]; then
-                if (dialog --yes-button "$yes" --no-button "$no" --yesno "\n$swap_frmt_msg" 11 50) then
+                if (yesno "\n$swap_frmt_msg" "${yes}" "${no}") then
                     (wipefs -a -q /dev/"$part"
                     mkswap /dev/"$part"
                     swapon /dev/"$part") &> /dev/null &
@@ -765,14 +765,14 @@ part_class() {
                 else
                     swapon /dev/"$part" &> /dev/null
                     if [ "$?" -gt "0" ]; then
-                        dialog --ok-button "$ok" --msgbox "$swap_err_msg2" 10 60
+                        msg "${swap_err_msg2}"
                     fi
                 fi
             else
                 points=$(echo  "$points" | grep -v "$mnt")
 
                 if "$frmt" ; then
-                    if (dialog --yes-button "$write" --no-button "$cancel" --defaultno --yesno "$part_confirm_var" 12 50) then
+                    if (yesno "$part_confirm_var" "${write}" "${cancel}" 1) then
                         (sgdisk --zap-all /dev/"$part"
                         wipefs -a /dev/"$part") &> /dev/null &
                         pid=$! pri=0.1 msg="\n$frmt_load \n\n \Z1> \Z2wipefs -a /dev/$part\Zn" load
@@ -799,7 +799,7 @@ part_class() {
                 pid=$! pri=0.1 msg="\n$mnt_load \n\n \Z1> \Z2mount /dev/$part ${ARCH}${mnt}\Zn" load
 
                 if [ "$(</tmp/ex_status.var)" -gt "0" ]; then
-                    dialog --ok-button "$ok" --msgbox "\n$part_err_msg2" 10 60
+                    msg "\n${part_err_msg2}"
                 fi
             fi
         fi

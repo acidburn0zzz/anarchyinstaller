@@ -18,7 +18,7 @@
 update_mirrors() {
 
 #    op_title="$welcome_op_msg"
-#    if ! (dialog --yes-button "$yes" --no-button "$no" --yesno "\n$intro_msg" 10 60) then
+#    if ! (yesno "\n${intro_msg}" "${yes}" "${no}") then
 #        reset ; exit
 #    fi
 
@@ -30,10 +30,10 @@ update_mirrors() {
     until "$OnLine"
       do
         if [ -n "$wifi_network" ]; then
-            if (dialog --yes-button "$yes" --no-button "$no" --yesno "\n$wifi_msg0" 10 60) then
+            if (yesno "\n${wifi_msg0}" "${yes}" "${no}") then
                 wifi-menu
                 if [ "$?" -gt "0" ]; then
-                    dialog --ok-button "$ok" --msgbox "\n$wifi_msg1" 10 60
+                    msg "\n${wifi_msg1}"
                     echo "$(date -u "+%F %H:%M") : Failed to connect to wifi: Exit 1" >> "$log"
                     setterm -background black -store ; reset ; echo "$connect_err1" | sed 's/\\Z1//;s/\\Zn//' ; exit 1
                 else
@@ -44,7 +44,7 @@ update_mirrors() {
                 unset wifi_network
             fi
         else
-            dialog --ok-button "$ok" --msgbox "\n$connect_err0" 10 60
+            msg "\n${connect_err0}"
             echo "$(date -u "+%F %H:%M") : Failed to connect to network: Exit 1" >> "$log"
             setterm -background black -store ; reset ; echo -e "$connect_err1" | sed 's/\\Z1//;s/\\Zn//' ;  exit 1
         fi
@@ -58,7 +58,7 @@ update_mirrors() {
             "$manual_mirrors" "->" \
             "$cancel_mirrors" "->" 3>&1 1>&2 2>&3)
         if [ "$?" -gt "0" ] || [ "$edit_mirrors" == "$cancel_mirrors" ]; then
-            if (dialog --yes-button "$yes" --no-button "$no" --yesno "\n$mirror_cancel_msg" 10 60) then
+            if (yesno "\n${mirror_cancel_msg}" "${yes}" "${no}") then
                 break
             fi
         fi
@@ -69,7 +69,7 @@ update_mirrors() {
                     "$default" "->" \
                     $countries 3>&1 1>&2 2>&3)
                 if [ "$?" -gt "0" ]; then
-                    if (dialog --yes-button "$yes" --no-button "$no" --yesno "\n$mirror_cancel_msg" 10 60) then
+                    if (yesno "\n${mirror_cancel_msg}" "${yes}" "${no}") then
                         break
                     else
                         continue
@@ -101,7 +101,7 @@ update_mirrors() {
                     rankmirrors -n 6 /etc/pacman.d/mirrorlist.bak > /etc/pacman.d/mirrorlist &
                     pid=$! pri=0.8 msg="\n$mirror_load1 \n\n \Z1> \Z2rankmirrors -n 6 /etc/pacman.d/mirrorlist\Zn" load
                 else
-                    dialog --ok-button "$ok" --msgbox "\n$connect_err0" 10 60
+                    msg "\n${connect_err0}"
                     echo "$(date -u "+%F %H:%M") : Failed to connect to wifi: Exit 1" >> "$log"
                     setterm -background black -store ; reset ; echo -e "$connect_err1" | sed 's/\\Z1//;s/\\Zn//' ;  exit 1
                 fi
@@ -113,7 +113,7 @@ update_mirrors() {
                     "vim"	"$vim_msg" \
                     "$cancel" "->" 3>&1 1>&2 2>&3)
                 if [ "$?" -gt "0" ] || [ "$EDITOR" == "$cancel" ]; then
-                    if (dialog --yes-button "$yes" --no-button "$no" --yesno "\n$mirror_cancel_msg" 10 60) then
+                    if (yesno "\n${mirror_cancel_msg}" "${yes}" "${no}") then
                         break
                     fi
                 else

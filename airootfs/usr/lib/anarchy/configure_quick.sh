@@ -117,7 +117,7 @@ quick_desktop() {
             "Anarchy-xfce4"         "${de15}" 3>&1 1>&2 2>&3)
 
         if [ -z "${de}" ]; then
-            if (dialog --yes-button "${yes}" --no-button "${no}" --yesno "\n${desktop_cancel_msg}" 10 60) then
+            if (yesno "\n${desktop_cancel_msg}" "${yes}" "${no}") then
                 return
             fi
         else
