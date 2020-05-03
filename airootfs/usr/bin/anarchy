@@ -108,6 +108,8 @@ else
 			cp -rf "${tmp_dir}"/airootfs/usr/share/anarchy/extra/* \
 					/usr/share/anarchy/extra/ || exit 1
 			echo 'Finished updating Anarchy'
+			echo 'To start the installation run the "anarchy" command'
+			echo 'To return to the main menu run the "start" command'
 		else
 			wifi-menu -o
 		fi
