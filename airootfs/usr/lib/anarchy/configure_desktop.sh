@@ -18,8 +18,8 @@
 graphics() {
 
     op_title="$de_op_msg"
-    if ! (dialog --yes-button "$yes" --no-button "$no" --yesno "\n$desktop_msg" 10 60) then
-        if (dialog --yes-button "$yes" --no-button "$no" --yesno "\n$desktop_cancel_msg" 10 60) then
+    if ! (yesno "\n${desktop_msg}" "${yes}" "${no}") then
+        if (yesno "\n${desktop_cancel_msg}" "${yes}" "${no}") then
             return
         fi
     fi
@@ -32,7 +32,7 @@ graphics() {
             "$more_wm"		"$more_wm_msg" 3>&1 1>&2 2>&3)
 
         if [ -z "$de" ]; then
-            if (dialog --yes-button "$yes" --no-button "$no" --yesno "\n$desktop_cancel_msg" 10 60) then
+            if (yesno "\n${desktop_cancel_msg}" "${yes}" "${no}") then
                 return
             fi
         elif [ "$de" == "$customized_de" ]; then
@@ -110,34 +110,34 @@ graphics() {
             "xfce4") 	start_term="exec startxfce4"
                     DE+="xfce4 "
 
-                    if (dialog --yes-button "$yes" --no-button "$no" --yesno "\n$extra_msg0" 10 60) then
+                    if (yesno "\n${extra_msg0}" "${yes}" "${no}") then
                         DE+="xfce4-goodies "
                     fi
             ;;
             "budgie")	start_term="export XDG_CURRENT_DESKTOP=Budgie:GNOME ; exec budgie-desktop"
                     DE+="budgie-desktop arc-icon-theme arc-gtk-theme elementary-icon-theme "
 
-                    if (dialog --yes-button "$yes" --no-button "$no" --yesno "\n$extra_msg6" 10 60) then
+                    if (yesno "\n${extra_msg6}" "${yes}" "${no}") then
                         DE+="gnome "
                     fi
             ;;
             "gnome")	start_term="exec gnome-session"
                     DE+="gnome "
 
-                    if (dialog --yes-button "$yes" --no-button "$no" --yesno "\n$extra_msg1" 10 60) then
+                    if (yesno "\n${extra_msg1}" "${yes}" "${no}") then
                         DE+="gnome-extra "
                     fi
             ;;
             "gnome-flashback")	start_term="export XDG_CURRENT_DESKTOP=GNOME-Flashback:GNOME ; exec gnome-session --session=gnome-flashback-metacity"
                         DE+="gnome-flashback "
 
-                        if (dialog --yes-button "$yes" --no-button "$no" --yesno "\n$extra_msg1" 10 60) then
+                        if (yesno "\n${extra_msg1}" "${yes}" "${no}") then
                             DE+="gnome-backgrounds gnome-control-center gnome-screensaver gnome-applets sensors-applet "
                         fi
             ;;
             "mate")		start_term="exec mate-session"
 
-                    if (dialog --yes-button "$yes" --no-button "$no" --yesno "\n$extra_msg2" 10 60) then
+                    if (yesno "\n${extra_msg2}" "${yes}" "${no}") then
                         DE+="mate mate-extra gtk-engine-murrine "
                     else
                         DE+="mate gtk-engine-murrine "
@@ -145,7 +145,7 @@ graphics() {
             ;;
             "KDE plasma")	start_term="exec startplasma-x11"
 
-                    if (dialog --defaultno --yes-button "$yes" --no-button "$no" --yesno "\n$extra_msg3" 10 60) then
+                    if (yesno "\n${extra_msg3}" "${yes}" "${no}") then
                         DE+="plasma-desktop konsole dolphin plasma-nm plasma-pa libxshmfence kscreen "
 
                         if "$LAPTOP" ; then
@@ -158,14 +158,14 @@ graphics() {
             "deepin")	start_term="exec startdde"
                     DE+="deepin "
 
-                    if (dialog --yes-button "$yes" --no-button "$no" --yesno "\n$extra_msg4" 10 60) then
+                    if (yesno "\n${extra_msg4}" "${yes}" "${no}") then
                         DE+="deepin-extra $kernel-headers "
                     fi
             ;;
             "xmonad")	start_term="exec xmonad"
                     DE+="xmonad "
 
-                    if (dialog --yes-button "$yes" --no-button "$no" --yesno "\n$extra_msg5" 10 60) then
+                    if (yesno "\n${extra_msg5}" "${yes}" "${no}") then
                         DE+="xmonad-contrib "
                                 fi
             ;;
@@ -174,7 +174,7 @@ graphics() {
             ;;
             "lxde")		start_term="exec startlxde"
 
-                    if (dialog --yes-button "$yes" --no-button "$no" --yesno "\n$gtk3_var" 10 60) then
+                    if (yesno "\n${gtk3_var}" "${yes}" "${no}") then
                         DE+="lxde-gtk3 "
                         GTK3=true
                     else
@@ -216,16 +216,16 @@ graphics() {
       do
         if "$VM" ; then
             case "$virt" in
-                vbox)	dialog --ok-button "$ok" --msgbox "\n$vbox_msg" 10 60
+                vbox)	msg "\n${vbox_msg}"
                         GPU="virtualbox-guest-utils virtualbox-guest-dkms "
                 ;;
-                vmware)	dialog --ok-button "$ok" --msgbox "\n$vmware_msg" 10 60
+                vmware)	msg "\n${vmware_msg}"
                         GPU="xf86-video-vmware xf86-input-vmmouse open-vm-tools net-tools gtkmm mesa mesa-libgl"
                 ;;
-                hyper-v) dialog --ok-button "$ok" --msgbox "\n$hyperv_msg" 10 60
+                hyper-v) msg "\n${hyperv_msg}"
                          GPU="xf86-video-fbdev mesa-libgl"
                 ;;
-                *) 		dialog --ok-button "$ok" --msgbox "\n$vm_msg" 10 60
+                *) 		msg "\n$vm_msg"
                         GPU="xf86-video-fbdev mesa-libgl"
                 ;;
             esac
@@ -254,7 +254,7 @@ graphics() {
         fi
 
         if [ "$ex" -gt "0" ]; then
-            if (dialog --yes-button "$yes" --no-button "$no" --yesno "$desktop_cancel_msg" 10 60) then
+            if (yesno "${desktop_cancel_msg}" "${yes}" "${no}") then
                 return
             fi
         elif [ "$GPU" == "NVIDIA" ]; then
@@ -268,7 +268,7 @@ graphics() {
                 if [ "$GPU" == "$gr0" ]; then
                     pci_id=$(lspci -nn | grep "VGA" | egrep -o '\[.*\]' | awk '{print $NF}' | sed 's/.*://;s/]//')
                     if (<"${anarchy_directory}"/etc/nvidia390.xx grep "$pci_id" &>/dev/null); then
-                        if (dialog --yes-button "$yes" --no-button "$no" --yesno "\n$nvidia_390msg" 10 60); then
+                        if (yesno "\n${nvidia_390msg}" "${yes}" "${no}"); then
                             if [ "$kernel" == "lts" ]; then
                                 GPU="nvidia-390xx-lts"
                             else
@@ -278,7 +278,7 @@ graphics() {
                             break
                         fi
                     elif (<"${anarchy_directory}"/etc/nvidia340.xx grep "$pci_id" &>/dev/null); then
-                                                 if (dialog --yes-button "$yes" --no-button "$no" --yesno "\n$nvidia_340msg" 10 60); then
+                                                 if (yesno "\n${nvidia_340msg}" "${yes}" "${no}"); then
                                                          if [ "$kernel" == "lts" ]; then
                                                                  GPU="nvidia-340xx-lts"
                                                          else
@@ -287,21 +287,21 @@ graphics() {
                                                          GPU+=" nvidia-340xx-libgl nvidia-340xx-utils nvidia-settings"
                                                          break
                                                  fi
-                    elif (dialog --yes-button "$yes" --no-button "$no" --yesno "\n$nvidia_curmsg" 10 60); then
+                    elif (yesno "\n${nvidia_curmsg}" "${yes}" "${no}"); then
                         if [ "$kernel" == "lts" ]; then
                             GPU="nvidia-lts"
                         else
                             GPU="nvidia"
                         fi
 
-                        if (dialog --yes-button "$yes" --no-button "$no" --yesno "\n$nvidia_modeset_msg" 10 60) then
+                        if (yesno "\n${nvidia_modeset_msg}" "${yes}" "${no}") then
                             drm=true
                         fi
                         GPU+=" nvidia-libgl nvidia-utils nvidia-settings"
                         break
                     fi
                 elif [ "$GPU" == "nvidia" ]; then
-                    if (dialog --yes-button "$yes" --no-button "$no" --yesno "\n$nvidia_modeset_msg" 10 60) then
+                    if (yesno "\n${nvidia_modeset_msg}" "${yes}" "${no}") then
                         drm=true
                     fi
 
@@ -339,7 +339,7 @@ graphics() {
         fi
     fi
 
-    if (dialog --defaultno --yes-button "$yes" --no-button "$no" --yesno "\n$touchpad_msg" 10 60) then
+    if (yesno "\n${touchpad_msg}" "${yes}" "${no}") then
         if (<<<"$DE" grep "gnome" &> /dev/null); then
             DE+="xf86-input-libinput "
         else
@@ -348,12 +348,12 @@ graphics() {
     fi
 
     if "$enable_bt" ; then
-        if (dialog --yes-button "$yes" --no-button "$no" --yesno "\n$blueman_msg" 10 60) then
+        if (yesno "\n${blueman_msg}" "${yes}" "${no}") then
             DE+="blueman "
         fi
     fi
 
-    if (dialog --yes-button "$yes" --no-button "$no" --yesno "\n$dm_msg" 10 60) then
+    if (yesno "\n${dm_msg}" "${yes}" "${no}") then
         DM=$(dialog --ok-button "$ok" --cancel-button "$cancel" --menu "$dm_msg1" 13 64 4 \
             "lightdm"	"$dm1" \
             "gdm"		"$dm0" \
@@ -369,10 +369,10 @@ graphics() {
             fi
             enable_dm=true
         else
-            dialog --ok-button "$ok" --msgbox "\n$startx_msg" 10 60
+            msg "\n${startx_msg}"
         fi
     else
-        dialog --ok-button "$ok" --msgbox "\n$startx_msg" 10 60
+        msg "\n${startx_msg}"
     fi
 
     base_install+="$DE "

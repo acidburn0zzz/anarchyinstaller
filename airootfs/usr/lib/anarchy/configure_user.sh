@@ -41,11 +41,11 @@ set_user() {
                     if [ "$?" -gt "0" ]; then
                         break
                     elif [ -z "$user" ]; then
-                        dialog --ok-button "$ok" --msgbox "\n$user_err_msg2" 10 60
+                        msg "\n${user_err_msg2}"
                     elif (grep "^$user:" "$tmp_passwd" &>/dev/null); then
-                        dialog --ok-button "$ok" --msgbox "\n$user_err_msg1" 10 60
+                        msg "\n${user_err_msg1}"
                     elif (<<<"$user" grep "^[0-9]\|[A-Z]\|[]:/?#@\!\$&'()*+,;=%[]" &> /dev/null); then
-                        dialog --ok-button "$ok" --msgbox "\n$user_err_msg" 10 60
+                        msg "\n${user_err_msg}"
                     else
                         while (true)
                           do
@@ -53,14 +53,14 @@ set_user() {
                             if [ "$?" != "0" ]; then
                                 break
                             elif (<<<"$full_user" grep "," &> /dev/null) then
-                                dialog --ok-button "$ok" --msgbox "\n$fulluser_err_msg" 10 60
+                                msg "\n${fulluser_err_msg}"
                             elif $(cut -d: -f1,4 <"$tmp_passwd" | grep -w "$user" | cut -d: -f2 | grep -w "$full_user"); then
-                                dialog --ok-button "$ok" --msgbox "\n$fulluser_err_msg1" 10 60
+                                msg "\n${fulluser_err_msg1}"
                             else
                                 set_password
                                 echo "$(date -u "+%F %H:%M") : Added user: $user" >> "$log"
 
-                                if (dialog --yes-button "$yes" --no-button "$no" --yesno "\n$sudo_var" 10 60) then
+                                if (yesno "\n${sudo_var}" "${yes}" "${no}") then
                                     sudo_user=yes
                                 else
                                     sudo_user=no
@@ -164,11 +164,11 @@ set_user() {
                         ;;
                         "$change_su")
                             if [ "$sudo" == "$yes" ]; then
-                                if (dialog --defaultno --yes-button "$yes" --no-button "$no" --yesno "\n$sudo_var1" 10 60) then
+                                if (yesno "\n${sudo_var1}" "${yes}" "${no}" 1) then
                                     sudo_user=no
                                 fi
                             else
-                                if (dialog --yes-button "$yes" --no-button "$no" --yesno "\n$sudo_var" 10 60) then
+                                if (yesno "\n${sudo_var}" "${yes}" "${no}") then
                                     sudo_user=yes
                                 fi
                             fi
@@ -188,7 +188,7 @@ set_user() {
                                 if [ "$?" != "0" ]; then
                                     break
                                 elif (<<<"$full_user" grep "," &> /dev/null) then
-                                    dialog --ok-button "$ok" --msgbox "\n$fulluser_err_msg" 10 60
+                                    msg "\n${fulluser_err_msg}"
                                 else
                                     if "$menu_enter" ; then
                                         if [ "$full_user" == "" ]; then
@@ -203,7 +203,7 @@ set_user() {
                             done
                         ;;
                         "$del_user")
-                            if (dialog --defaultno --yes-button "$yes" --no-button "$no" --yesno "\n$deluser_var" 10 60) then
+                            if (yesno "\n${deluser_var}" "${yes}" "${no}" 1) then
                                 if "$menu_enter" ; then
                                     arch-chroot "$ARCH" userdel --remove "$user" &>/dev/null
                                 fi
@@ -236,7 +236,7 @@ set_hostname() {
                  hostname=$(dialog --ok-button "$ok" --nocancel --inputbox "\n$host_msg" 12 55 "anarchy" 3>&1 1>&2 2>&3 | sed 's/ //g')
 
                  if (<<<$hostname grep "^[0-9]\|[\[\$\!\'\"\`\\|%&#@()+=<>~;:/?.,^{}]\|]" &> /dev/null); then
-                         dialog --ok-button "$ok" --msgbox "\n$host_err_msg" 10 60
+                         msg "\n${host_err_msg}"
                  else
                          break
                  fi
@@ -259,10 +259,10 @@ set_password() {
             input_chk=$(dialog --nocancel --clear --insecure --passwordbox "$user_var1" 11 55 --stdout)
 
         if [ -z "$input" ]; then
-            dialog --ok-button "$ok" --msgbox "\n$passwd_msg0" 10 55
+            msg "\n${passwd_msg0}"
             input_chk=default
         elif [ "$input" != "$input_chk" ]; then
-            dialog --ok-button "$ok" --msgbox "\n$passwd_msg1" 10 55
+            msg "\n${passwd_msg1}"
         fi
     done
 
