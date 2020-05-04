@@ -29,6 +29,15 @@ https://www.balena.io/etcher/[Etcher].
 Use https://sourceforge.net/projects/win32diskimager/[Win32DiskImager] or
 https://rufus.ie/[Rufus].
 
+==== Compiling the installer
+
+Anarchy uses https://wiki.archlinux.org/index.php/archiso[Archiso] as a base.
+Before starting the installation you need to have the `archiso` package
+installed (`pacman -S archiso`).
+
+To compile the installer run the `build.sh` script as root.
+To see all the available compilation options run `./build.sh -h`.
+
 = Reporting issues
 
 Before
