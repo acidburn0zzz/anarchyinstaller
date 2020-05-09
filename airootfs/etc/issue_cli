@@ -1,16 +1,15 @@
-\033[H
-\e[31m┌───────────────────────────────────────────────────────────────────────────────┐
-\e[31m│                              \e[36mAnarchy Installer                                \e[31m│
-\e[31m│                                                                               \e[31m│
-\e[31m│ \e[33mSelect an option or type '\e[32manarchy\e[33m' to begin automated installer.              \e[31m│
-\e[31m│ \e[33mOptions:                                                                      \e[31m│
-\e[31m│                                                                               \e[31m│
-\e[31m│       \e[33m1.\e[31m) \e[32mAnarchy Installer       - anarchy                                   \e[31m│
-\e[31m│       \e[33m2.\e[31m) \e[32mAnarchy Update          - anarchy -u                                \e[31m│
-\e[31m│       \e[33m3.\e[31m) \e[32mUpdate Archlinux Keys   - anarchy -k                                \e[31m│
-\e[31m│       \e[33m4.\e[31m) \e[32mConnection Test         - iptest                                    \e[31m│
-\e[31m│       \e[33m5.\e[31m) \e[32mSystem Information      - sysinfo                                   \e[31m│
-\e[31m│                                                                               \e[31m│
-\e[31m│ \e[33mFor more information on Anarchy type: \e[32manarchy --help                          \e[31m│
-\e[31m│ \e[33mTo show this screen at any time type: \e[32mstart                                   \e[31m│
-\e[31m└───────────────────────────────────────────────────────────────────────────────┘\e[0m
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                              Anarchy Installer                               │
+│                                                                              │
+│ Select an option or type 'anarchy' to begin the automated installer.         │
+│ Options:                                                                     │
+│                                                                              │
+│       1.) Anarchy Installer       - anarchy                                  │
+│       2.) Anarchy Update          - anarchy -u                               │
+│       3.) Update Arch Linux Keys  - anarchy -k                               │
+│       4.) Connection Test         - iptest                                   │
+│       5.) System Information      - sysinfo                                  │
+│                                                                              │
+│ For more information on Anarchy type: 'anarchy --help'                       │
+│ To show this screen at any time type: 'start'                                │
+└──────────────────────────────────────────────────────────────────────────────┘
