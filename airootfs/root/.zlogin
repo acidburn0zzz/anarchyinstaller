@@ -7,4 +7,5 @@ alias 2='anarchy -u'
 alias 3='anarchy -k'
 alias 4='iptest'
 alias 5='sysinfo'
+clear
 cat /etc/issue_cli
