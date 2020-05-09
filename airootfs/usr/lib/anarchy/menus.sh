@@ -47,7 +47,7 @@ reboot_system() {
 				;;
 			"${reboot2}") # Anarchy Chroot function
 				clear
-				echo "${arch_chroot_msg}"
+				echo -e "${arch_chroot_msg}"
 				echo "/root" >/tmp/chroot_dir.var
 				anarchy_chroot
 				clear
