@@ -1,5 +1,4 @@
 # Library functions that Anarchy's scripts use
-# Copyright (C) 2020 Erazem Kokot <contact at erazem dot eu>
 
 # Global variables (shared between scripts and functions)
 export LOG_FILE="${HOME}/anarchy-$(date '+%Y-%m-%d').log"
