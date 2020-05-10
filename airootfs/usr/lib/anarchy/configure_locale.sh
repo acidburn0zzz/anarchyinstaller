@@ -47,6 +47,7 @@ set_keys() {
     done
 
     localectl set-keymap "$keyboard"
+    loadkeys "${keyboard}"
     echo "$(date -u "+%F %H:%M") : Set keymap to: $keyboard" >> "$log"
 
 }
