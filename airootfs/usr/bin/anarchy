@@ -1,6 +1,5 @@
 #!/bin/sh
 # Copyright (C) 2017 Dylan Schacht
-# Copyright (C) 2020 Erazem Kokot
 
 VERSION='1.2.1'
 
