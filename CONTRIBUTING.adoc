@@ -1,6 +1,6 @@
 = Contributing guide
 
-You can help contribute to Anarchy in many ways, including
+You can help contribute to Anarchy in many ways, including by
 
 == Writing code
 
@@ -17,9 +17,6 @@ should be in `lower_case`
 * Explain what arguments a function takes (if any)
 * Use different error codes when exiting and explain when they occur
 at the top of the file
-* If you've created a new file or have made a lot of changes
-(judge this by yourself), you can add a copyright disclaimer below any other
-copyright notices (e.g. `Copyright (C) Jane Doe <contact@jane.doe>`)
 * If possible *line wrap at 80 characters*
 * Scripts should be named `setup-<function>` and should not have an extension
 * Libraries should always have a `.sh` extension and should not have a shebang
