@@ -54,6 +54,9 @@ https://wiki.archlinux.org/[Arch Wiki] and
 https://bbs.archlinux.org/[Arch Forums], since it's most likely an
 Arch-related issue, not Anarchy's
 
+If you don't want to sign up for Gitlab, you can also report issues
+mailto:incoming+anarchyinstaller-installer-18524601-issue-@incoming.gitlab.com[over email].
+
 = Contributing
 
 We're always looking for new contributors to the project,
