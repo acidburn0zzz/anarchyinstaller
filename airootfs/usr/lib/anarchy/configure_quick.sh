@@ -151,7 +151,7 @@ quick_desktop() {
 	"Anarchy-openbox")
 		config_env="${de}"
 		start_term="exec openbox-session"
-		DE+="openbox thunar thunar-volman xfce4-terminal xfce4-panel xfce4-whiskermenu-plugin xcompmgr transset-df obconf lxappearance-obconf wmctrl gxmessage xfce4-pulseaudio-plugin xfdesktop xdotool ristretto polkit-gnome ${extras} "
+		DE+="openbox thunar thunar-volman xfce4-terminal xfce4-panel xfce4-whiskermenu-plugin xcompmgr obconf lxappearance-obconf wmctrl gxmessage xfce4-pulseaudio-plugin xfdesktop xdotool ristretto polkit-gnome ${extras} "
 		;;
 	esac
 
