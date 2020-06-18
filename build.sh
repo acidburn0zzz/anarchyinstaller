@@ -224,6 +224,19 @@ make_iso() {
     mkarchiso ${verbose} -w "${work_dir}" -D "${install_dir}" -L "${iso_label}" -P "${iso_publisher}" -A "${iso_application}" -o "${out_dir}" iso "${iso_name}-${iso_version}-x86_64.iso"
 }
 
+# [Anarchy | Prebuild] Check optional configuration file for SSH connection
+if [[ -f autoconnect.sh ]]; then
+    source autoconnect.sh
+
+    # Copy PUBLIC_KEY to authorized_keys
+    if [[ ! -d airootfs/etc/skel/.ssh ]]; then
+        mkdir -p airootfs/etc/skel/.ssh
+    fi
+    cp "${PUBLIC_KEY}" airootfs/etc/skel/.ssh/authorized_keys
+    chmod 700 airootfs/etc/skel/.ssh
+    chmod 600 airootfs/etc/skel/.ssh/authorized_keys
+fi
+
 if [[ ${EUID} -ne 0 ]]; then
     echo "This script must be run as root."
     _usage 1

@@ -29,6 +29,30 @@ https://www.balena.io/etcher/[Etcher].
 Use https://sourceforge.net/projects/win32diskimager/[Win32DiskImager] or
 https://rufus.ie/[Rufus].
 
+==== Install via SSH
+
+> Note: Running the installer over an SSH connection requires physical access to the remote machine.
+
+After flashing Anarchy on a USB drive, it must be booted from the machine where you want to install. If it has a wired internet connection, you only have to wait approximately one minute for Anarchy to start before connecting. If you have a wireless connection, you have two options: you normally connect to the target machine (requires physical access), or you must compile the installer yourself as indicated in the next step, but adding the file `autoconnect.sh` (it must be kept exactly the same name) along with the script `build.sh`. The `autoconnect.sh` file must have the following format:
+
+[source,shell]
+----
+SSID="your_wifi_network_ssid"
+PASSWORD="your_wifi_network_password"
+PUBLIC_KEY=/path/to/your/public/key
+----
+
+`SSID` must contain the name that identifies the wifi network, `PASSWORD` is its respective password, and `PUBLIC_KEY` refers to the local path of our public SSH key. Then compile the installer normally.
+
+To connect simply run on your local machine (from where you will install via SSH):
+
+[source,shell]
+----
+ssh root@ip.address.of.target
+----
+
+The default password is `anarchy`.
+
 ==== Compiling the installer
 
 Anarchy uses https://wiki.archlinux.org/index.php/archiso[Archiso] as a base.
