@@ -21,7 +21,7 @@ set_keys() {
 		source "${lang_file}"
 
 		if [ "${keyboard}" = "${other}" ]; then
-			keyboard="$(dialog --ok-button "${ok}" --cancel-button "${cancel}" --menu "${keys_msg}" 19 60 10 "${key_maps}" 3>&1 1>&2 2>&3)"
+			keyboard="$(dialog --ok-button "${ok}" --cancel-button "${cancel}" --menu "${keys_msg}" 19 60 10 ${key_maps} 3>&1 1>&2 2>&3)"
 			if [ "$?" -eq 0 ]; then
 				break
 			fi
