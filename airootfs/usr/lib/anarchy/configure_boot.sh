@@ -126,7 +126,7 @@ systemd_config() {
 	if "${crypted}"; then
 		echo "options		cryptdevice=/dev/lvm/lvroot:root root=/dev/mapper/root quiet rw" >>"${ARCH}${esp_mnt}"/loader/entries/arch.conf
 	else
-		echo "options		root=PARTUUID=$(blkid -s PARTUUID -o value $(df | grep -m1 "${ARCH}" | awk '{print ${1}}')) rw" >>"${ARCH}${esp_mnt}"/loader/entries/arch.conf
+		echo "options		root=PARTUUID=$(blkid -s PARTUUID -o value $(df | grep -m1 "${ARCH}" | awk '{print $1}')) rw" >>"${ARCH}${esp_mnt}"/loader/entries/arch.conf
 	fi
 
 	if "${drm}"; then
@@ -155,5 +155,35 @@ efistub_config() {
 	fi
 
 	# -p: boot partition number (is always "1")
-	efibootmgr -d /dev/${DRIVE} -p 1 -c -L "Arch Linux" -l \vmlinuz-linux -u "${efi_root} rw initrd=/${initramfs} ${drm}"
+	efibootmgr -d /dev/"${DRIVE}" -p 1 -c -L "Arch Linux" -l \vmlinuz-linux -u "${efi_root} rw initrd=/${initramfs} ${drm}"
+}
+
+refind_config() {
+    local ROOT_PARTUUID="$(blkid -s PARTUUID -o value $(df | grep -m1 "${ARCH}" | awk '{print $1}'))"
+    local ROOT_FSTYPE="$(blkid -s TYPE -o value $(df | grep -m1 "${ARCH}" | awk '{print $1}'))"
+    mkdir -p "${esp_mnt}"/EFI/refind
+    cp /usr/share/refind/refind_x64.efi "${esp_mnt}"/EFI/refind/
+
+    efibootmgr --create --disk /dev/"${DRIVE}" --part 1 --loader /EFI/refind/refind_x64.efi --label "Arch Linux"
+
+    cat > "${ARCH}/boot/refind_linux.conf" <<- EOF
+"Boot using standard options"  "root=PARTUUID=${ROOT_PARTUUID} rootfstype=${ROOT_FSTYPE} rw add_efi_memmap $([[ ${UCODE} ]] && printf "initrd=%s " "\\${UCODE}.img") initrd=\initramfs-%v.img"
+"Boot using fallback initramfs"  "root=PARTUUID=${ROOT_PARTUUID} rootfstype=${ROOT_FSTYPE} rw add_efi_memmap $([[ ${UCODE} ]] && printf "initrd=%s " "\\${UCODE}.img") initrd=\initramfs-%v-fallback.img"
+"Boot to terminal"  "root=PARTUUID=${ROOT_PARTUUID} rootfstype=${ROOT_FSTYPE} rw add_efi_memmap $([[ ${UCODE} ]] && printf "initrd=%s " "\\${UCODE}.img") initrd=\initramfs-%v.img systemd.unit=multi-user.target"
+EOF
+
+    # For upgrading
+    mkdir -p "${ARCH}/etc/pacman.d/hooks"
+
+    cat > "${ARCH}/etc/pacman.d/hooks/refind.hook" <<- EOF
+[Trigger]
+Operation=Upgrade
+Type=Package
+Target=refind-efi
+
+[Action]
+Description=Updating rEFInd on ESP
+When=PostTransaction
+Exec=/usr/bin/refind-install
+EOF
 }

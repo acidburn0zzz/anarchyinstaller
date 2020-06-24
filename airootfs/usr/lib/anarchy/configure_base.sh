@@ -136,15 +136,20 @@ prepare_base() {
         fi
     done
 
+    #
+    # Bootloader selection
+    #
+    base_install+="${UCODE} "
     while (true)
       do
         if "$UEFI" ; then
             bootloader=$(dialog --ok-button "$ok" --cancel-button "$cancel" --menu "$loader_type_msg" 13 64 4 \
-                "grub"			"$loader_msg" \
-                "syslinux"		"$loader_msg1" \
-                "systemd-boot"	"$loader_msg2" \
-                "efistub"	    "$loader_msg3" \
-                "$none" "-" 3>&1 1>&2 2>&3)
+                "grub"			"${loader_msg}"    \
+                "syslinux"		"${loader_msg1}"   \
+                "systemd-boot"	"${loader_msg2}"   \
+                "efistub"	    "${loader_msg3}"   \
+                "refind"        "${loader_msg4}"   \
+                "${none}" "-" 3>&1 1>&2 2>&3)
             ex="$?"
         else
             bootloader=$(dialog --ok-button "$ok" --cancel-button "$cancel" --menu "$loader_type_msg" 12 64 3 \
@@ -161,6 +166,9 @@ prepare_base() {
         elif [ "$bootloader" == "systemd-boot" ]; then
             break
         elif [ "$bootloader" == "efistub" ]; then
+            break
+        elif [ "${bootloader}" == "refind" ]; then
+            base_install+="refind "
             break
         elif [ "$bootloader" == "syslinux" ]; then
             if ! "$UEFI" ; then

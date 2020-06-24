@@ -61,11 +61,12 @@ install_base() {
                 reset ; tail "$log" ; exit 1
             fi
 
-            case "$bootloader" in
+            case "${bootloader}" in
                 grub) grub_config ;;
                 syslinux) syslinux_config ;;
                 systemd-boot) systemd_config ;;
                 efistub) efistub_config ;;
+                refind) refind_config ;;
             esac
 
             echo "$(date -u "+%F %H:%M") : Configured bootloader: $bootloader" >> "$log"
