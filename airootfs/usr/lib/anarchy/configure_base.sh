@@ -540,21 +540,28 @@ add_software() {
                 ;;
                 "$servers")
                     software=$(dialog --ok-button "$ok" --cancel-button "$cancel" --checklist "$software_msg1" 20 63 10 \
-                        "LAMP Stack"		"$srv1" OFF \
-                        "LEMP Stack"		"$srv2" OFF \
-                        "apache"		"$sys1" OFF \
-                        "bind"			"$srv10" OFF \
-                        "cups"			"$srv11" OFF \
-                        "lighttpd"		"$srv5" OFF \
-                        "nginx"			"$srv3" OFF \
-                        "nginx-mainline"	"$srv4" OFF \
-                        "openssh"		"$sys10" OFF \
-                        "postfix"		"$srv6" OFF \
-                        "samba"			"$srv9" OFF \
-                        "squid"			"$srv8" OFF \
-                        "vsftpd"		"$srv7" OFF 3>&1 1>&2 2>&3)
+                        "LAMP Stack"		"${srv1}" OFF \
+                        "LEMP Stack"		"${srv2}" OFF \
+                        "apache"		"${sys1}" OFF \
+                        "bind"			"${srv10}" OFF \
+                        "cups"			"${srv11}" OFF \
+                        "lighttpd"		"${srv5}" OFF \
+                        "nginx"			"${srv3}" OFF \
+                        "nginx-mainline"	"${srv4}" OFF \
+                        "openssh"		"${sys10}" OFF \
+                        "postfix"		"${srv6}" OFF \
+                        "samba"			"${srv9}" OFF \
+                        "squid"			"${srv8}" OFF \
+                        "vsftpd"		"${srv7}" OFF \
+                        "dhcpcd"		"${srv12}" OFF 3>&1 1>&2 2>&3)
                     if [ "$?" -gt "0" ]; then
                         add_soft=false
+                    fi
+
+                    if (grep "dhcpcd" <<<"${software}" &>/dev/null); then
+                        if (yesno "\n${dhcp_msg}" "${yes}" "${no}") then
+                            dhcp=true
+                        fi
                     fi
 
                     if (grep "LAMP" <<<"$software" &>/dev/null); then
