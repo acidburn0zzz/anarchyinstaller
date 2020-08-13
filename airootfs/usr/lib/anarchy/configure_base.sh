@@ -111,7 +111,7 @@ prepare_base() {
             case "$shell" in
                 bash) sh="/bin/bash" shell="bash-completion"
                 ;;
-                fish) 	sh="/bin/bash"
+                fish) sh="/bin/fish"
                 ;;
                 zsh) 	shrc=$(dialog --ok-button "$ok" --cancel-button "$cancel" --menu "\n$shrc_msg" 13 65 4 \
                                 "$default"		"$shrc_msg1" \
