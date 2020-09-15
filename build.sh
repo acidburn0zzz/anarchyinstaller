@@ -5,8 +5,8 @@
 
 # Archiso variables
 iso_name="anarchy"
-iso_version="1.3.0"
-iso_label="ANARCHY_130"
+iso_version="1.2.2"
+iso_label="ANARCHY_122"
 iso_publisher="Anarchy Installer <https://anarchyinstaller.org>"
 install_dir="arch"
 bootmodes="('bios.syslinux.mbr' 'bios.syslinux.eltorito' 'uefi-x64.systemd-boot.esp' 'uefi-x64.systemd-boot.eltorito')"
