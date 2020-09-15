@@ -60,7 +60,6 @@ Before starting the installation you need to have the `archiso` package
 installed (`pacman -S archiso`).
 
 To compile the installer run the `build.sh` script as root.
-To see all the available compilation options run `./build.sh -h`.
 
 = Reporting issues
 
