@@ -60,20 +60,23 @@ create_build_dir() {
     mkdir -p "${BUILD_DIR}/airootfs/etc"
 
     # Copy anarchy files to tmp dir
-    sudo cp -Tr "$(pwd)/anarchy/boot" "${BUILD_DIR}/airootfs/usr/share/anarchy/boot"
-    sudo cp -Tr "$(pwd)/anarchy/etc" "${BUILD_DIR}/airootfs/usr/share/anarchy/etc"
-    sudo cp "$(pwd)/anarchy/extra/.dialogrc" "${BUILD_DIR}/airootfs/root/.dialogrc"
-    sudo cp "$(pwd)/anarchy/extra/.zlogin" "${BUILD_DIR}/airootfs/root/.zlogin"
-    sudo cp "$(pwd)/anarchy/extra/.zshrc" "${BUILD_DIR}/airootfs/etc/zsh/.zshrc"
-    sudo cp -Tr "$(pwd)/anarchy/extra" "${BUILD_DIR}/airootfs/usr/share/anarchy/extra"
-    sudo cp -Tr "$(pwd)/anarchy/lang" "${BUILD_DIR}/airootfs/usr/share/anarchy/lang"
-    sudo cp -Tr "$(pwd)/bin" "${BUILD_DIR}/airootfs/usr/bin"
-    sudo cp -Tr "$(pwd)/lib" "${BUILD_DIR}/airootfs/usr/lib"
-    sudo cp "$(pwd)/etc/zsh/.zshrc" "${BUILD_DIR}/airootfs/usr/share/anarchy/extra/.zshrc"
-    sudo cp -Tr "$(pwd)/etc" "${BUILD_DIR}/airootfs/etc"
-    sudo cp -Tr "$(pwd)/syslinux" "${BUILD_DIR}/syslinux"
-    sudo cp -Tr "$(pwd)/isolinux" "${BUILD_DIR}/isolinux"
-    sudo cp -Tr "$(pwd)/efiboot" "${BUILD_DIR}/efiboot"
+    sudo cp -Tr "$(pwd)/src/anarchy/boot" "${BUILD_DIR}/airootfs/usr/share/anarchy/boot"
+    sudo cp -Tr "$(pwd)/src/anarchy/etc" "${BUILD_DIR}/airootfs/usr/share/anarchy/etc"
+    sudo cp "$(pwd)/src/anarchy/extra/.dialogrc" "${BUILD_DIR}/airootfs/root/.dialogrc"
+    sudo cp "$(pwd)/src/anarchy/extra/.zlogin" "${BUILD_DIR}/airootfs/root/.zlogin"
+    sudo cp "$(pwd)/src/anarchy/extra/.zshrc" "${BUILD_DIR}/airootfs/etc/zsh/.zshrc"
+    sudo cp -Tr "$(pwd)/src/anarchy/extra" "${BUILD_DIR}/airootfs/usr/share/anarchy/extra"
+    sudo cp -Tr "$(pwd)/src/anarchy/lang" "${BUILD_DIR}/airootfs/usr/share/anarchy/lang"
+    sudo cp -Tr "$(pwd)/src/bin" "${BUILD_DIR}/airootfs/usr/bin"
+    sudo cp -Tr "$(pwd)/src/lib" "${BUILD_DIR}/airootfs/usr/lib"
+    sudo cp "$(pwd)/src/etc/zsh/.zshrc" "${BUILD_DIR}/airootfs/usr/share/anarchy/extra/.zshrc"
+    sudo cp -Tr "$(pwd)/src/etc" "${BUILD_DIR}/airootfs/etc"
+    sudo cp -Tr "$(pwd)/src/syslinux" "${BUILD_DIR}/syslinux"
+    sudo cp -Tr "$(pwd)/src/isolinux" "${BUILD_DIR}/isolinux"
+    sudo cp -Tr "$(pwd)/src/efiboot" "${BUILD_DIR}/efiboot"
+
+    # Remove motd file
+    sudo rm "${BUILD_DIR}/airootfs/etc/motd"
 
     # Add anarchy packages
     cat "$(pwd)/anarchy-packages.x86_64" >> "${BUILD_DIR}/packages.x86_64"
