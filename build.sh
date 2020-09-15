@@ -48,29 +48,10 @@ create_build_dir() {
     # Copy archiso files to tmp dir
     sudo cp -r "${ARCHISO_DIR}"/* "${BUILD_DIR}"
 
-    # Create needed folders
-    mkdir -p "${BUILD_DIR}/airootfs/usr/share/anarchy/boot"
-    mkdir -p "${BUILD_DIR}/airootfs/usr/share/anarchy/etc"
-    mkdir -p "${BUILD_DIR}/airootfs/root"
-    mkdir -p "${BUILD_DIR}/airootfs/etc/zsh"
-    mkdir -p "${BUILD_DIR}/airootfs/usr/share/anarchy/extra"
-    mkdir -p "${BUILD_DIR}/airootfs/usr/share/anarchy/lang"
-    mkdir -p "${BUILD_DIR}/airootfs/usr/bin"
-    mkdir -p "${BUILD_DIR}/airootfs/usr/lib"
-    mkdir -p "${BUILD_DIR}/airootfs/etc"
-
     # Copy anarchy files to tmp dir
-    sudo cp -Tr "$(pwd)/src/anarchy/boot" "${BUILD_DIR}/airootfs/usr/share/anarchy/boot"
-    sudo cp -Tr "$(pwd)/src/anarchy/etc" "${BUILD_DIR}/airootfs/usr/share/anarchy/etc"
-    sudo cp "$(pwd)/src/anarchy/extra/.dialogrc" "${BUILD_DIR}/airootfs/root/.dialogrc"
-    sudo cp "$(pwd)/src/anarchy/extra/.zlogin" "${BUILD_DIR}/airootfs/root/.zlogin"
-    sudo cp "$(pwd)/src/anarchy/extra/.zshrc" "${BUILD_DIR}/airootfs/etc/zsh/.zshrc"
-    sudo cp -Tr "$(pwd)/src/anarchy/extra" "${BUILD_DIR}/airootfs/usr/share/anarchy/extra"
-    sudo cp -Tr "$(pwd)/src/anarchy/lang" "${BUILD_DIR}/airootfs/usr/share/anarchy/lang"
-    sudo cp -Tr "$(pwd)/src/bin" "${BUILD_DIR}/airootfs/usr/bin"
-    sudo cp -Tr "$(pwd)/src/lib" "${BUILD_DIR}/airootfs/usr/lib"
-    sudo cp "$(pwd)/src/etc/zsh/.zshrc" "${BUILD_DIR}/airootfs/usr/share/anarchy/extra/.zshrc"
-    sudo cp -Tr "$(pwd)/src/etc" "${BUILD_DIR}/airootfs/etc"
+    sudo cp -Tr "$(pwd)/src/airootfs/root" "${BUILD_DIR}/airootfs/root"
+    sudo cp -Tr "$(pwd)/src/airootfs/usr" "${BUILD_DIR}/airootfs/usr"
+    sudo cp -Tr "$(pwd)/src/airootfs/etc" "${BUILD_DIR}/airootfs/etc"
     sudo cp -Tr "$(pwd)/src/syslinux" "${BUILD_DIR}/syslinux"
     sudo cp -Tr "$(pwd)/src/isolinux" "${BUILD_DIR}/isolinux"
     sudo cp -Tr "$(pwd)/src/efiboot" "${BUILD_DIR}/efiboot"
