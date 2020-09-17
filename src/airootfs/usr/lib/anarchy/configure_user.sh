@@ -116,7 +116,7 @@ set_user() {
                             set_password
 
                             if "$menu_enter" ; then
-                                input="$(echo "$pass_crypt" | openssl enc -aes-256-cbc -a -d -salt -pass pass:"$ssl_key")"
+                                input="$(echo "$pass_crypt" | openssl enc -aes-256-cbc -a -d -salt -pbkdf2 -iter 1000 -pass pass:"$ssl_key")"
                                         (printf "$input\n$input" | arch-chroot "$ARCH" passwd "$user") &> /dev/null &
                                         pid=$! pri=0.1 msg="$wait_load \n\n \Z1> \Z2passwd $user\Zn" load
                                 echo -e "${paswd}\n${user}:${user_sh}:${sudo_user}:${full_user}:${pass_crypt}" > "$tmp_passwd"
@@ -266,7 +266,7 @@ set_password() {
         fi
     done
 
-    pass_crypt="$(echo "$input" | openssl enc -aes-256-cbc -a -salt -pass pass:"$ssl_key")"
+    pass_crypt="$(echo "$input" | openssl enc -aes-256-cbc -a -salt -pbkdf2 -iter 1000 -pass pass:"$ssl_key")"
     sleep 1 &
     pid=$! pri=0.1 msg="$wait_load \n\n \Z1> \Z2encrypt passwd\Zn" load
     unset input input_chk ; input_chk=default
@@ -285,7 +285,7 @@ add_user() {
                     pid=$! pri=0.1 msg="$wait_load \n\n \Z1> \Z2useradd $user\Zn" load
             fi
 
-            input="$(echo "$pass_crypt" | openssl enc -aes-256-cbc -a -d -salt -pass pass:"$ssl_key")"
+            input="$(echo "$pass_crypt" | openssl enc -aes-256-cbc -a -d -salt -pbkdf2 -iter 1000 -pass pass:"$ssl_key")"
             (printf "$input\n$input" | arch-chroot "$ARCH" passwd "$user") &> /dev/null &
             pid=$! pri=0.1 msg="$wait_load \n\n \Z1> \Z2passwd $user\Zn" load
             unset input
@@ -306,7 +306,7 @@ add_user() {
                              pid=$! pri=0.1 msg="$wait_load \n\n \Z1> \Z2useradd $(<<<"$i" cut -d: -f1)\Zn" load
                      fi
 
-                     input="$(<<<"$i" cut -d: -f5 | openssl enc -aes-256-cbc -a -d -salt -pass pass:"$ssl_key")"
+                     input="$(<<<"$i" cut -d: -f5 | openssl enc -aes-256-cbc -a -d -salt -pbkdf2 -iter 1000 -pass pass:"$ssl_key")"
                      (printf "$input\n$input" | arch-chroot "$ARCH" passwd "$(<<<"$i" cut -d: -f1)") &> /dev/null &
                      pid=$! pri=0.1 msg="$wait_load \n\n \Z1> \Z2passwd $(<<<"$i" cut -d: -f1)\Zn" load
                      unset input

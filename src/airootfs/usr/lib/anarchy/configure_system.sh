@@ -300,7 +300,7 @@ configure_system() {
     echo "$hostname" > "$ARCH"/etc/hostname
         echo "$(date -u "+%F %H:%M") : Hostname set: $hostname" >> "$log"
     arch-chroot "$ARCH" chsh -s "$sh" &>/dev/null
-    input="$(echo "$root_crypt" | openssl enc -aes-256-cbc -a -d -salt -pass pass:"$ssl_key")"
+    input="$(echo "$root_crypt" | openssl enc -aes-256-cbc -a -d -salt -pbkdf2 -iter 1000 -pass pass:"$ssl_key")"
         (sleep 1 ; printf "$input\n$input" | arch-chroot "$ARCH" passwd root) &> /dev/null &
         pid=$! pri=0.1 msg="$wait_load \n\n \Z1> \Z2passwd root\Zn" load
         unset input
