@@ -27,14 +27,15 @@ check_root() {
 
 # Check if archiso is installed
 check_archiso() {
-    if ! sudo pacman -Qqs '^archiso' >/dev/null; then
-        printf "archiso was not found.\n"
+    if ! sudo pacman -Qqs '^archiso$' >/dev/null \
+    || ! sudo pacman -Qqs '^mkinitcpio-archiso$'; then
+        printf "archiso or mkinitcpio-archiso was not found.\n"
         printf "Do you want to install it? [Y/n] "
         read -r answer
         if [ "${answer}" != "${answer#[Yy]}" ] ;then
-            sudo pacman -Syy archiso
+            sudo pacman -Syy archiso mkinitcpio-archiso --needed
         else
-            echo "archiso is necessary. Please install it before continuing."
+            echo "archiso and mkinitcpio-archiso are required. Please install it before continuing."
             exit 1
         fi
         exit
