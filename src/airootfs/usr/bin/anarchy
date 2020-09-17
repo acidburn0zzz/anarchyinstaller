@@ -95,13 +95,9 @@ else
 			echo 'Updating Anarchy'
 			git clone https://gitlab.com/anarchyinstaller/installer.git \
 					"${tmp_dir}" || { echo 'Failed to clone git repo'; exit 1; }
-			cp -f "${tmp_dir}"/src/airootfs/usr/bin/* /usr/bin/ || exit 1
-			cp -fr "${tmp_dir}"/src/airootfs/etc/* /etc/ || exit 1
-			cp -f "${tmp_dir}"/src/airootfs/root/* /root/ || exit 1
-			cp -f "${tmp_dir}"/src/airootfs/usr/lib/anarchy/* /usr/lib/anarchy/ || \
-					exit 1
-			cp -fr "${tmp_dir}"/src/airootfs/usr/share/anarchy/* \
-					/usr/share/anarchy/ || exit 1
+			cp -Tr "${tmp_dir}"/src/airootfs/usr /usr || exit 1
+			cp -Tr "${tmp_dir}"/src/airootfs/etc /etc || exit 1
+			cp -Tr "${tmp_dir}"/src/airootfs/root /root || exit 1
 			echo 'Finished updating Anarchy'
 			echo 'To start the installation run the "anarchy" command'
 			echo 'To return to the main menu run the "start" command'
