@@ -1,7 +1,7 @@
 #!/bin/sh
 # Copyright (C) 2017 Dylan Schacht
 
-VERSION='1.2.1'
+VERSION='1.2.2'
 
 . libanarchy.sh
 . /etc/anarchy.conf
@@ -93,14 +93,14 @@ else
 		-u|--update) if is_online; then
 			tmp_dir="$(mktemp -d)"
 			echo 'Updating Anarchy'
-			git clone https://gitlab.com/anarchyinstaller/installer \
+			git clone https://gitlab.com/anarchyinstaller/installer.git \
 					"${tmp_dir}" || { echo 'Failed to clone git repo'; exit 1; }
-			cp -f "${tmp_dir}"/airootfs/usr/bin/* /usr/bin/ || exit 1
-			cp -fr "${tmp_dir}"/airootfs/etc/* /etc/ || exit 1
-			cp -f "${tmp_dir}"/airootfs/root/* /root/ || exit 1
-			cp -f "${tmp_dir}"/airootfs/usr/lib/anarchy/* /usr/lib/anarchy/ || \
+			cp -f "${tmp_dir}"/src/airootfs/usr/bin/* /usr/bin/ || exit 1
+			cp -fr "${tmp_dir}"/src/airootfs/etc/* /etc/ || exit 1
+			cp -f "${tmp_dir}"/src/airootfs/root/* /root/ || exit 1
+			cp -f "${tmp_dir}"/src/airootfs/usr/lib/anarchy/* /usr/lib/anarchy/ || \
 					exit 1
-			cp -fr "${tmp_dir}"/airootfs/usr/share/anarchy/* \
+			cp -fr "${tmp_dir}"/src/airootfs/usr/share/anarchy/* \
 					/usr/share/anarchy/ || exit 1
 			echo 'Finished updating Anarchy'
 			echo 'To start the installation run the "anarchy" command'
