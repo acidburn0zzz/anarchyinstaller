@@ -2,6 +2,7 @@ acpi
 curl
 dialog
 git
+netctl
 networkmanager
 pacman-contrib
 terminus-font
