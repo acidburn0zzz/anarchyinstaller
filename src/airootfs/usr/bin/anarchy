@@ -5,43 +5,32 @@ VERSION='1.2.2'
 
 . libanarchy.sh
 . /etc/anarchy.conf
+. /usr/share/anarchy/lang/english.conf
 
-init() {
-	# Prevents the installer from exiting if Ctrl-C is pressed
-	trap '' 2
-
-	anarchy_directory='/usr/share/anarchy'
-
-	for library in /usr/lib/anarchy/*; do
-		. "${library}"
-	done
-
-	language
-	. "${lang_file}"
-	export reload=true
-}
-
-main() {
-	if [ "$(id -u)" -ne 0 ]; then
-		echo 'Error: anarchy requires root privileges'
-		echo '    Use: sudo anarchy'
-		exit 1
+# Starts on bootup
+start_menu() { 
+	# Only run if the start menu hasn't been run already
+	if [ ! -f /root/.anarchy_updated ]; then
+		dialog --clear \
+				--title 'About Anarchy Installer' \
+				--msgbox "\n${start_menu_msg}" 18 80
+		
+		# Ask if user wants to update
+		if dialog --title 'Update' \
+				--yesno '\nWould you like to update Anarchy?' 16 80; then
+			if ! is_online; then
+				wifi-menu -o
+			fi
+		
+			# Download run the update script
+			tmp_dir="$(mktemp -d)"
+			curl -O https://gitlab.com/anarchyinstaller/installer/-/raw/HEAD/src/airootfs/usr/bin/anarchy-update
+			chmod +x "${tmp_dir}"/anarchy-update
+			./"${tmp_dir}"/anarchy-update &
+		else
+			echo "When you're finished, run 'anarchy' to start the installation"
+		fi
 	fi
-
-	set_keys
-	update_mirrors
-	check_connection
-	set_locale
-	set_zone
-	prepare_drives
-	install_options
-	set_hostname
-	set_user
-	add_software
-	install_base
-	configure_system
-	add_user
-	reboot_system
 }
 
 dialog() {
@@ -69,43 +58,53 @@ usage() {
 	echo '    -v | --version   Show the current Anarchy version'
 }
 
+init() {
+	# Prevents the installer from exiting if Ctrl-C is pressed
+	trap '' 2
+
+	anarchy_directory='/usr/share/anarchy'
+
+	for library in /usr/lib/anarchy/*; do
+		. "${library}"
+	done
+
+	language
+	. "${lang_file}"
+	export reload=true
+}
+
+main() {
+	if [ "$(id -u)" -ne 0 ]; then
+		echo 'Error: anarchy requires root privileges'
+		echo '    Use: sudo anarchy'
+		exit 1
+	fi
+
+	start_menu
+	set_keys
+	update_mirrors
+	check_connection
+	set_locale
+	set_zone
+	prepare_drives
+	install_options
+	set_hostname
+	set_user
+	add_software
+	install_base
+	configure_system
+	add_user
+	reboot_system
+}
+
 if [ $# -eq 0 ]; then
 	init
 	main
 else
 	case "$1" in
-		-h|--help) usage; exit 0 ;;
-		-k|--keys) if is_online; then
-			echo 'Updating pacman keys'
-			pacman-db-upgrade || { echo 'Failed to update database'; exit 1; }
-			pacman-key --init || { echo 'Failed to initialize keys'; exit 1; }
-			pacman-key --populate archlinux || \
-					{ echo 'Failed to populate keystore'; exit 1; }
-			pacman-key --refresh-keys || \
-					{ echo 'Failed to refresh keys'; exit 1; }
-			echo 'Finished updating keys'
-		else
-			# Assume that user is using wifi to connect, since ethernet
-			# would already be connected
-			wifi-menu -o
-		fi
-		;;
-		-u|--update) if is_online; then
-			tmp_dir="$(mktemp -d)"
-			echo 'Updating Anarchy'
-			git clone https://gitlab.com/anarchyinstaller/installer.git \
-					"${tmp_dir}" || { echo 'Failed to clone git repo'; exit 1; }
-			cp -Tr "${tmp_dir}"/src/airootfs/usr /usr || exit 1
-			cp -Tr "${tmp_dir}"/src/airootfs/etc /etc || exit 1
-			cp -Tr "${tmp_dir}"/src/airootfs/root /root || exit 1
-			echo 'Finished updating Anarchy'
-			echo 'To start the installation run the "anarchy" command'
-			echo 'To return to the main menu run the "start" command'
-		else
-			wifi-menu -o
-		fi
-		;;
-		-v|--version) echo "Anarchy Installer v${VERSION}"; exit 0 ;;
+		-h|--help) usage ;;
+		-u|--update) anarchy-update ;;
+		-v|--version) echo "Anarchy Installer v${VERSION}" ;;
 		*) usage; exit 1 ;;
 	esac
 fi

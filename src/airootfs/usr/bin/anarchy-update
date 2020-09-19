@@ -1,0 +1,43 @@
+#!/bin/sh
+# Updates Anarchy's scripts and the Arch Linux keyring
+
+. libanarchy.sh
+. /etc/anarchy.conf
+
+if ! is_online; then
+	wifi-menu -o
+fi
+
+tmp_dir="$(mktemp -d)"
+
+echo 'Updating Arch repos'
+pacman -Sy --noconfirm
+
+echo 'Updating Anarchy scripts'
+git clone https://gitlab.com/anarchyinstaller/installer "${tmp_dir}"
+cp -f "${tmp_dir}"/src/airootfs/usr/bin/* /usr/bin/
+
+cp -f "${tmp_dir}"/src/airootfs/etc/anarchy.conf /etc/
+cp -f "${tmp_dir}"/src/airootfs/etc/hostname /etc/
+cp -f "${tmp_dir}"/src/airootfs/etc/locale.gen /etc/
+cp -f "${tmp_dir}"/src/airootfs/etc/vconsole.conf /etc/
+cp -fr "${tmp_dir}"/src/airootfs/etc/zsh /etc/
+
+cp -f "${tmp_dir}"/src/airootfs/root/.dialogrc /root/
+cp -f "${tmp_dir}"/src/airootfs/root/.zlogin /root/
+
+cp -f "${tmp_dir}"/src/airootfs/usr/lib/anarchy/* /usr/lib/anarchy/
+cp -fr "${tmp_dir}"/src/airootfs/usr/share/anarchy/* /usr/share/anarchy/
+
+echo 'Updating pacman keys'
+pacman-db-upgrade
+pacman-key --init
+pacman-key --populate archlinux
+pacman-key --refresh-keys
+echo 'Finished updating keys'
+
+# Signal that the update was successful
+touch /root/.anarchy_updated
+
+# Run the (updated) main script
+anarchy &
