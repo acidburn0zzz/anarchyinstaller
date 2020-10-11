@@ -1,8 +1,6 @@
 #!/bin/sh
 # Copyright (C) 2017 Dylan Schacht
 
-VERSION='1.2.2'
-
 . libanarchy.sh
 . /etc/anarchy.conf
 . /usr/share/anarchy/lang/english.conf
@@ -60,7 +58,6 @@ usage() {
 	echo 'Usage: anarchy [option]'
 	echo '    -h | --help      Show this message'
 	echo '    -u | --update    Update Anarchy'
-	echo '    -v | --version   Show the current Anarchy version'
 }
 
 init() {
@@ -80,8 +77,8 @@ init() {
 
 main() {
 	if [ "$(id -u)" -ne 0 ]; then
-		echo 'Error: anarchy requires root privileges'
-		echo '    Use: sudo anarchy'
+		echo "Error: $0 requires root privileges"
+		echo "    Use: sudo $0"
 		exit 1
 	fi
 
@@ -109,7 +106,6 @@ else
 	case "$1" in
 		-h|--help) usage ;;
 		-u|--update) anarchy-update ;;
-		-v|--version) echo "Anarchy Installer v${VERSION}" ;;
 		*) usage; exit 1 ;;
 	esac
 fi
