@@ -8,20 +8,20 @@ VERSION='1.2.2'
 . /usr/share/anarchy/lang/english.conf
 
 # Starts on bootup
-start_menu() { 
+start_menu() {
 	# Only run if the start menu hasn't been run already
 	if [ ! -f /root/.anarchy_updated ]; then
 		dialog --clear \
 				--title 'About Anarchy Installer' \
-				--msgbox "\n${start_menu_msg}" 18 80
-		
+				--msgbox "\n${start_menu_msg}\n\n${start_menu_social}" 18 80
+
 		# Ask if user wants to update
 		if dialog --title 'Update' \
 				--yesno '\nWould you like to update Anarchy?' 16 80; then
 			if ! is_online; then
 				wifi-menu -o
 			fi
-		
+
 			# Download run the update script
 			tmp_dir="$(mktemp -d)"
 			curl -O https://gitlab.com/anarchyinstaller/installer/-/raw/HEAD/src/airootfs/usr/bin/anarchy-update
