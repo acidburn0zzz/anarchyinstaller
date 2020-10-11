@@ -1,50 +1,53 @@
 #!/bin/sh
 # shellcheck disable=SC2034
-
 # Compiles Anarchy with archiso
 
 # Archiso variables
-iso_name="anarchy"
-iso_version="1.2.2"
-iso_label="ANARCHY_122"
-iso_publisher="Anarchy Installer <https://anarchyinstaller.org>"
-install_dir="arch"
-bootmodes="('bios.syslinux.mbr' 'bios.syslinux.eltorito' 'uefi-x64.systemd-boot.esp' 'uefi-x64.systemd-boot.eltorito')"
-arch="x86_64"
-pacman_conf="pacman.conf"
-
-# Anarchy specific variables
-BUILD_DIR="$(pwd)/anarchy_build"
+ISO_VERSION="1.3.0"
+ISO_LABEL="ANARCHY_13" # This is an incremental number, so bump it when updating the version number
+ISO_PUBLISHER="Anarchy Installer <https://anarchyinstaller.org>"
+BOOTMODES="('bios.syslinux.mbr' 'bios.syslinux.eltorito' 'uefi-x64.systemd-boot.esp' 'uefi-x64.systemd-boot.eltorito')"
+ARCHITECTURE="x86_64"
+PACMAN_CONFIG="pacman.conf"
+BUILD_DIR="$(pwd)/temp"
 ARCHISO_DIR="/usr/share/archiso/configs/releng"
 
 # Check root permission
 check_root() {
     if [ "$(id -u)" -ne 0 ]; then
-        echo "Please run as root"
+        echo "$0 needs to be run with root permissions"
         exit
     fi
 }
 
-# Check if archiso is installed
-check_archiso() {
-    if ! sudo pacman -Qqs '^archiso$' >/dev/null \
-    || ! sudo pacman -Qqs '^mkinitcpio-archiso$'; then
-        printf "archiso or mkinitcpio-archiso was not found.\n"
-        printf "Do you want to install it? [Y/n] "
-        read -r answer
-        if [ "${answer}" != "${answer#[Yy]}" ] ;then
-            sudo pacman -Syy archiso mkinitcpio-archiso --needed
-        else
-            echo "archiso and mkinitcpio-archiso are required. Please install it before continuing."
-            exit 1
-        fi
-        exit
+# Check if dependencies are installed
+check_deps() {
+    if ! pacman -Qi archiso > /dev/null 2>&1; then
+        echo "'archiso' is not installed, but is required by $0, do you want to install it?"
+        echo "Install [Y/n]: "
+        read ans
+
+        case "${ans}" in
+            Y|y|yes|YES|Yes) sudo pacman -Sy archiso ;;
+            *) echo "Not installing 'archiso' and exiting" ; exit 1 ;;
+        esac
+    fi
+
+    if ! pacman -Qi mkinitcpio-archiso > /dev/null 2>&1; then
+        echo "'mkinitcpio-archiso' is not installed, but is required by $0, do you want to install it?"
+        echo "Install [Y/n]: "
+        read ans
+
+        case "${ans}" in
+            Y|y|yes|YES|Yes) sudo pacman -Sy mkinitcpio-archiso ;;
+            *) echo "Not installing 'mkinitcpio-archiso' and exiting" ; exit 1 ;;
+        esac
     fi
 }
 
 create_build_dir() {
     # Create temporary directory if not exists
-    [ -d "${BUILD_DIR}" ] || mkdir "${BUILD_DIR}"
+    [ ! -d "${BUILD_DIR}" ] && mkdir "${BUILD_DIR}"
 
     # Copy archiso files to tmp dir
     sudo cp -r "${ARCHISO_DIR}"/* "${BUILD_DIR}"
@@ -86,20 +89,20 @@ profiledef_gen() {
     [ ! -f "${BUILD_DIR}"/profiledef.sh ] || rm "${BUILD_DIR}/profiledef.sh"
     touch "${BUILD_DIR}/profiledef.sh"
     cat << EOF > "${BUILD_DIR}/profiledef.sh"
-    iso_name="${iso_name}"
-    iso_version="${iso_version}"
-    iso_label="${iso_label}"
-    iso_publisher="${iso_publisher}"
-    install_dir="${install_dir}"
-    bootmodes=${bootmodes}
-    arch="${arch}"
-    pacman_conf="${pacman_conf}"
+    iso_name="anarchy"
+    iso_version="${ISO_VERSION}"
+    iso_label="${ISO_LABEL}"
+    iso_publisher="Anarchy Installer <https://anarchyinstaller.org>"
+    install_dir="arch"
+    bootmodes=${BOOTMODES}
+    arch="${ARCHITECTURE}"
+    pacman_conf="${PACMAN_CONFIG}"
 EOF
 }
 
 main() {
     check_root
-    check_archiso
+    check_deps
     create_build_dir
     ssh_config
     profiledef_gen
