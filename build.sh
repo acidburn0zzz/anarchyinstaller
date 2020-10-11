@@ -3,7 +3,7 @@
 # Compiles Anarchy with archiso
 
 # Archiso variables
-ISO_VERSION="1.3.0"
+ISO_VERSION="1.3.0-beta"
 ISO_LABEL="ANARCHY_13" # This is an incremental number, so bump it when updating the version number
 ISO_PUBLISHER="Anarchy Installer <https://anarchyinstaller.org>"
 BOOTMODES="('bios.syslinux.mbr' 'bios.syslinux.eltorito' 'uefi-x64.systemd-boot.esp' 'uefi-x64.systemd-boot.eltorito')"
