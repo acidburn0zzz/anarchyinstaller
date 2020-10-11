@@ -59,7 +59,6 @@ dialog() {
 usage() {
 	echo 'Usage: anarchy [option]'
 	echo '    -h | --help      Show this message'
-	echo '    -k | --keys      Update pacman keys'
 	echo '    -u | --update    Update Anarchy'
 	echo '    -v | --version   Show the current Anarchy version'
 }
