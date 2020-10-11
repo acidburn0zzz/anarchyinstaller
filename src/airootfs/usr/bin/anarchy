@@ -15,19 +15,27 @@ start_menu() {
 				--title 'About Anarchy Installer' \
 				--msgbox "\n${start_menu_msg}\n\n${start_menu_social}" 18 80
 
-		# Ask if user wants to update
-		if dialog --title 'Update' \
-				--yesno '\nWould you like to update Anarchy?' 16 80; then
-			if ! is_online; then
-				wifi-menu -o
-			fi
+		# Ask the user what they want to do, default to updating anarchy
+		menu_choice="$(dialog --menu "What do you want to do?" 18 80 \
+				"Update" "Update anarchy and start the installation" \
+				"Start" "Start the installation without updating anarchy" \
+				"Exit" "Exit the installer and be dropped into a shell" 3>&1 1>&2 2>&3)"
 
-			# Download run the update script
-			tmp_dir="$(mktemp -d)"
-			curl -O https://gitlab.com/anarchyinstaller/installer/-/raw/HEAD/src/airootfs/usr/bin/anarchy-update
-			chmod +x "${tmp_dir}"/anarchy-update
-			./"${tmp_dir}"/anarchy-update &
-		fi
+		case "${menu_choice}" in
+			Update)
+				if ! is_online; then
+					wifi-menu -o
+				fi
+
+				# Download run the update script
+				tmp_dir="$(mktemp -d)"
+				curl -O https://gitlab.com/anarchyinstaller/installer/-/raw/HEAD/src/airootfs/usr/bin/anarchy-update
+				chmod +x "${tmp_dir}"/anarchy-update
+				./"${tmp_dir}"/anarchy-update &
+				;;
+			Start) touch /root/.anarchy_updated ;; # Pretend user has updated
+			Exit) exit ;;
+		esac
 	fi
 }
 
