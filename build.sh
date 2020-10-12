@@ -28,8 +28,8 @@ check_deps() {
         read -r ans
 
         case "${ans}" in
-            Y|y|yes|YES|Yes) sudo pacman -Sy archiso ;;
-            *) echo "Not installing 'archiso' and exiting" ; exit 1 ;;
+            n|N|no|NO|No|nO) echo "Not installing 'archiso', exiting" ; exit 1 ;;
+            *) sudo pacman -Sy archiso ;;
         esac
     fi
 
@@ -39,8 +39,8 @@ check_deps() {
         read -r ans
 
         case "${ans}" in
-            Y|y|yes|YES|Yes) sudo pacman -Sy mkinitcpio-archiso ;;
-            *) echo "Not installing 'mkinitcpio-archiso' and exiting" ; exit 1 ;;
+            n|N|no|NO|No|nO) echo "Not installing 'mkinitcpio-archiso', exiting" ; exit 1 ;;
+            *) sudo pacman -Sy mkarchiso-archiso ;;
         esac
     fi
 }
@@ -103,7 +103,45 @@ EOF
 checksum_gen() {
     cd "${BUILD_DIR}" || exit
     filename="anarchy-${ISO_VERSION}-${ARCHITECTURE}.iso"
+
+    if [ ! -f  "${filename}" ]; then
+        echo "Mising file ${filename}"
+        exit 1
+    fi
+
     sha512sum --tag "${filename}" > "${filename}".sha512sum
+    echo "Created checksum file ${filename}.sha512sum"
+}
+
+upload_iso() {
+    filename="anarchy-${ISO_VERSION}-${ARCHITECTURE}.iso"
+    checksum="${filename}.sha512sum"
+
+    echo "Enter your osdn.net username: "
+    read -r username
+
+    echo "Is this a testing or release iso?"
+    echo "[T/r]: "
+    read -r reltype
+
+    case "${reltype}" in
+        r|R|rel|Rel|release|Release|RELEASE) dir='' ;;
+        *) dir='testing/' ;;
+    esac
+
+    if ! pacman -Qi rsync > /dev/null 2>&1; then
+        echo "'rsync' is not installed, do you want to install it?"
+        echo "Install [Y/n]: "
+        read -r ans
+
+        case "${ans}" in
+            n|N|no|NO|No|nO) sudo pacman -Sy rsync ;;
+            *) echo "Not installing 'rsync', exiting" ; exit 1 ;;
+        esac
+    fi
+
+    rsync "${BUILD_DIR}/${filename}" "${BUILD_DIR}/${checksum}" \
+            "${username}"@storage.osdn.net:/storage/groups/a/an/anarchy/"${dir}"
 }
 
 main() {
@@ -113,6 +151,18 @@ main() {
     ssh_config
     profiledef_gen
     sudo mkarchiso -v "${BUILD_DIR}" command_iso
+    checksum_gen
 }
 
-main
+if [ $# -eq 0 ]; then
+	main
+else
+    case "$1" in
+        -u|--upload-iso)
+            main
+            upload_iso
+            ;;
+        -o|--only-upload) upload_iso ;;
+        *) exit 1 ;;
+    esac
+fi
