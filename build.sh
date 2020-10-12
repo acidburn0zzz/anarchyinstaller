@@ -25,7 +25,7 @@ check_deps() {
     if ! pacman -Qi archiso > /dev/null 2>&1; then
         echo "'archiso' is not installed, but is required by $0, do you want to install it?"
         echo "Install [Y/n]: "
-        read ans
+        read -r ans
 
         case "${ans}" in
             Y|y|yes|YES|Yes) sudo pacman -Sy archiso ;;
@@ -36,7 +36,7 @@ check_deps() {
     if ! pacman -Qi mkinitcpio-archiso > /dev/null 2>&1; then
         echo "'mkinitcpio-archiso' is not installed, but is required by $0, do you want to install it?"
         echo "Install [Y/n]: "
-        read ans
+        read -r ans
 
         case "${ans}" in
             Y|y|yes|YES|Yes) sudo pacman -Sy mkinitcpio-archiso ;;
@@ -98,6 +98,12 @@ profiledef_gen() {
     arch="${ARCHITECTURE}"
     pacman_conf="${PACMAN_CONFIG}"
 EOF
+}
+
+checksum_gen() {
+    cd "${BUILD_DIR}" || exit
+    filename="anarchy-${ISO_VERSION}-${ARCHITECTURE}.iso"
+    sha512sum --tag "${filename}" > "${filename}".sha512sum
 }
 
 main() {
