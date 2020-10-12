@@ -146,7 +146,7 @@ upload_iso() {
 }
 
 fix_perms() {
-    chown -R "${USER}":"${USER}" "${ANARCHY_ROOT_DIR}"/out
+    sudo chown -R "${USER}":"${USER}" "${ANARCHY_ROOT_DIR}"/out
 }
 
 main() {
