@@ -145,6 +145,10 @@ upload_iso() {
             "${username}"@storage.osdn.net:/storage/groups/a/an/anarchy/"${dir}"
 }
 
+fix_perms() {
+    chown -R "${USER}":"${USER}" "${ANARCHY_ROOT_DIR}"/out
+}
+
 main() {
     check_root
     check_deps
@@ -152,6 +156,7 @@ main() {
     ssh_config
     profiledef_gen
     sudo mkarchiso -v "${BUILD_DIR}" command_iso
+    fix_perms
     checksum_gen
 }
 
