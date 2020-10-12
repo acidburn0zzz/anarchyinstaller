@@ -11,6 +11,7 @@ ARCHITECTURE="x86_64"
 PACMAN_CONFIG="pacman.conf"
 BUILD_DIR="$(pwd)/temp"
 ARCHISO_DIR="/usr/share/archiso/configs/releng"
+ANARCHY_ROOT_DIR="$(pwd)"
 
 # Check root permission
 check_root() {
@@ -101,7 +102,7 @@ EOF
 }
 
 checksum_gen() {
-    cd out/ || exit
+    cd "${ANARCHY_ROOT_DIR}"/out || exit
     filename="anarchy-${ISO_VERSION}-${ARCHITECTURE}.iso"
 
     if [ ! -f  "${filename}" ]; then
@@ -140,7 +141,7 @@ upload_iso() {
         esac
     fi
 
-    rsync out/${filename}" out/${checksum}" \
+    rsync "${ANARCHY_ROOT_DIR}/out/${filename} ${ANARCHY_ROOT_DIR}/out/${checksum}" \
             "${username}"@storage.osdn.net:/storage/groups/a/an/anarchy/"${dir}"
 }
 
