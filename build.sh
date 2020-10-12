@@ -101,7 +101,7 @@ EOF
 }
 
 checksum_gen() {
-    cd "${BUILD_DIR}" || exit
+    cd out/ || exit
     filename="anarchy-${ISO_VERSION}-${ARCHITECTURE}.iso"
 
     if [ ! -f  "${filename}" ]; then
@@ -140,7 +140,7 @@ upload_iso() {
         esac
     fi
 
-    rsync "${BUILD_DIR}/${filename}" "${BUILD_DIR}/${checksum}" \
+    rsync out/${filename}" out/${checksum}" \
             "${username}"@storage.osdn.net:/storage/groups/a/an/anarchy/"${dir}"
 }
 
