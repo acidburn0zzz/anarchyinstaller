@@ -426,7 +426,6 @@ add_software() {
                         "inkscape"		"$graphic9" OFF \
                         "mtpaint"		"$graphic10" OFF \
                         "mypaint"		"$graphic11" OFF \
-                        "pinta"			"$graphic5" OFF \
                         "rawtherapee"		"$graphic7" OFF 3>&1 1>&2 2>&3)
                     if [ "$?" -gt "0" ]; then
                         add_soft=false

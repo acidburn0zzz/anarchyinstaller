@@ -1,4 +1,4 @@
-favorites=exo-terminal-emulator.desktop,exo-file-manager.desktop,org.gnome.Packages.desktop,htop.desktop,chromium.desktop,vlc.desktop,org.pantheon.noise.desktop,pinta.desktop,libreoffice-writer.desktop,pavucontrol.desktop
+favorites=exo-terminal-emulator.desktop,exo-file-manager.desktop,org.gnome.Packages.desktop,htop.desktop,chromium.desktop,vlc.desktop,org.pantheon.noise.desktop,libreoffice-writer.desktop,pavucontrol.desktop
 recent=obconf.desktop,xfce-backdrop-settings.desktop,htop.desktop,thunar-volman-settings.desktop,xterm.desktop,panel-preferences.desktop,exo-preferred-applications.desktop,exo-web-browser.desktop,exo-file-manager.desktop
 button-title=Menu
 button-icon=/usr/share/pixmaps/anarchy-icon.png
