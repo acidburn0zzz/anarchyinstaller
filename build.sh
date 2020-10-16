@@ -13,8 +13,6 @@ if [ "${iscontainer}" = "yes" ]; then
 fi
 
 PROFILE_DIR="${REPO_DIR}"/profile
-WORK_DIR="${REPO_DIR}"/work
-OUT_DIR="${REPO_DIR}"/out
 
 # Check root permission
 check_root() {
@@ -96,18 +94,18 @@ ssh_config() {
 
 geniso() {
     echo "Generating iso"
-    mkarchiso -v -c zstd -o "${OUT_DIR}" -w "${WORK_DIR}" "${PROFILE_DIR}" || exit
+    mkarchiso -v -c zstd "${PROFILE_DIR}" || exit
 }
 
 cleanup() {
     echo "Cleaning up"
-    chown -R "${USER}":"${USER}" "${OUT_DIR}" || exit
+    chown -R "${USER}":"${USER}" "${REPO_DIR}"/out || exit
 }
 
 checksum_gen() {
     echo "Generating checksum"
 
-    cd "${OUT_DIR}" || exit
+    cd "${REPO_DIR}"/out || exit
     # TODO: handle missing iso file
     filename="$(basename "$(find . -name 'anarchy-*.iso')")"
 
@@ -123,7 +121,7 @@ checksum_gen() {
 upload_iso() {
     echo "Uploading iso"
 
-    cd "${OUT_DIR}" || exit
+    cd "${REPO_DIR}"/out || exit
     filename="$(basename "$(find . -name 'anarchy-*.iso')")"
     checksum="${filename}.sha512sum"
 
@@ -155,7 +153,7 @@ upload_iso() {
         esac
     fi
 
-    rsync "${OUT_DIR}/${filename} ${OUT_DIR}/${checksum}" \
+    rsync "${REPO_DIR}/out/${filename} ${REPO_DIR}/out/${checksum}" \
             "${username}"@storage.osdn.net:/storage/groups/a/an/anarchy/"${dir}"
 }
 
@@ -182,9 +180,9 @@ else
             ;;
         -d)
             sudo podman build --rm -t anarchy:latest -f ./Dockerfile
-            [ ! -d "${OUT_DIR}" ] && mkdir -p "${OUT_DIR}"
+            [ ! -d "${REPO_DIR}"/out ] && mkdir "${REPO_DIR}"/out
             # TODO: Possibly bindmount $WORK_DIR to tmpfs (e.g. /tmp on host)
-            sudo podman run --rm -v "${OUT_DIR}":/out -t -i --privileged localhost/anarchy:latest
+            sudo podman run --rm -v "${REPO_DIR}"/out:/anarchy/out -t -i --privileged localhost/anarchy:latest
             ;;
         *) echo "Usage: $0 [-u|-o]" ; exit ;;
     esac
