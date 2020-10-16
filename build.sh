@@ -1,17 +1,17 @@
 #!/bin/sh
 
 REPO_DIR="$(pwd)"
+ARCHISO_DIR=/usr/share/archiso/configs/releng
+
+[ "${iscontainer}" = "yes" ] && REPO_DIR=/anarchy
+
 PROFILE_DIR="${REPO_DIR}"/profile
 WORK_DIR="${REPO_DIR}"/work
 OUT_DIR="${REPO_DIR}"/out
-ARCHISO_DIR=/usr/share/archiso/configs/releng
 
 # Check root permission
 check_root() {
-    if [ "$(id -u)" -ne 0 ]; then
-        echo "$0 needs to be run with root permissions"
-        exit
-    fi
+    [ "$(id -u)" -ne 0 ] && echo "$0 needs to be run with root permissions" && exit
 }
 
 # Check if dependencies are installed
@@ -166,8 +166,21 @@ if [ $# -eq 0 ]; then
 	main
 else
     case "$1" in
-        -u) main ; upload_iso ;;
-        -o) upload_iso ;;
+        -u)
+            main
+            upload_iso
+            ;;
+        -o)
+            upload_iso
+            ;;
+        -d)
+            sudo podman build --rm -t anarchy:latest -f ./Dockerfile
+            [ ! -d "${OUT_DIR}" ] && mkdir -p "${OUT_DIR}"
+            # TODO: Possibly bindmount $WORK_DIR to tmpfs (e.g. /tmp on host)
+            sudo podman run --rm -v "${OUT_DIR}":/out -t -i --privileged localhost/anarchy:latest
+            ;;
         *) echo "Usage: $0 [-u|-o]" ; exit ;;
     esac
 fi
+
+echo "Finished normally"
