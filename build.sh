@@ -1,8 +1,8 @@
 #!/bin/sh
 
-ISO_VERSION="1.3.0-beta2"
 REPO_DIR="$(pwd)"
-BUILD_DIR="${REPO_DIR}"/build
+PROFILE_DIR="${REPO_DIR}"/profile
+WORK_DIR="${REPO_DIR}"/work
 OUT_DIR="${REPO_DIR}"/out
 ARCHISO_DIR=/usr/share/archiso/configs/releng
 
@@ -45,24 +45,28 @@ prepare_build_dir() {
     echo "Preparing build directory"
 
     # Create temporary directory if not exists
-    [ ! -d "${BUILD_DIR}" ] && mkdir "${BUILD_DIR}"
+    [ ! -d "${PROFILE_DIR}" ] && mkdir "${PROFILE_DIR}"
 
     # Copy archiso files to tmp dir
-    cp -r "${ARCHISO_DIR}"/* "${BUILD_DIR}"/
+    cp -r "${ARCHISO_DIR}"/* "${PROFILE_DIR}"/
 
     # Copy anarchy files to tmp dir
-    cp -Tr "$(pwd)/src/airootfs/root" "${BUILD_DIR}/airootfs/root"
-    cp -Tr "$(pwd)/src/airootfs/usr" "${BUILD_DIR}/airootfs/usr"
-    cp -Tr "$(pwd)/src/airootfs/etc" "${BUILD_DIR}/airootfs/etc"
-    cp -Tr "$(pwd)/src/syslinux" "${BUILD_DIR}/syslinux"
-    cp -Tr "$(pwd)/src/isolinux" "${BUILD_DIR}/isolinux"
-    cp -Tr "$(pwd)/src/efiboot" "${BUILD_DIR}/efiboot"
+    cp -Tr "$(pwd)/src/airootfs/root" "${PROFILE_DIR}/airootfs/root"
+    cp -Tr "$(pwd)/src/airootfs/usr" "${PROFILE_DIR}/airootfs/usr"
+    cp -Tr "$(pwd)/src/airootfs/etc" "${PROFILE_DIR}/airootfs/etc"
+    cp -Tr "$(pwd)/src/syslinux" "${PROFILE_DIR}/syslinux"
+    cp -Tr "$(pwd)/src/isolinux" "${PROFILE_DIR}/isolinux"
+    cp -Tr "$(pwd)/src/efiboot" "${PROFILE_DIR}/efiboot"
 
     # Remove motd file
-    rm "${BUILD_DIR}/airootfs/etc/motd"
+    rm "${PROFILE_DIR}/airootfs/etc/motd"
+
+    # Replace profiledef file
+    rm "${PROFILE_DIR}/profiledef.sh"
+    cp ./profiledef.sh "${PROFILE_DIR}"/
 
     # Add anarchy packages
-    cat "$(pwd)/anarchy-packages.x86_64" >> "${BUILD_DIR}/packages.x86_64"
+    cat "$(pwd)/anarchy-packages.x86_64" >> "${PROFILE_DIR}/packages.x86_64"
 }
 
 ssh_config() {
@@ -85,27 +89,20 @@ ssh_config() {
 
 geniso() {
     echo "Generating iso"
-
-    mkarchiso -v \
-        -P "Anarchy Installer <https://anarchyinstaller.org>" \
-        -A "Anarchy Installer" \
-        -o "${OUT_DIR}" \
-        -L "ANARCHY" \
-        -c zstd \
-        "${BUILD_DIR}" || exit
+    mkarchiso -v -c zstd -o "${OUT_DIR}" -w "${WORK_DIR}" "${PROFILE_DIR}" || exit
 }
 
 cleanup() {
     echo "Cleaning up"
     chown -R "${USER}":"${USER}" "${OUT_DIR}" || exit
-    rm -rf "${BUILD_DIR}" || exit
 }
 
 checksum_gen() {
     echo "Generating checksum"
 
     cd "${OUT_DIR}" || exit
-    filename="anarchy-${ISO_VERSION}-x86_64.iso"
+    # TODO: handle missing iso file
+    filename="$(basename "$(find . -name 'anarchy-*.iso')")"
 
     if [ ! -f  "${filename}" ]; then
         echo "Mising file ${filename}"
@@ -120,7 +117,7 @@ upload_iso() {
     echo "Uploading iso"
 
     cd "${OUT_DIR}" || exit
-    filename="anarchy-${ISO_VERSION}-x86_64.iso"
+    filename="$(basename "$(find . -name 'anarchy-*.iso')")"
     checksum="${filename}.sha512sum"
 
     if [ ! -f "${filename}" ] || [ ! -f "${checksum}" ]; then
@@ -169,11 +166,8 @@ if [ $# -eq 0 ]; then
 	main
 else
     case "$1" in
-        -u) # build and upload
-            main
-            upload_iso
-            ;;
-        -o) upload_iso ;; # only upload
+        -u) main ; upload_iso ;;
+        -o) upload_iso ;;
         *) echo "Usage: $0 [-u|-o]" ; exit ;;
     esac
 fi
