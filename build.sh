@@ -1,17 +1,10 @@
 #!/bin/sh
-# shellcheck disable=SC2034
-# Compiles Anarchy with archiso
 
-# Archiso variables
-ISO_VERSION="1.3.0-beta"
-ISO_LABEL="ANARCHY_13" # This is an incremental number, so bump it when updating the version number
-ISO_PUBLISHER="Anarchy Installer <https://anarchyinstaller.org>"
-BOOTMODES="('bios.syslinux.mbr' 'bios.syslinux.eltorito' 'uefi-x64.systemd-boot.esp' 'uefi-x64.systemd-boot.eltorito')"
-ARCHITECTURE="x86_64"
-PACMAN_CONFIG="pacman.conf"
-BUILD_DIR="$(pwd)/temp"
-ARCHISO_DIR="/usr/share/archiso/configs/releng"
-ANARCHY_ROOT_DIR="$(pwd)"
+ISO_VERSION="1.3.0-beta2"
+REPO_DIR="$(pwd)"
+BUILD_DIR="${REPO_DIR}"/build
+ARCHISO_DIR=/usr/share/archiso/configs/releng
+OUT_DIR="${REPO_DIR}"/out
 
 # Check root permission
 check_root() {
@@ -46,12 +39,12 @@ check_deps() {
     fi
 }
 
-create_build_dir() {
+prepare_build_dir() {
     # Create temporary directory if not exists
     [ ! -d "${BUILD_DIR}" ] && mkdir "${BUILD_DIR}"
 
     # Copy archiso files to tmp dir
-    sudo cp -r "${ARCHISO_DIR}"/* "${BUILD_DIR}"
+    sudo cp -r "${ARCHISO_DIR}"/* "${BUILD_DIR}"/
 
     # Copy anarchy files to tmp dir
     sudo cp -Tr "$(pwd)/src/airootfs/root" "${BUILD_DIR}/airootfs/root"
@@ -66,7 +59,6 @@ create_build_dir() {
 
     # Add anarchy packages
     cat "$(pwd)/anarchy-packages.x86_64" >> "${BUILD_DIR}/packages.x86_64"
-    sort --unique --output="${BUILD_DIR}/packages.x86_64" "${BUILD_DIR}/packages.x86_64"
 }
 
 ssh_config() {
@@ -85,25 +77,23 @@ ssh_config() {
     fi
 }
 
-# Generate profiledef.sh file
-profiledef_gen() {
-    [ ! -f "${BUILD_DIR}"/profiledef.sh ] || rm "${BUILD_DIR}/profiledef.sh"
-    touch "${BUILD_DIR}/profiledef.sh"
-    cat << EOF > "${BUILD_DIR}/profiledef.sh"
-    iso_name="anarchy"
-    iso_version="${ISO_VERSION}"
-    iso_label="${ISO_LABEL}"
-    iso_publisher="Anarchy Installer <https://anarchyinstaller.org>"
-    install_dir="arch"
-    bootmodes=${BOOTMODES}
-    arch="${ARCHITECTURE}"
-    pacman_conf="${PACMAN_CONFIG}"
-EOF
+geniso() {
+    mkarchiso -v \
+            -P "Anarchy Installer <https://anarchyinstaller.org>" \
+            -A "Anarchy Installer" \
+            -o "${OUT_DIR}" \
+            -L "ANARCHY" \
+            -c zstd
+}
+
+cleanup() {
+    sudo chown -R "${USER}":"${USER}" "${OUT_DIR}"
+    sudo rm -rf "${BUILD_DIR}"
 }
 
 checksum_gen() {
-    cd "${ANARCHY_ROOT_DIR}"/out || exit
-    filename="anarchy-${ISO_VERSION}-${ARCHITECTURE}.iso"
+    cd "${OUT_DIR}" || exit
+    filename="anarchy-${ISO_VERSION}-x86_64.iso"
 
     if [ ! -f  "${filename}" ]; then
         echo "Mising file ${filename}"
@@ -115,8 +105,15 @@ checksum_gen() {
 }
 
 upload_iso() {
-    filename="anarchy-${ISO_VERSION}-${ARCHITECTURE}.iso"
+
+    cd "${OUT_DIR}" || exit
+    filename="anarchy-${ISO_VERSION}-x86_64.iso"
     checksum="${filename}.sha512sum"
+
+    if [ ! -f "${filename}" ] || [ ! -f "${checksum}" ]; then
+        echo "${filename} or ${checksum} missing, can't upload!"
+        exit 1
+    fi
 
     echo "Enter your osdn.net username: "
     read -r username
@@ -141,22 +138,17 @@ upload_iso() {
         esac
     fi
 
-    rsync "${ANARCHY_ROOT_DIR}/out/${filename} ${ANARCHY_ROOT_DIR}/out/${checksum}" \
+    rsync "${OUT_DIR}/${filename} ${OUT_DIR}/${checksum}" \
             "${username}"@storage.osdn.net:/storage/groups/a/an/anarchy/"${dir}"
-}
-
-fix_perms() {
-    sudo chown -R "${USER}":"${USER}" "${ANARCHY_ROOT_DIR}"/out
 }
 
 main() {
     check_root
     check_deps
-    create_build_dir
+    prepare_build_dir
     ssh_config
-    profiledef_gen
-    sudo mkarchiso -v "${BUILD_DIR}" command_iso
-    fix_perms
+    geniso
+    cleanup
     checksum_gen
 }
 
@@ -164,11 +156,11 @@ if [ $# -eq 0 ]; then
 	main
 else
     case "$1" in
-        -u|--upload-iso)
+        -u) # Build and upload
             main
             upload_iso
             ;;
-        -o|--only-upload) upload_iso ;;
-        *) exit 1 ;;
+        -o) upload_iso ;; # Only upload
+        *) echo "Usage: $0 [-u|-o]" ; exit 1 ;;
     esac
 fi
