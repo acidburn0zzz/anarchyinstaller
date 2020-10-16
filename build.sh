@@ -3,8 +3,8 @@
 ISO_VERSION="1.3.0-beta2"
 REPO_DIR="$(pwd)"
 BUILD_DIR="${REPO_DIR}"/build
-ARCHISO_DIR=/usr/share/archiso/configs/releng
 OUT_DIR="${REPO_DIR}"/out
+ARCHISO_DIR=/usr/share/archiso/configs/releng
 
 # Check root permission
 check_root() {
@@ -24,7 +24,7 @@ check_deps() {
         read -r ans
 
         case "${ans}" in
-            n|N|no|NO|No|nO) echo "Not installing 'archiso', exiting" ; exit 1 ;;
+            n|N|no|NO|No|nO) echo "Not installing 'archiso', exiting" ; exit ;;
             *) sudo pacman -Sy archiso ;;
         esac
     fi
@@ -35,7 +35,7 @@ check_deps() {
         read -r ans
 
         case "${ans}" in
-            n|N|no|NO|No|nO) echo "Not installing 'mkinitcpio-archiso', exiting" ; exit 1 ;;
+            n|N|no|NO|No|nO) echo "Not installing 'mkinitcpio-archiso', exiting" ; exit ;;
             *) sudo pacman -Sy mkarchiso-archiso ;;
         esac
     fi
@@ -91,14 +91,14 @@ geniso() {
             -A "Anarchy Installer" \
             -o "${OUT_DIR}" \
             -L "ANARCHY" \
-            -c zstd
-            "${BUILD_DIR}"
+            -c zstd \
+            "${BUILD_DIR}" || exit
 }
 
 cleanup() {
     echo "Cleaning up"
-    sudo chown -R "${USER}":"${USER}" "${OUT_DIR}"
-    sudo rm -rf "${BUILD_DIR}"
+    sudo chown -R "${USER}":"${USER}" "${OUT_DIR}" || exit
+    sudo rm -rf "${BUILD_DIR}" || exit
 }
 
 checksum_gen() {
@@ -109,10 +109,10 @@ checksum_gen() {
 
     if [ ! -f  "${filename}" ]; then
         echo "Mising file ${filename}"
-        exit 1
+        exit
     fi
 
-    sha512sum --tag "${filename}" > "${filename}".sha512sum
+    sha512sum --tag "${filename}" > "${filename}".sha512sum || exit
     echo "Created checksum file ${filename}.sha512sum"
 }
 
@@ -125,7 +125,7 @@ upload_iso() {
 
     if [ ! -f "${filename}" ] || [ ! -f "${checksum}" ]; then
         echo "${filename} or ${checksum} missing, can't upload!"
-        exit 1
+        exit
     fi
 
     echo "Enter your osdn.net username: "
@@ -147,7 +147,7 @@ upload_iso() {
 
         case "${ans}" in
             n|N|no|NO|No|nO) sudo pacman -Sy rsync ;;
-            *) echo "Not installing 'rsync', exiting" ; exit 1 ;;
+            *) echo "Not installing 'rsync', exiting" ; exit ;;
         esac
     fi
 
@@ -169,11 +169,11 @@ if [ $# -eq 0 ]; then
 	main
 else
     case "$1" in
-        -u) # Build and upload
+        -u) # build and upload
             main
             upload_iso
             ;;
-        -o) upload_iso ;; # Only upload
-        *) echo "Usage: $0 [-u|-o]" ; exit 1 ;;
+        -o) upload_iso ;; # only upload
+        *) echo "Usage: $0 [-u|-o]" ; exit ;;
     esac
 fi
