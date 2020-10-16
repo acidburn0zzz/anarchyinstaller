@@ -4,7 +4,13 @@ REPO_DIR="$(pwd)"
 ARCHISO_DIR=/usr/share/archiso/configs/releng
 SRC_DIR="${REPO_DIR}"/src
 
-[ "${iscontainer}" = "yes" ] && REPO_DIR=/anarchy SRC_DIR=/anarchy
+if [ "${iscontainer}" = "yes" ]; then
+    REPO_DIR=/anarchy
+    SRC_DIR=/anarchy
+
+    # Update packages with reflector
+    reflector --verbose --latest 5 --sort rate --save /etc/pacman.d/mirrorlist
+fi
 
 PROFILE_DIR="${REPO_DIR}"/profile
 WORK_DIR="${REPO_DIR}"/work
