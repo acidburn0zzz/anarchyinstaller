@@ -25,7 +25,7 @@ check_deps() {
 
         case "${ans}" in
             n|N|no|NO|No|nO) echo "Not installing 'archiso', exiting" ; exit ;;
-            *) sudo pacman -Sy archiso ;;
+            *) pacman -Sy --noconfirm archiso ;;
         esac
     fi
 
@@ -36,7 +36,7 @@ check_deps() {
 
         case "${ans}" in
             n|N|no|NO|No|nO) echo "Not installing 'mkinitcpio-archiso', exiting" ; exit ;;
-            *) sudo pacman -Sy mkarchiso-archiso ;;
+            *) pacman -Sy --noconfirm mkarchiso-archiso ;;
         esac
     fi
 }
@@ -48,18 +48,18 @@ prepare_build_dir() {
     [ ! -d "${BUILD_DIR}" ] && mkdir "${BUILD_DIR}"
 
     # Copy archiso files to tmp dir
-    sudo cp -r "${ARCHISO_DIR}"/* "${BUILD_DIR}"/
+    cp -r "${ARCHISO_DIR}"/* "${BUILD_DIR}"/
 
     # Copy anarchy files to tmp dir
-    sudo cp -Tr "$(pwd)/src/airootfs/root" "${BUILD_DIR}/airootfs/root"
-    sudo cp -Tr "$(pwd)/src/airootfs/usr" "${BUILD_DIR}/airootfs/usr"
-    sudo cp -Tr "$(pwd)/src/airootfs/etc" "${BUILD_DIR}/airootfs/etc"
-    sudo cp -Tr "$(pwd)/src/syslinux" "${BUILD_DIR}/syslinux"
-    sudo cp -Tr "$(pwd)/src/isolinux" "${BUILD_DIR}/isolinux"
-    sudo cp -Tr "$(pwd)/src/efiboot" "${BUILD_DIR}/efiboot"
+    cp -Tr "$(pwd)/src/airootfs/root" "${BUILD_DIR}/airootfs/root"
+    cp -Tr "$(pwd)/src/airootfs/usr" "${BUILD_DIR}/airootfs/usr"
+    cp -Tr "$(pwd)/src/airootfs/etc" "${BUILD_DIR}/airootfs/etc"
+    cp -Tr "$(pwd)/src/syslinux" "${BUILD_DIR}/syslinux"
+    cp -Tr "$(pwd)/src/isolinux" "${BUILD_DIR}/isolinux"
+    cp -Tr "$(pwd)/src/efiboot" "${BUILD_DIR}/efiboot"
 
     # Remove motd file
-    sudo rm "${BUILD_DIR}/airootfs/etc/motd"
+    rm "${BUILD_DIR}/airootfs/etc/motd"
 
     # Add anarchy packages
     cat "$(pwd)/anarchy-packages.x86_64" >> "${BUILD_DIR}/packages.x86_64"
@@ -87,18 +87,18 @@ geniso() {
     echo "Generating iso"
 
     mkarchiso -v \
-            -P "Anarchy Installer <https://anarchyinstaller.org>" \
-            -A "Anarchy Installer" \
-            -o "${OUT_DIR}" \
-            -L "ANARCHY" \
-            -c zstd \
-            "${BUILD_DIR}" || exit
+        -P "Anarchy Installer <https://anarchyinstaller.org>" \
+        -A "Anarchy Installer" \
+        -o "${OUT_DIR}" \
+        -L "ANARCHY" \
+        -c zstd \
+        "${BUILD_DIR}" || exit
 }
 
 cleanup() {
     echo "Cleaning up"
-    sudo chown -R "${USER}":"${USER}" "${OUT_DIR}" || exit
-    sudo rm -rf "${BUILD_DIR}" || exit
+    chown -R "${USER}":"${USER}" "${OUT_DIR}" || exit
+    rm -rf "${BUILD_DIR}" || exit
 }
 
 checksum_gen() {
