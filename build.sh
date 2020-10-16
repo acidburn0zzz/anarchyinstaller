@@ -16,6 +16,8 @@ check_root() {
 
 # Check if dependencies are installed
 check_deps() {
+    echo "Checking dependencies"
+
     if ! pacman -Qi archiso > /dev/null 2>&1; then
         echo "'archiso' is not installed, but is required by $0, do you want to install it?"
         echo "Install [Y/n]: "
@@ -40,6 +42,8 @@ check_deps() {
 }
 
 prepare_build_dir() {
+    echo "Preparing build directory"
+
     # Create temporary directory if not exists
     [ ! -d "${BUILD_DIR}" ] && mkdir "${BUILD_DIR}"
 
@@ -62,6 +66,8 @@ prepare_build_dir() {
 }
 
 ssh_config() {
+    echo "Adding SSH config"
+
     # Check optional configuration file for SSH connection
     if [ -f autoconnect.sh ]; then
         # shellcheck disable=SC1091
@@ -78,20 +84,26 @@ ssh_config() {
 }
 
 geniso() {
+    echo "Generating iso"
+
     mkarchiso -v \
             -P "Anarchy Installer <https://anarchyinstaller.org>" \
             -A "Anarchy Installer" \
             -o "${OUT_DIR}" \
             -L "ANARCHY" \
             -c zstd
+            "${BUILD_DIR}"
 }
 
 cleanup() {
+    echo "Cleaning up"
     sudo chown -R "${USER}":"${USER}" "${OUT_DIR}"
     sudo rm -rf "${BUILD_DIR}"
 }
 
 checksum_gen() {
+    echo "Generating checksum"
+
     cd "${OUT_DIR}" || exit
     filename="anarchy-${ISO_VERSION}-x86_64.iso"
 
@@ -105,6 +117,7 @@ checksum_gen() {
 }
 
 upload_iso() {
+    echo "Uploading iso"
 
     cd "${OUT_DIR}" || exit
     filename="anarchy-${ISO_VERSION}-x86_64.iso"
