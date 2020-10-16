@@ -2,8 +2,9 @@
 
 REPO_DIR="$(pwd)"
 ARCHISO_DIR=/usr/share/archiso/configs/releng
+SRC_DIR="${REPO_DIR}"/src
 
-[ "${iscontainer}" = "yes" ] && REPO_DIR=/anarchy
+[ "${iscontainer}" = "yes" ] && REPO_DIR=/anarchy SRC_DIR=/anarchy
 
 PROFILE_DIR="${REPO_DIR}"/profile
 WORK_DIR="${REPO_DIR}"/work
@@ -51,22 +52,22 @@ prepare_build_dir() {
     cp -r "${ARCHISO_DIR}"/* "${PROFILE_DIR}"/
 
     # Copy anarchy files to tmp dir
-    cp -Tr "$(pwd)/src/airootfs/root" "${PROFILE_DIR}/airootfs/root"
-    cp -Tr "$(pwd)/src/airootfs/usr" "${PROFILE_DIR}/airootfs/usr"
-    cp -Tr "$(pwd)/src/airootfs/etc" "${PROFILE_DIR}/airootfs/etc"
-    cp -Tr "$(pwd)/src/syslinux" "${PROFILE_DIR}/syslinux"
-    cp -Tr "$(pwd)/src/isolinux" "${PROFILE_DIR}/isolinux"
-    cp -Tr "$(pwd)/src/efiboot" "${PROFILE_DIR}/efiboot"
+    cp -r "${SRC_DIR}/airootfs/root/" "${PROFILE_DIR}/airootfs/root/"
+    cp -r "${SRC_DIR}/airootfs/usr/" "${PROFILE_DIR}/airootfs/usr/"
+    cp -r "${SRC_DIR}/airootfs/etc/" "${PROFILE_DIR}/airootfs/etc/"
+    #cp -Tr "$(pwd)/src/syslinux" "${PROFILE_DIR}/syslinux"
+    #cp -Tr "$(pwd)/src/isolinux" "${PROFILE_DIR}/isolinux"
+    #cp -Tr "$(pwd)/src/efiboot" "${PROFILE_DIR}/efiboot"
 
     # Remove motd file
-    rm "${PROFILE_DIR}/airootfs/etc/motd"
+    rm "${PROFILE_DIR}"/airootfs/etc/motd
 
     # Replace profiledef file
-    rm "${PROFILE_DIR}/profiledef.sh"
-    cp ./profiledef.sh "${PROFILE_DIR}"/
+    rm "${PROFILE_DIR}"/profiledef.sh
+    cp "${REPO_DIR}"/profiledef.sh "${PROFILE_DIR}"/
 
     # Add anarchy packages
-    cat "$(pwd)/anarchy-packages.x86_64" >> "${PROFILE_DIR}/packages.x86_64"
+    cat "${REPO_DIR}/anarchy-packages.x86_64" >> "${PROFILE_DIR}/packages.x86_64"
 }
 
 ssh_config() {
