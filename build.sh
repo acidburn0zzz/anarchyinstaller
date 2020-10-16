@@ -58,9 +58,9 @@ prepare_build_dir() {
     cp -r "${ARCHISO_DIR}"/* "${PROFILE_DIR}"/
 
     # Copy anarchy files to tmp dir
-    cp -r "${SRC_DIR}/airootfs/root/" "${PROFILE_DIR}/airootfs/root/"
-    cp -r "${SRC_DIR}/airootfs/usr/" "${PROFILE_DIR}/airootfs/usr/"
-    cp -r "${SRC_DIR}/airootfs/etc/" "${PROFILE_DIR}/airootfs/etc/"
+    cp -r "${SRC_DIR}"/airootfs/root/ "${PROFILE_DIR}"/airootfs/root/
+    cp -r "${SRC_DIR}"/airootfs/usr/ "${PROFILE_DIR}"/airootfs/usr/
+    cp -r "${SRC_DIR}"/airootfs/etc/ "${PROFILE_DIR}"/airootfs/etc/
     #cp -Tr "$(pwd)/src/syslinux" "${PROFILE_DIR}/syslinux"
     #cp -Tr "$(pwd)/src/isolinux" "${PROFILE_DIR}/isolinux"
     #cp -Tr "$(pwd)/src/efiboot" "${PROFILE_DIR}/efiboot"
@@ -73,7 +73,7 @@ prepare_build_dir() {
     cp "${REPO_DIR}"/profiledef.sh "${PROFILE_DIR}"/
 
     # Add anarchy packages
-    cat "${REPO_DIR}/anarchy-packages.x86_64" >> "${PROFILE_DIR}/packages.x86_64"
+    cat "${REPO_DIR}"/anarchy-packages.x86_64 >> "${PROFILE_DIR}"/packages.x86_64
 }
 
 ssh_config() {
@@ -189,5 +189,3 @@ else
         *) echo "Usage: $0 [-u|-o]" ; exit ;;
     esac
 fi
-
-echo "Finished normally"
