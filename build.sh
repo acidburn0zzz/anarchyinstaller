@@ -94,6 +94,7 @@ ssh_config() {
 
 geniso() {
     echo "Generating iso"
+    cd "${REPO_DIR}" || exit
     mkarchiso -v -c zstd "${PROFILE_DIR}" || exit
 }
 
@@ -182,7 +183,7 @@ else
             sudo podman build --rm -t anarchy:latest -f ./Dockerfile
             [ ! -d "${REPO_DIR}"/out ] && mkdir "${REPO_DIR}"/out
             # TODO: Possibly bindmount $WORK_DIR to tmpfs (e.g. /tmp on host)
-            sudo podman run --rm -v "${REPO_DIR}"/out:/anarchy/out -t -i --privileged localhost/anarchy:latest
+            sudo podman run --rm -v "${REPO_DIR}"/out:/anarchy/out -v /tmp/anarchy:/anarchy/work -t -i --privileged localhost/anarchy:latest
             ;;
         *) echo "Usage: $0 [-u|-o]" ; exit ;;
     esac
