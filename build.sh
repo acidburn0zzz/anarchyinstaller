@@ -56,15 +56,15 @@ prepare_build_dir() {
     cp -r "${ARCHISO_DIR}"/* "${PROFILE_DIR}"/
 
     # Copy anarchy files to tmp dir
-    cp -r "${SRC_DIR}"/airootfs/root/ "${PROFILE_DIR}"/airootfs/root/
-    cp -r "${SRC_DIR}"/airootfs/usr/ "${PROFILE_DIR}"/airootfs/usr/
-    cp -r "${SRC_DIR}"/airootfs/etc/ "${PROFILE_DIR}"/airootfs/etc/
+    cp -rf "${SRC_DIR}"/airootfs/root/* "${PROFILE_DIR}"/airootfs/root/
+    cp -rf "${SRC_DIR}"/airootfs/usr/* "${PROFILE_DIR}"/airootfs/usr/
+    cp -rf "${SRC_DIR}"/airootfs/etc/* "${PROFILE_DIR}"/airootfs/etc/
     #cp -Tr "$(pwd)/src/syslinux" "${PROFILE_DIR}/syslinux"
     #cp -Tr "$(pwd)/src/isolinux" "${PROFILE_DIR}/isolinux"
     #cp -Tr "$(pwd)/src/efiboot" "${PROFILE_DIR}/efiboot"
 
     # Remove motd file
-    rm "${PROFILE_DIR}"/airootfs/etc/motd
+    #rm "${PROFILE_DIR}"/airootfs/etc/motd
 
     # Replace profiledef file
     rm "${PROFILE_DIR}"/profiledef.sh
@@ -100,6 +100,7 @@ geniso() {
 
 cleanup() {
     echo "Cleaning up"
+    # TODO: Fix, $USER is going to be root in every case
     chown -R "${USER}":"${USER}" "${REPO_DIR}"/out || exit
 }
 
@@ -164,7 +165,7 @@ main() {
     prepare_build_dir
     ssh_config
     geniso
-    cleanup
+    #cleanup
     checksum_gen
 }
 
@@ -182,8 +183,10 @@ else
         -d)
             sudo podman build --rm -t anarchy:latest -f ./Dockerfile
             [ ! -d "${REPO_DIR}"/out ] && mkdir "${REPO_DIR}"/out
+
+            tmpdir="$(cd "$(mktemp -d)" || exit)"
             # TODO: Possibly bindmount $WORK_DIR to tmpfs (e.g. /tmp on host)
-            sudo podman run --rm -v "${REPO_DIR}"/out:/anarchy/out -v /tmp/anarchy:/anarchy/work -t -i --privileged localhost/anarchy:latest
+            sudo podman run --rm -v "${REPO_DIR}"/out:/anarchy/out -v "${tmpdir}":"${REPO_DIR}"/work -t -i --privileged localhost/anarchy:latest
             ;;
         *) echo "Usage: $0 [-u|-o]" ; exit ;;
     esac
