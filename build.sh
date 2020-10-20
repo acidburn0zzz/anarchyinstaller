@@ -56,9 +56,9 @@ prepare_build_dir() {
     cp -r "${ARCHISO_DIR}"/* "${PROFILE_DIR}"/
 
     # Copy anarchy files to tmp dir
-    cp -rf "${SRC_DIR}"/airootfs/root/* "${PROFILE_DIR}"/airootfs/root/
-    cp -rf "${SRC_DIR}"/airootfs/usr/* "${PROFILE_DIR}"/airootfs/usr/
-    cp -rf "${SRC_DIR}"/airootfs/etc/* "${PROFILE_DIR}"/airootfs/etc/
+    cp -rf "${SRC_DIR}"/airootfs/root/ "${PROFILE_DIR}"/airootfs/root/
+    cp -rf "${SRC_DIR}"/airootfs/usr/ "${PROFILE_DIR}"/airootfs/usr/
+    cp -rf "${SRC_DIR}"/airootfs/etc/ "${PROFILE_DIR}"/airootfs/etc/
     #cp -Tr "$(pwd)/src/syslinux" "${PROFILE_DIR}/syslinux"
     #cp -Tr "$(pwd)/src/isolinux" "${PROFILE_DIR}/isolinux"
     #cp -Tr "$(pwd)/src/efiboot" "${PROFILE_DIR}/efiboot"
