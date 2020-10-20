@@ -184,7 +184,7 @@ else
             sudo podman build --rm -t anarchy:latest -f ./Dockerfile
             [ ! -d "${REPO_DIR}"/out ] && mkdir "${REPO_DIR}"/out
 
-            tmpdir="$(cd "$(mktemp -d)" || exit)"
+            tmpdir="$(mktemp -d)"
             # TODO: Possibly bindmount $WORK_DIR to tmpfs (e.g. /tmp on host)
             sudo podman run --rm -v "${REPO_DIR}"/out:/anarchy/out -v "${tmpdir}":"${REPO_DIR}"/work -t -i --privileged localhost/anarchy:latest
             ;;
