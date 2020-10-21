@@ -14,7 +14,7 @@ start_menu() {
 				--msgbox "\n${start_menu_msg}\n\n${start_menu_social}" 18 80
 
 		# Ask the user what they want to do, default to updating anarchy
-		menu_choice="$(dialog --menu "What do you want to do?" 18 80 \
+		menu_choice="$(dialog --menu "What do you want to do?" 18 80 5 \
 				"Update" "Update anarchy and start the installation" \
 				"Start" "Start the installation without updating anarchy" \
 				"Exit" "Exit the installer and be dropped into a shell" 3>&1 1>&2 2>&3)"
