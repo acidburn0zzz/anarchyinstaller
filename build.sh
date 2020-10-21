@@ -115,36 +115,6 @@ checksum_gen() {
     echo "Created checksum file ${filename}.sha512sum"
 }
 
-upload_iso() {
-    echo "Uploading iso"
-
-    cd "${REPO_DIR}"/out || exit
-    filename="$(basename "$(find . -name 'anarchy-*.iso')")"
-    checksum="${filename}.sha512sum"
-
-    if [ ! -f "${filename}" ] || [ ! -f "${checksum}" ]; then
-        echo "${filename} or ${checksum} missing, can't upload!"
-        exit
-    fi
-
-    echo "Enter your osdn.net username: "
-    read -r username
-
-    echo "Is this a testing or release iso?"
-    echo "[T/r]: "
-    read -r reltype
-
-    case "${reltype}" in
-        r|R|rel|Rel|release|Release|RELEASE) dir='' ;;
-        *) dir='testing/' ;;
-    esac
-
-    [ ! -e /usr/bin/rsync ] && echo "'rsync' is not installed, exiting" && exit
-
-    rsync "${REPO_DIR}/out/${filename} ${REPO_DIR}/out/${checksum}" \
-            "${username}"@storage.osdn.net:/storage/groups/a/an/anarchy/"${dir}"
-}
-
 main() {
     check_root
     check_deps
@@ -158,13 +128,6 @@ if [ $# -eq 0 ]; then
 	main
 else
     case "$1" in
-        -u)
-            main
-            upload_iso
-            ;;
-        -o)
-            upload_iso
-            ;;
         -d)
             [ ! -d "${REPO_DIR}"/out ] && mkdir "${REPO_DIR}"/out
             tmpdir="$(mktemp -d)"
