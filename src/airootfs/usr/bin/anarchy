@@ -14,8 +14,8 @@ start_menu() {
 				--msgbox "\n${start_menu_msg}\n\n${start_menu_social}" 18 80
 
 		# Ask the user what they want to do, default to updating anarchy
-		#		"Update" "Update anarchy and start the installation" \ # Hide update option for now
 		menu_choice="$(dialog --menu "What do you want to do?" 18 80 5 \
+				"Update" "Update anarchy and start the installation" \
 				"Start" "Start the installation" \
 				"Exit" "Exit the installer and be dropped into a shell" 3>&1 1>&2 2>&3)"
 
@@ -25,12 +25,20 @@ start_menu() {
 					wifi-menu -o
 				fi
 
-				# Download run the update script
-				tmp_dir="$(mktemp -d)"
-				cd "${tmp_dir}" || exit
-				curl -O https://gitlab.com/anarchyinstaller/installer/-/raw/add-start-menu/src/airootfs/usr/bin/anarchy-update
-				chmod +x anarchy-update
-				./anarchy-update &
+				# Download and run the update script
+				#tmp_dir="$(mktemp -d)"
+				#cd "${tmp_dir}" || exit
+				#curl -O https://gitlab.com/anarchyinstaller/installer/-/raw/add-start-menu/src/airootfs/usr/bin/anarchy-update
+				#chmod +x anarchy-update
+				#./anarchy-update &
+
+				# Update arch packages and keyring
+				pacman -Sy --noconfirm
+				pacman-db-upgrade
+				pacman-key --init
+				pacman-key --populate archlinux
+				pacman-key --refresh-keys
+				touch /root/.anarchy_updated
 				;;
 			Start) touch /root/.anarchy_updated ;; # Pretend user has updated
 			Exit) exit ;;
