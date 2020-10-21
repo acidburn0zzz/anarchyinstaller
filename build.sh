@@ -97,15 +97,6 @@ ssh_config() {
 geniso() {
     echo "Generating iso"
     cd "${REPO_DIR}" || exit
-    echo "Assumed work dir: $(pwd)/work"
-    echo ---
-    ls -lah "$(pwd)"
-    echo ---
-    ls -lah "${PROFILE_DIR}"
-    echo ---
-    ls -lah "${PROFILE_DIR}"/airootfs/root
-    echo ---
-    ls -lah "${REPO_DIR}"
     mkarchiso -v -c zstd "${PROFILE_DIR}" || exit
 }
 
