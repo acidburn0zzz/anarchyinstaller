@@ -59,6 +59,7 @@ prepare_build_dir() {
     cp -rf "${SRC_DIR}"/airootfs/root/. "${PROFILE_DIR}"/airootfs/root/
     cp -rf "${SRC_DIR}"/airootfs/usr/. "${PROFILE_DIR}"/airootfs/usr/
     cp -rf "${SRC_DIR}"/airootfs/etc/. "${PROFILE_DIR}"/airootfs/etc/
+    cp -rf "${REPO_DIR}"/assets/splash.png "${PROFILE_DIR}"/syslinux/splash.png
 
     echo "anarchy" >> "${PROFILE_DIR}"/airootfs/root/.zlogin
 
