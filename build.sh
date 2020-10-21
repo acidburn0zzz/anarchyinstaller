@@ -56,9 +56,11 @@ prepare_build_dir() {
     cp -r "${ARCHISO_DIR}"/* "${PROFILE_DIR}"/
 
     # Copy anarchy files to tmp dir
-    cp -rf "${SRC_DIR}"/airootfs/root/ "${PROFILE_DIR}"/airootfs/root/
-    cp -rf "${SRC_DIR}"/airootfs/usr/ "${PROFILE_DIR}"/airootfs/usr/
-    cp -rf "${SRC_DIR}"/airootfs/etc/ "${PROFILE_DIR}"/airootfs/etc/
+    cp -rf "${SRC_DIR}"/airootfs/root/. "${PROFILE_DIR}"/airootfs/root/
+    cp -rf "${SRC_DIR}"/airootfs/usr/. "${PROFILE_DIR}"/airootfs/usr/
+    cp -rf "${SRC_DIR}"/airootfs/etc/. "${PROFILE_DIR}"/airootfs/etc/
+
+    echo "anarchy" >> "${PROFILE_DIR}"/airootfs/root/.zlogin
     #cp -Tr "$(pwd)/src/syslinux" "${PROFILE_DIR}/syslinux"
     #cp -Tr "$(pwd)/src/isolinux" "${PROFILE_DIR}/isolinux"
     #cp -Tr "$(pwd)/src/efiboot" "${PROFILE_DIR}/efiboot"
@@ -95,6 +97,15 @@ ssh_config() {
 geniso() {
     echo "Generating iso"
     cd "${REPO_DIR}" || exit
+    echo "Assumed work dir: $(pwd)/work"
+    echo ---
+    ls -lah "$(pwd)"
+    echo ---
+    ls -lah "${PROFILE_DIR}"
+    echo ---
+    ls -lah "${PROFILE_DIR}"/airootfs/root
+    echo ---
+    ls -lah "${REPO_DIR}"
     mkarchiso -v -c zstd "${PROFILE_DIR}" || exit
 }
 
@@ -166,7 +177,7 @@ main() {
     ssh_config
     geniso
     #cleanup
-    checksum_gen
+    #checksum_gen
 }
 
 if [ $# -eq 0 ]; then
@@ -181,12 +192,12 @@ else
             upload_iso
             ;;
         -d)
-            sudo podman build --rm -t anarchy:latest -f ./Dockerfile
             [ ! -d "${REPO_DIR}"/out ] && mkdir "${REPO_DIR}"/out
-
             tmpdir="$(mktemp -d)"
-            # TODO: Possibly bindmount $WORK_DIR to tmpfs (e.g. /tmp on host)
+            echo "Temporary work directory: ${tmpdir}"
+            sudo podman build --rm -t anarchy:latest -f ./Dockerfile
             sudo podman run --rm -v "${REPO_DIR}"/out:/anarchy/out -v "${tmpdir}":"${REPO_DIR}"/work -t -i --privileged localhost/anarchy:latest
+            exit
             ;;
         *) echo "Usage: $0 [-u|-o]" ; exit ;;
     esac
