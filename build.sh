@@ -61,12 +61,6 @@ prepare_build_dir() {
     cp -rf "${SRC_DIR}"/airootfs/etc/. "${PROFILE_DIR}"/airootfs/etc/
 
     echo "anarchy" >> "${PROFILE_DIR}"/airootfs/root/.zlogin
-    #cp -Tr "$(pwd)/src/syslinux" "${PROFILE_DIR}/syslinux"
-    #cp -Tr "$(pwd)/src/isolinux" "${PROFILE_DIR}/isolinux"
-    #cp -Tr "$(pwd)/src/efiboot" "${PROFILE_DIR}/efiboot"
-
-    # Remove motd file
-    #rm "${PROFILE_DIR}"/airootfs/etc/motd
 
     # Replace profiledef file
     rm "${PROFILE_DIR}"/profiledef.sh
