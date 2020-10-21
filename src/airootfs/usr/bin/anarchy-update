@@ -14,7 +14,7 @@ echo 'Updating Arch repos'
 pacman -Sy --noconfirm
 
 echo 'Updating Anarchy scripts'
-git clone https://gitlab.com/anarchyinstaller/installer "${tmp_dir}"
+git clone https://gitlab.com/anarchyinstaller/installer -b add-start-menu "${tmp_dir}"
 cp -f "${tmp_dir}"/src/airootfs/usr/bin/* /usr/bin/
 
 cp -f "${tmp_dir}"/src/airootfs/etc/anarchy.conf /etc/

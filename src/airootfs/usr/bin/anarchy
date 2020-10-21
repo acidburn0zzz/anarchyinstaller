@@ -28,7 +28,7 @@ start_menu() {
 				# Download run the update script
 				tmp_dir="$(mktemp -d)"
 				cd "${tmp_dir}" || exit
-				curl -O https://gitlab.com/anarchyinstaller/installer/-/raw/HEAD/src/airootfs/usr/bin/anarchy-update
+				curl -O https://gitlab.com/anarchyinstaller/installer/-/raw/add-start-menu/src/airootfs/usr/bin/anarchy-update
 				chmod +x anarchy-update
 				./anarchy-update &
 				;;
