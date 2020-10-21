@@ -124,9 +124,10 @@ if [ $# -eq 0 ]; then
 else
     case "$1" in
         -d)
+            check_root
             [ ! -d "${REPO_DIR}"/out ] && mkdir "${REPO_DIR}"/out
-            sudo podman build --rm -t anarchy:latest -f ./Dockerfile
-            sudo podman run --rm -v "${REPO_DIR}"/out:/anarchy/out -t -i --privileged localhost/anarchy:latest
+            podman build --rm -t anarchy:latest -f ./Dockerfile
+            podman run --rm -v "${REPO_DIR}"/out:/anarchy/out -t -i --privileged localhost/anarchy:latest
             exit
             ;;
         *) echo "Usage: $0 [-d]" ; exit ;;
