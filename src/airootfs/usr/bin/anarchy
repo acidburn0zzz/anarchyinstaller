@@ -14,9 +14,9 @@ start_menu() {
 				--msgbox "\n${start_menu_msg}\n\n${start_menu_social}" 18 80
 
 		# Ask the user what they want to do, default to updating anarchy
+		#		"Update" "Update anarchy and start the installation" \ # Hide update option for now
 		menu_choice="$(dialog --menu "What do you want to do?" 18 80 5 \
-				"Update" "Update anarchy and start the installation" \
-				"Start" "Start the installation without updating anarchy" \
+				"Start" "Start the installation" \
 				"Exit" "Exit the installer and be dropped into a shell" 3>&1 1>&2 2>&3)"
 
 		case "${menu_choice}" in
@@ -58,7 +58,7 @@ dialog() {
 usage() {
 	echo 'Usage: anarchy [option]'
 	echo '    -h | --help      Show this message'
-	echo '    -u | --update    Update Anarchy'
+	#echo '    -u | --update    Update Anarchy'
 }
 
 init() {
@@ -106,7 +106,7 @@ if [ $# -eq 0 ]; then
 else
 	case "$1" in
 		-h|--help) usage ;;
-		-u|--update) anarchy-update ;;
+		#-u|--update) anarchy-update ;;
 		*) usage; exit 1 ;;
 	esac
 fi
