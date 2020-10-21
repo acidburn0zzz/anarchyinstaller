@@ -130,12 +130,10 @@ else
     case "$1" in
         -d)
             [ ! -d "${REPO_DIR}"/out ] && mkdir "${REPO_DIR}"/out
-            tmpdir="$(mktemp -d)"
-            echo "Temporary work directory: ${tmpdir}"
             sudo podman build --rm -t anarchy:latest -f ./Dockerfile
-            sudo podman run --rm -v "${REPO_DIR}"/out:/anarchy/out -v "${tmpdir}":"${REPO_DIR}"/work -t -i --privileged localhost/anarchy:latest
+            sudo podman run --rm -v "${REPO_DIR}"/out:/anarchy/out -t -i --privileged localhost/anarchy:latest
             exit
             ;;
-        *) echo "Usage: $0 [-u|-o]" ; exit ;;
+        *) echo "Usage: $0 [-d]" ; exit ;;
     esac
 fi
