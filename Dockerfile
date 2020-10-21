@@ -4,5 +4,6 @@ LABEL maintainer="Erazem Kokot <contact at erazem dot eu>"
 ENV iscontainer="yes"
 
 RUN pacman -Sy --noconfirm archiso mkinitcpio-archiso reflector
-COPY assets src anarchy-packages.x86_64 build.sh profiledef.sh /anarchy
+COPY assets /anarchy/assets
+COPY src anarchy-packages.x86_64 build.sh profiledef.sh /anarchy/
 ENTRYPOINT ["/anarchy/build.sh"]
