@@ -100,12 +100,6 @@ geniso() {
     mkarchiso -v -c zstd "${PROFILE_DIR}" || exit
 }
 
-cleanup() {
-    echo "Cleaning up"
-    # TODO: Fix, $USER is going to be root in every case
-    chown -R "${USER}":"${USER}" "${REPO_DIR}"/out || exit
-}
-
 checksum_gen() {
     echo "Generating checksum"
 
@@ -158,7 +152,6 @@ main() {
     prepare_build_dir
     ssh_config
     geniso
-    #cleanup
     #checksum_gen
 }
 
