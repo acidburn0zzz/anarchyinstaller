@@ -151,7 +151,7 @@ main() {
     prepare_build_dir
     ssh_config
     geniso
-    #checksum_gen
+    checksum_gen
 }
 
 if [ $# -eq 0 ]; then
