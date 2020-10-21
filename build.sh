@@ -66,6 +66,9 @@ prepare_build_dir() {
     rm "${PROFILE_DIR}"/profiledef.sh
     cp "${REPO_DIR}"/profiledef.sh "${PROFILE_DIR}"/
 
+    # Remove motd since it's not useful in Anarchy
+    rm "${PROFILE_DIR}"/airootfs/etc/motd
+
     # Add anarchy packages
     cat "${REPO_DIR}"/anarchy-packages.x86_64 >> "${PROFILE_DIR}"/packages.x86_64
 
