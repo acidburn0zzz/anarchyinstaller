@@ -59,7 +59,6 @@ prepare_build_dir() {
     cp -rf "${SRC_DIR}"/airootfs/root/. "${PROFILE_DIR}"/airootfs/root/
     cp -rf "${SRC_DIR}"/airootfs/usr/. "${PROFILE_DIR}"/airootfs/usr/
     cp -rf "${SRC_DIR}"/airootfs/etc/. "${PROFILE_DIR}"/airootfs/etc/
-    cp -rf "${REPO_DIR}"/assets/splash.png "${PROFILE_DIR}"/syslinux/splash.png
 
     echo "anarchy" >> "${PROFILE_DIR}"/airootfs/root/.zlogin
 
@@ -69,6 +68,15 @@ prepare_build_dir() {
 
     # Add anarchy packages
     cat "${REPO_DIR}"/anarchy-packages.x86_64 >> "${PROFILE_DIR}"/packages.x86_64
+
+    # Re-add custom bootloader entries
+    cp -rf "${REPO_DIR}"/assets/splash.png "${PROFILE_DIR}"/syslinux/splash.png
+    sed -i 's/Arch Linux install medium/Anarchy Installer/' "${PROFILE_DIR}"/efiboot/loader/entries/archiso-x86_64-linux.conf
+    sed -i 's/Arch Linux install medium/Anarchy Installer/' "${PROFILE_DIR}"/syslinux/archiso_sys-linux.cfg
+    sed -i 's/Arch Linux/Anarchy/' "${PROFILE_DIR}"/syslinux/archiso_sys-linux.cfg
+    sed -i 's/Arch Linux install medium/Anarchy Installer/' "${PROFILE_DIR}"/syslinux/archiso_pxe-linux.cfg
+    sed -i 's/Arch Linux/Anarchy/' "${PROFILE_DIR}"/syslinux/archiso_pxe-linux.cfg
+    sed -i 's/Arch Linux/Anarchy Installer/' "${PROFILE_DIR}"/syslinux/archiso_head.cfg
 }
 
 ssh_config() {
