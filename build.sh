@@ -155,16 +155,7 @@ upload_iso() {
         *) dir='testing/' ;;
     esac
 
-    if ! pacman -Qi rsync > /dev/null 2>&1; then
-        echo "'rsync' is not installed, do you want to install it?"
-        echo "Install [Y/n]: "
-        read -r ans
-
-        case "${ans}" in
-            n|N|no|NO|No|nO) sudo pacman -Sy rsync ;;
-            *) echo "Not installing 'rsync', exiting" ; exit ;;
-        esac
-    fi
+    [ ! -e /usr/bin/rsync ] && echo "'rsync' is not installed, exiting" && exit
 
     rsync "${REPO_DIR}/out/${filename} ${REPO_DIR}/out/${checksum}" \
             "${username}"@storage.osdn.net:/storage/groups/a/an/anarchy/"${dir}"
