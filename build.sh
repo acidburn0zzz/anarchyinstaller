@@ -104,7 +104,6 @@ checksum_gen() {
     echo "Generating checksum"
 
     cd "${REPO_DIR}"/out || exit
-    # TODO: handle missing iso file
     filename="$(basename "$(find . -name 'anarchy-*.iso')")"
 
     if [ ! -f  "${filename}" ]; then
