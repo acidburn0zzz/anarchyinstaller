@@ -135,7 +135,7 @@ main_menu() {
 			fi
 			;;
 		"${menu13}") # Start command line session
-			echo "alias anarchy=exit ; echo ${return_msg}" >/tmp/.zshrc
+			echo "alias anarchy=exit ; echo -e \"${return_msg}\"" >/tmp/.zshrc
 			clear
 			ZDOTDIR=/tmp/ zsh
 			rm /tmp/.zshrc
