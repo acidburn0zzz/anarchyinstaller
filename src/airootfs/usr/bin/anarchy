@@ -33,11 +33,10 @@ start_menu() {
 				#./anarchy-update &
 
 				# Update arch packages and keyring
+				pacman-key --keyserver hkp://keyserver.ubuntu.com --init
+				pacman-key --keyserver hkp://keyserver.ubuntu.com --populate archlinux
+				pacman-key --keyserver hkp://keyserver.ubuntu.com --refresh-keys
 				pacman -Sy --noconfirm
-				pacman-db-upgrade
-				pacman-key --init
-				pacman-key --populate archlinux
-				pacman-key --refresh-keys
 				touch /root/.anarchy_updated
 				;;
 			Start) touch /root/.anarchy_updated ;; # Pretend user has updated
