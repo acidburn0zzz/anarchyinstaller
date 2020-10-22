@@ -65,11 +65,6 @@ dialog() {
 	fi
 }
 
-usage() {
-	echo 'Usage: anarchy [option]'
-	echo '    -h | --help      Show this message'
-}
-
 init() {
 	# Prevents the installer from exiting if Ctrl-C is pressed
 	trap '' 2
@@ -109,12 +104,5 @@ main() {
 	reboot_system
 }
 
-if [ $# -eq 0 ]; then
-	init
-	main
-else
-	case "$1" in
-		-h|--help) usage ;;
-		*) usage; exit 1 ;;
-	esac
-fi
+init
+main
