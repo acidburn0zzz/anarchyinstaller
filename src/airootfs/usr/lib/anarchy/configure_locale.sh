@@ -17,6 +17,7 @@ set_keys() {
 			"ru" "Russian" \
 			"sv" "Swedish" \
 			"uk" "United Kingdom" \
+			"slovene" "Slovenian" \
 			"${other}" "${other}-keymaps" 3>&1 1>&2 2>&3)"
 		source "${lang_file}"
 
