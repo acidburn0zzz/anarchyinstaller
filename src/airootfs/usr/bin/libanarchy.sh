@@ -6,8 +6,14 @@ export LOG_FILE
 
 # Logging library, that appends its arguments (log messages) to the LOG_FILE
 log() {
-	local message="$1"
-	echo "[$(date '+%H:%M:%S')]: ${message}" >> "${LOG_FILE}"
+	if [ -n "$1" ]; then
+		message="$1" # Manual log messages that use arguments (e.g. 'log "My message"')
+		echo "--- [$(date '+%H:%M:%S')]: ${message} ---" | tee -a "${LOG_FILE}"
+	else
+		while read -r message; do # Command output
+			echo "[$(date '+%H:%M:%S')]: ${message}" | tee -a "${LOG_FILE}"
+		done
+	fi
 }
 
 # Check if user has an internet connection
