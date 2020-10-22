@@ -1,4 +1,5 @@
 # Library functions that Anarchy's scripts use
+# shellcheck shell=sh
 
 # Global variables (shared between scripts and functions)
 LOG_FILE="${HOME}/anarchy-$(date '+%Y-%m-%d').log"
