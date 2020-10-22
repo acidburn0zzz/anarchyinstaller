@@ -37,7 +37,7 @@ offon() {
 msg() {
 	_body="$1"
 	#shellcheck disable=SC2154
-	dialog --ok-button "${ok}" --msgbox "${body}" 10 60
+	dialog --ok-button "${ok}" --msgbox "${_body}" 10 60
 }
 
 # Displays a yesno dialog
@@ -47,11 +47,11 @@ yesno()
 	_yes_button="$2"
 	_no_button="$3"
 	if [ $# = 4 ]; then
-		dialog --defaultno --yes-label "${yes_button}" --no-label \
-				"${no_button}" --yesno "${body}" 0 0
+		dialog --defaultno --yes-label "${_yes_button}" --no-label \
+				"${_no_button}" --yesno "${_body}" 0 0
 	else
-		dialog --yes-label "${yes_button}" --no-label "${no_button}" \
-			--yesno "${body}" 0 0
+		dialog --yes-label "${_yes_button}" --no-label "${_no_button}" \
+			--yesno "${_body}" 0 0
 	fi
 	return $?
 }
