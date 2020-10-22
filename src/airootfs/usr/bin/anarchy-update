@@ -10,31 +10,28 @@ fi
 
 tmp_dir="$(mktemp -d)"
 
-echo 'Updating Arch repos'
-pacman -Sy --noconfirm
+log 'Updating Anarchy scripts'
+git clone https://gitlab.com/anarchyinstaller/installer -b add-start-menu "${tmp_dir}" 2>&1 | log
+cp -f "${tmp_dir}"/src/airootfs/usr/bin/* /usr/bin/ 2>&1 | log
 
-echo 'Updating Anarchy scripts'
-git clone https://gitlab.com/anarchyinstaller/installer -b add-start-menu "${tmp_dir}"
-cp -f "${tmp_dir}"/src/airootfs/usr/bin/* /usr/bin/
+cp -f "${tmp_dir}"/src/airootfs/etc/anarchy.conf /etc/ 2>&1 | log
+cp -f "${tmp_dir}"/src/airootfs/etc/hostname /etc/ 2>&1 | log
+cp -f "${tmp_dir}"/src/airootfs/etc/locale.gen /etc/ 2>&1 | log
+cp -f "${tmp_dir}"/src/airootfs/etc/vconsole.conf /etc/ 2>&1 | log
+cp -fr "${tmp_dir}"/src/airootfs/etc/zsh /etc/ 2>&1 | log
 
-cp -f "${tmp_dir}"/src/airootfs/etc/anarchy.conf /etc/
-cp -f "${tmp_dir}"/src/airootfs/etc/hostname /etc/
-cp -f "${tmp_dir}"/src/airootfs/etc/locale.gen /etc/
-cp -f "${tmp_dir}"/src/airootfs/etc/vconsole.conf /etc/
-cp -fr "${tmp_dir}"/src/airootfs/etc/zsh /etc/
+cp -f "${tmp_dir}"/src/airootfs/root/.dialogrc /root/ 2>&1 | log
+cp -f "${tmp_dir}"/src/airootfs/root/.zlogin /root/ 2>&1 | log
 
-cp -f "${tmp_dir}"/src/airootfs/root/.dialogrc /root/
-cp -f "${tmp_dir}"/src/airootfs/root/.zlogin /root/
+cp -f "${tmp_dir}"/src/airootfs/usr/lib/anarchy/* /usr/lib/anarchy/ 2>&1 | log
+cp -fr "${tmp_dir}"/src/airootfs/usr/share/anarchy/* /usr/share/anarchy/ 2>&1 | log
 
-cp -f "${tmp_dir}"/src/airootfs/usr/lib/anarchy/* /usr/lib/anarchy/
-cp -fr "${tmp_dir}"/src/airootfs/usr/share/anarchy/* /usr/share/anarchy/
-
-echo 'Updating pacman keys'
-pacman-db-upgrade
-pacman-key --init
-pacman-key --populate archlinux
-pacman-key --refresh-keys
-echo 'Finished updating keys'
+log 'Updating pacman keys'
+pacman-key --keyserver hkp://keyserver.ubuntu.com --init 2>&1 | log
+pacman-key --keyserver hkp://keyserver.ubuntu.com --populate archlinux 2>&1 | log
+pacman-key --keyserver hkp://keyserver.ubuntu.com --refresh-keys 2>&1 | log
+pacman -Sy --noconfirm 2>&1 | log
+log 'Finished updating keys'
 
 # Signal that the update was successful
 touch /root/.anarchy_updated
