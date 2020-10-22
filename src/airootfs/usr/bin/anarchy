@@ -19,6 +19,8 @@ start_menu() {
 				"Start" "Start the installation" \
 				"Exit" "Exit the installer and be dropped into a shell" 3>&1 1>&2 2>&3)"
 
+		log "Start menu: chose to ${menu_choice}"
+
 		case "${menu_choice}" in
 			Update)
 				if ! is_online; then
@@ -33,10 +35,11 @@ start_menu() {
 				#./anarchy-update &
 
 				# Update arch packages and keyring
-				pacman-key --keyserver hkp://keyserver.ubuntu.com --init
-				pacman-key --keyserver hkp://keyserver.ubuntu.com --populate archlinux
-				pacman-key --keyserver hkp://keyserver.ubuntu.com --refresh-keys
-				pacman -Sy --noconfirm
+				log "Updating pacman keys"
+				pacman-key --keyserver hkp://keyserver.ubuntu.com --init 2>&1 | log
+				pacman-key --keyserver hkp://keyserver.ubuntu.com --populate archlinux 2>&1 | log
+				pacman-key --keyserver hkp://keyserver.ubuntu.com --refresh-keys 2>&1 | log
+				pacman -Sy --noconfirm 2>&1 | log
 				touch /root/.anarchy_updated
 				;;
 			Start) touch /root/.anarchy_updated ;; # Pretend user has updated
@@ -65,7 +68,6 @@ dialog() {
 usage() {
 	echo 'Usage: anarchy [option]'
 	echo '    -h | --help      Show this message'
-	#echo '    -u | --update    Update Anarchy'
 }
 
 init() {
@@ -113,7 +115,6 @@ if [ $# -eq 0 ]; then
 else
 	case "$1" in
 		-h|--help) usage ;;
-		#-u|--update) anarchy-update ;;
 		*) usage; exit 1 ;;
 	esac
 fi
