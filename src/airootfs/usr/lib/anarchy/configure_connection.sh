@@ -15,6 +15,8 @@
 ### License: GPL v2.0
 ###############################################################
 
+. libanarchy.sh
+
 update_mirrors() {
 
 #    op_title="$welcome_op_msg"

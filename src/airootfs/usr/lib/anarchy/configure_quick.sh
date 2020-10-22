@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+. libanarchy.sh
+
 quick_install() {
 	case "${install_opt}" in
 	Anarchy-Desktop)

@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # Copyright (C) 2017 Dylan Schacht
 
+. libanarchy.sh
+
 grub_config() {
 	if "${crypted}"; then
 		sed -i 's!quiet!cryptdevice=/dev/lvm/lvroot:root root=/dev/mapper/root!' "${ARCH}"/etc/default/grub

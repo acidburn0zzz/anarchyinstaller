@@ -15,6 +15,8 @@
 ### License: GPL v2.0
 ###############################################################
 
+. libanarchy.sh
+
 language() {
 
     echo "$(date -u "+%F %H:%M") : Start anarchy installer" > "${log}"

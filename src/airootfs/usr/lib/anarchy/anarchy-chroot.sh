@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # Copyright (C) 2017 Dylan Schacht
 
+. libanarchy.sh
+
 anarchy_chroot() {
 	local char=
 	local input=

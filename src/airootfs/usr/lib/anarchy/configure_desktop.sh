@@ -15,6 +15,8 @@
 ### License: GPL v2.0
 ###############################################################
 
+. libanarchy.sh
+
 graphics() {
 
     op_title="$de_op_msg"

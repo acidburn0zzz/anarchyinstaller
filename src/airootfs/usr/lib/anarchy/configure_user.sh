@@ -15,6 +15,8 @@
 ### License: GPL v2.0
 ###############################################################
 
+. libanarchy.sh
+
 set_user() {
 
     while (true)	# Begin user menu while loop

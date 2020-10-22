@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # Copyright (C) 2017 Dylan Schacht
 
+. libanarchy.sh
+
 set_keys() {
 	op_title="${key_op_msg}"
 	while (true); do

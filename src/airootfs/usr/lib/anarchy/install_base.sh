@@ -15,6 +15,8 @@
 ### License: GPL v2.0
 ###############################################################
 
+. libanarchy.sh
+
 install_base() {
 
     op_title="$install_op_msg"

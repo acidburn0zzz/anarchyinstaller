@@ -1,6 +1,8 @@
 #!/bin/sh
 # Copyright (C) 2017 Dylan Schacht
 
+. libanarchy.sh
+
 reboot_system() {
 	op_title="${complete_op_msg}"
 	# Check if system is installed

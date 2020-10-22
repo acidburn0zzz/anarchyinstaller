@@ -15,6 +15,8 @@
 ### License: GPL v2.0
 ###############################################################
 
+. libanarchy.sh
+
 prepare_drives() {
 
     op_title="$part_op_msg"

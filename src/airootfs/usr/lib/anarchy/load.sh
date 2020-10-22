@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # Copyright (C) 2017 Dylan Schacht
 
+. libanarchy.sh
+
 cal_rate() {
 	case "${connection_rate}" in
 		KB/s)
