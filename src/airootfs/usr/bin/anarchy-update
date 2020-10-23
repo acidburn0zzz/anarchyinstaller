@@ -1,11 +1,11 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # Updates Anarchy's scripts and the Arch Linux keyring
 
 . libanarchy.sh
 . /etc/anarchy.conf
 
 if ! is_online; then
-	wifi-menu -o
+  wifi-menu -o
 fi
 
 tmp_dir="$(mktemp -d)"

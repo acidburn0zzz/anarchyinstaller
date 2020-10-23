@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 REPO_DIR="$(pwd)"
 ARCHISO_DIR=/usr/share/archiso/configs/releng
