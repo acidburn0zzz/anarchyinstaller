@@ -1,0 +1,122 @@
+#!/usr/bin/env bash
+
+auto_encrypt() {
+  op_title="${partload_op_msg}"
+  if (yesno "\n${encrypt_var0}" "${yes}" "${no}" 1); then
+    while [ "${input}" != "${input_chk}" ]; do
+      input=$(dialog --nocancel --clear --insecure --passwordbox "${encrypt_var1}" 12 55 --stdout)
+      input_chk=$(dialog --nocancel --clear --insecure --passwordbox "${encrypt_var2}" 12 55 --stdout)
+
+      if [ -z "${input}" ]; then
+        msg "\n${passwd_msg0}"
+        input_chk=default
+      elif [ "${input}" != "${input_chk}" ]; then
+        msg "\n${passwd_msg1}"
+      fi
+    done
+  else
+    return
+  fi
+
+  if "${GPT}"; then
+    if "${UEFI}"; then
+      echo -e "n\n\n\n512M\nef00\nn\n\n\n\n\nw\ny" | gdisk /dev/"${DRIVE}" &>/dev/null &
+      pid=$! pri=0.1 msg="\n${load_var0} \n\n \Z1> \Z2gdisk /dev/${DRIVE}\Zn" load
+      BOOT="${DRIVE}${PART_PREFIX}1"
+      ROOT="${DRIVE}${PART_PREFIX}2"
+    else
+      echo -e "o\ny\nn\n1\n\n+512M\n\nn\n2\n\n+1M\nEF02\nn\n3\n\n\n\nw\ny" | gdisk /dev/"${DRIVE}" &>/dev/null &
+      pid=$! pri=0.1 msg="\n${load_var0} \n\n \Z1> \Z2gdisk /dev/${DRIVE}\Zn" load
+      BOOT="${DRIVE}${PART_PREFIX}1"
+      ROOT="${DRIVE}${PART_PREFIX}3"
+    fi
+  else
+    echo -e "o\nn\np\n1\n\n+512M\nn\np\n2\n\n\nw" | fdisk /dev/"${DRIVE}" &>/dev/null &
+    pid=$! pri=0.1 msg="\n${load_var0} \n\n \Z1> \Z2fdisk /dev/${DRIVE}\Zn" load
+    BOOT="${DRIVE}${PART_PREFIX}1"
+    ROOT="${DRIVE}${PART_PREFIX}2"
+  fi
+
+  echo "$(date -u "+%F %H:%M") : Create boot partition: ${BOOT}" >>"${log}"
+  echo "$(date -u "+%F %H:%M") : Create root partition: ${ROOT}" >>"${log}"
+  (
+    sgdisk --zap-all /dev/"${ROOT}"
+    sgdisk --zap-all /dev/"${BOOT}"
+    wipefs -a /dev/"${ROOT}"
+    wipefs -a /dev/"${BOOT}"
+  ) &>/dev/null &
+  pid=$! pri=0.1 msg="\n${frmt_load} \n\n \Z1> \Z2wipefs -a /dev/${ROOT}\Zn" load
+  echo "$(date -u "+%F %H:%M") : Wipe boot partition" >>"${log}"
+  echo "$(date -u "+%F %H:%M") : Wipe root partition" >>"${log}"
+
+  (
+    lvm pvcreate /dev/"${ROOT}"
+    lvm vgcreate lvm /dev/"${ROOT}"
+  ) &>/dev/null &
+  pid=$! pri=0.1 msg="\n${pv_load} \n\n \Z1> \Z2lvm pvcreate /dev/${ROOT}\Zn" load
+  echo "$(date -u "+%F %H:%M") : Create physical root volume: /dev/${ROOT}" >>"${log}"
+
+  if "${SWAP}"; then
+    lvm lvcreate -L "${SWAPSPACE}M" -n swap lvm &>/dev/null &
+    pid=$! pri=0.1 msg="\n${swap_load} \n\n \Z1> \Z2lvm lvcreate -L ${SWAPSPACE}M -n swap lvm\Zn" load
+    echo "$(date -u "+%F %H:%M") : Create logical swapspace" >>"${log}"
+  fi
+
+  (
+    lvm lvcreate -L 500M -n tmp lvm
+    lvm lvcreate -l 100%FREE -n lvroot lvm
+  ) &>/dev/null &
+  pid=$! pri=0.1 msg="\n${lv_load} \n\n \Z1> \Z2lvm lvcreate -l 100%FREE -n lvroot lvm\Zn" load
+  echo "$(date -u "+%F %H:%M") : Create logical root volume: lvroot" >>"${log}"
+  echo "$(date -u "+%F %H:%M") : Create logical tmp filesystem: tmp" >>"${log}"
+
+  (
+    printf "%s" "${input}" | cryptsetup luksFormat -c aes-xts-plain64 -s 512 /dev/lvm/lvroot -
+    printf "%s" "${input}" | cryptsetup open --type luks /dev/lvm/lvroot root -
+  ) &>/dev/null &
+  pid=$! pri=0.2 msg="\n${encrypt_load} \n\n \Z1> \Z2cryptsetup luksFormat -c aes-xts-plain64 -s 512 /dev/lvm/lvroot\Zn" load
+  echo "$(date -u "+%F %H:%M") : Encrypt logical volume: lvroot" >>"${log}"
+  unset input input_chk
+  input_chk=default
+  wipefs -a /dev/mapper/root &>/dev/null
+
+  case "${FS}" in
+  jfs | reiserfs)
+    echo -e "y" | mkfs."${FS}" /dev/mapper/root &>/dev/null &
+    ;;
+  *)
+    mkfs."${FS}" /dev/mapper/root &>/dev/null &
+    ;;
+  esac
+  pid=$! pri=1 msg="\n${load_var1} \n\n \Z1> \Z2mkfs.${FS} /dev/mapper/root\Zn" load
+  echo "$(date -u "+%F %H:%M") : Create root filesystem: ${FS}" >>"${log}"
+
+  if "${UEFI}"; then
+    mkfs.vfat -F32 /dev/"${BOOT}" &>/dev/null &
+    pid=$! pri=0.2 msg="\n${efi_load1} \n\n \Z1> \Z2mkfs.vfat -F32 /dev/${BOOT}\Zn" load
+    esp_part="/dev/${BOOT}"
+    esp_mnt=/boot
+    echo "$(date -u "+%F %H:%M") : Create boot filesystem: vfat" >>"${log}"
+  else
+    mkfs.ext4 -O \^64bit /dev/"${BOOT}" &>/dev/null &
+    pid=$! pri=0.2 msg="\n${boot_load} \n\n \Z1> \Z2mkfs.ext4 /dev/${BOOT}\Zn" load
+    echo "$(date -u "+%F %H:%M") : Create boot filesystem: ext4" >>"${log}"
+  fi
+
+  (
+    mount /dev/mapper/root "${ARCH}"
+    echo "$?" >/tmp/ex_status.var
+    mkdir "${ARCH}"/boot
+    mount /dev/"${BOOT}" "${ARCH}"/boot
+  ) &>/dev/null &
+  pid=$! pri=0.1 msg="\n${mnt_load} \n\n \Z1> \Z2mount /dev/mapper/root ${ARCH}\Zn" load
+  echo "$(date -u "+%F %H:%M") : Mount root filesystem: ${ARCH}" >>"${log}"
+  echo "$(date -u "+%F %H:%M") : Mount boot filesystem: ${ARCH}/boot" >>"${log}"
+
+  if [ "$(</tmp/ex_status.var)" -eq "0" ]; then
+    mounted=true
+    crypted=true
+  fi
+
+  rm /tmp/ex_status.var
+}
