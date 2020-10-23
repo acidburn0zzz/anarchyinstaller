@@ -7,101 +7,101 @@
 
 # Starts on bootup
 start_menu() {
-	# Only run if the start menu hasn't been run already
-	if [ ! -f /root/.anarchy_updated ]; then
-		dialog --clear \
-				--title 'About Anarchy Installer' \
-				--msgbox "\n${start_menu_msg}\n\n${start_menu_social}" 18 80
+  # Only run if the start menu hasn't been run already
+  if [ ! -f /root/.anarchy_updated ]; then
+    dialog --clear \
+      --title 'About Anarchy Installer' \
+      --msgbox "\n${start_menu_msg}\n\n${start_menu_social}" 18 80
 
-		# Ask the user what they want to do, default to updating anarchy
-		menu_choice="$(dialog --menu "What do you want to do?" 18 80 5 \
-				"Update" "Update anarchy and start the installation" \
-				"Start" "Start the installation" \
-				"Exit" "Exit the installer and be dropped into a shell" 3>&1 1>&2 2>&3)"
+    # Ask the user what they want to do, default to updating anarchy
+    menu_choice="$(dialog --menu "What do you want to do?" 18 80 5 \
+      "Update" "Update anarchy and start the installation" \
+      "Start" "Start the installation" \
+      "Exit" "Exit the installer and be dropped into a shell" 3>&1 1>&2 2>&3)"
 
-		log "Start menu: chose to ${menu_choice}"
+    log "Start menu: chose to ${menu_choice}"
 
-		case "${menu_choice}" in
-			Update)
-				if ! is_online; then
-					wifi-menu -o
-				fi
+    case "${menu_choice}" in
+    Update)
+      if ! is_online; then
+        wifi-menu -o
+      fi
 
-				# Download and run the update script
-				#tmp_dir="$(mktemp -d)"
-				#cd "${tmp_dir}" || exit
-				#curl -O https://gitlab.com/anarchyinstaller/installer/-/raw/add-start-menu/src/airootfs/usr/bin/anarchy-update
-				#chmod +x anarchy-update
-				#./anarchy-update &
+      # Download and run the update script
+      #tmp_dir="$(mktemp -d)"
+      #cd "${tmp_dir}" || exit
+      #curl -O https://gitlab.com/anarchyinstaller/installer/-/raw/add-start-menu/src/airootfs/usr/bin/anarchy-update
+      #chmod +x anarchy-update
+      #./anarchy-update &
 
-				# Update arch packages and keyring
-				log "Updating pacman keys"
-				pacman-key --keyserver hkp://keyserver.ubuntu.com --init 2>&1 | log
-				pacman-key --keyserver hkp://keyserver.ubuntu.com --populate archlinux 2>&1 | log
-				pacman-key --keyserver hkp://keyserver.ubuntu.com --refresh-keys 2>&1 | log
-				pacman -Sy --noconfirm 2>&1 | log
-				touch /root/.anarchy_updated
-				;;
-			Start) touch /root/.anarchy_updated ;; # Pretend user has updated
-			Exit) exit ;;
-		esac
-	fi
+      # Update arch packages and keyring
+      log "Updating pacman keys"
+      pacman-key --keyserver hkp://keyserver.ubuntu.com --init 2>&1 | log
+      pacman-key --keyserver hkp://keyserver.ubuntu.com --populate archlinux 2>&1 | log
+      pacman-key --keyserver hkp://keyserver.ubuntu.com --refresh-keys 2>&1 | log
+      pacman -Sy --noconfirm 2>&1 | log
+      touch /root/.anarchy_updated
+      ;;
+    Start) touch /root/.anarchy_updated ;; # Pretend user has updated
+    Exit) exit ;;
+    esac
+  fi
 }
 
 dialog() {
-	# If terminal height is more than 25 lines add extra info at the top
-	if "${screen_h}" ; then
-		if "${LAPTOP}" ; then
-			# Show battery charge next to Anarchy heading
-			backtitle="${backtitle} $(acpi)"
-		fi
+  # If terminal height is more than 25 lines add extra info at the top
+  if "${screen_h}"; then
+    if "${LAPTOP}"; then
+      # Show battery charge next to Anarchy heading
+      backtitle="${backtitle} $(acpi)"
+    fi
 
-		# op_title is the current menu title
-		/usr/bin/dialog --colors --backtitle "${backtitle}" \
-				--title "${op_title}" "$@"
-	else
-		# title is the main title (Anarchy)
-		/usr/bin/dialog --colors --title "${title}" "$@"
-	fi
+    # op_title is the current menu title
+    /usr/bin/dialog --colors --backtitle "${backtitle}" \
+      --title "${op_title}" "$@"
+  else
+    # title is the main title (Anarchy)
+    /usr/bin/dialog --colors --title "${title}" "$@"
+  fi
 }
 
 init() {
-	# Prevents the installer from exiting if Ctrl-C is pressed
-	trap '' 2
+  # Prevents the installer from exiting if Ctrl-C is pressed
+  trap '' 2
 
-	anarchy_directory='/usr/share/anarchy'
+  anarchy_directory='/usr/share/anarchy'
 
-	for library in /usr/lib/anarchy/*; do
-		. "${library}"
-	done
+  for library in /usr/lib/anarchy/*; do
+    . "${library}"
+  done
 
-	language
-	. "${lang_file}"
-	export reload=true
+  language
+  . "${lang_file}"
+  export reload=true
 }
 
 main() {
-	if [ "$(id -u)" -ne 0 ]; then
-		echo "Error: $0 requires root privileges"
-		echo "    Use: sudo $0"
-		exit 1
-	fi
+  if [ "$(id -u)" -ne 0 ]; then
+    echo "Error: $0 requires root privileges"
+    echo "    Use: sudo $0"
+    exit 1
+  fi
 
-	start_menu
-	set_keys
-	update_mirrors
-	check_connection
-	set_locale
-	set_zone
-	prepare_drives
-	install_options
-	set_hostname
-	set_user
-	add_software
-	install_base
-	configure_system
-	add_user
-	reboot_system
+  start_menu
+  set_keys
+  update_mirrors
+  check_connection
+  set_locale
+  set_zone
+  prepare_drives
+  install_options
+  set_hostname
+  set_user
+  add_software
+  install_base
+  configure_system
+  add_user
+  reboot_system
 }
 
 init
