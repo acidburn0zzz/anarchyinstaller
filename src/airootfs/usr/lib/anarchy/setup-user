@@ -266,7 +266,7 @@ add_user() {
     fi
 
     input="$(echo "${pass_crypt}" | openssl enc -aes-256-cbc -a -d -salt -pbkdf2 -iter 1000 -pass pass:"${ssl_key}")"
-    (printf "%s\n%s" "${input}" "${input}" | arch-chroot "${ARCH}" passwd "${user}") &>/dev/null &
+    (printf "${input}\n${input}" | arch-chroot "${ARCH}" passwd "${user}") &>/dev/null &
     pid=$! pri=0.1 msg="${wait_load} \n\n \Z1> \Z2passwd ${user}\Zn" load
     unset input
     echo "$(date -u "+%F %H:%M") : Password set: ${user}" >>"${log}"
@@ -289,7 +289,7 @@ add_user() {
       fi
 
       input="$(cut <<<"${i}" -d: -f5 | openssl enc -aes-256-cbc -a -d -salt -pbkdf2 -iter 1000 -pass pass:"${ssl_key}")"
-      (printf "%s\n%s" "${input}" "${input}" | arch-chroot "${ARCH}" passwd "$(cut <<<"${i}" -d: -f1)") &>/dev/null &
+      (printf "${input}\n${input}" | arch-chroot "${ARCH}" passwd "$(cut <<<"${i}" -d: -f1)") &>/dev/null &
       pid=$! pri=0.1 msg="${wait_load} \n\n \Z1> \Z2passwd $(cut <<<"${i}" -d: -f1)\Zn" load
       unset input
       echo "$(date -u "+%F %H:%M") : Password set: $(cut <<<"${i}" -d: -f1)" >>"${log}"
