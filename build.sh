@@ -50,7 +50,7 @@ check_deps() {
       exit
       ;;
     *)
-      pacman -Sy --noconfirm mkarchiso-archiso
+      pacman -Sy --noconfirm mkinitcpio-archiso
       ;;
     esac
   fi
