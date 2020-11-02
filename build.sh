@@ -112,7 +112,7 @@ ssh_config() {
 geniso() {
   echo "Generating iso"
   cd "${REPO_DIR}" || exit
-  mkarchiso -v -c zstd "${PROFILE_DIR}" || exit
+  mkarchiso -v "${PROFILE_DIR}" || exit
 }
 
 checksum_gen() {
