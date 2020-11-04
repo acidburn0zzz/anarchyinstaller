@@ -5,11 +5,17 @@ set_user() {
   while (true); do # Begin user menu while loop
     op_title="${user_op_msg}"
     # Create main user dialog menu from users in ${tmp_passwd} include root user
-    user="$(dialog --extra-button --extra-label "${edit}" --ok-button "${new_user}" --cancel-button "${done_msg}" --menu "${user_menu_msg}" 13 55 4 \
-      "$(while IFS= read -r i; do
-        echo "$i $(cut <"${tmp_passwd}" -d: -f1,2 | grep -w "$i" | cut -d: -f2)"
-      done <<<"$(sort "${tmp_passwd}" | cut -d: -f1)")" \
-      "root" "${root_sh}" 3>&1 1>&2 2>&3)"
+    user=$(dialog --extra-button \
+      --extra-label "${edit}" \
+      --ok-button "${new_user}" \
+      --cancel-button "${done_msg}" \
+      --menu "${user_menu_msg}" 13 55 4 \
+            $(while IFS= read -r i ; do
+                echo "$i $(<"${tmp_passwd}" cut -d: -f1,2 | grep -w $i | cut -d: -f2)"
+            done <<<"$(sort "${tmp_passwd}" | cut -d: -f1)") \
+            "root" "${root_sh}" 3>&1 1>&2 2>&3)
+
+
 
     # Check exit status of main user dialog menu
     case "$?" in
