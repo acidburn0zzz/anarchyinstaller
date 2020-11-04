@@ -23,36 +23,9 @@ check_root() {
 check_deps() {
   echo "Checking dependencies"
 
-  if ! pacman -Qi archiso >/dev/null 2>&1; then
-    echo "'archiso' is not installed, but is required by $0, do you want to install it?"
-    echo "Install [Y/n]: "
-    read -r ans
-
-    case "${ans}" in
-    n | N | no | NO | No | nO)
-      echo "Not installing 'archiso', exiting"
-      exit
-      ;;
-    *)
-      pacman -Sy --noconfirm archiso
-      ;;
-    esac
-  fi
-
-  if ! pacman -Qi mkinitcpio-archiso >/dev/null 2>&1; then
-    echo "'mkinitcpio-archiso' is not installed, but is required by $0, do you want to install it?"
-    echo "Install [Y/n]: "
-    read -r ans
-
-    case "${ans}" in
-    n | N | no | NO | No | nO)
-      echo "Not installing 'mkinitcpio-archiso', exiting"
-      exit
-      ;;
-    *)
-      pacman -Sy --noconfirm mkinitcpio-archiso
-      ;;
-    esac
+  if ! pacman -Qi archiso >/dev/null 2>&1 || ! pacman -Qi mkinitcpio-archiso >/dev/null 2>&1; then
+    echo "archiso and or mkinitcpio-archiso are not installed, installing"
+    pacman -Sy --noconfirm archiso mkinitcpio-archiso
   fi
 }
 
