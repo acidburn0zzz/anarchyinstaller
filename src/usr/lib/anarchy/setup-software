@@ -493,7 +493,7 @@ add_software() {
           download_list=$(echo "${download}" | sed -e 's/^[ \t]*//')
 
           if ! "${menu_enter}"; then
-            echo "$(date -u "+%F %H:%M") : Add software list: ${download}" >>"${log}"
+            log "Add software list: ${download}"
             base_install+="${download_list} "
             unset final_software
             break
@@ -515,10 +515,10 @@ add_software() {
             fi
 
             if (yesno "\n${software_confirm_var1}" "${install}" "${cancel}"); then
-              arch-chroot "${ARCH}" pacman --noconfirm -Sy archlinux-keyring &>>"${log}" &
-              arch-chroot "${ARCH}" pacman --noconfirm -Sy "${download}" &>>"${log}" &
+              arch-chroot "${ARCH}" pacman --noconfirm -Sy archlinux-keyring | log &
+              arch-chroot "${ARCH}" pacman --noconfirm -Sy "${download}" | log &
               pid=$! pri=$(sed <<<"${down}" 's/\..*$//') msg="\n${software_load_var}" load_log
-              echo "$(date -u "+%F %H:%M") : Finished installing software" >>"${log}"
+              log "Finished installing software"
               unset final_software
               break
             else

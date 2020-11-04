@@ -61,7 +61,7 @@ reboot_system() {
         ;;
       "${reboot4}") # Show install log
         clear
-        less "${log}" clear
+        less "${LOG_FILE}" clear
         ;;
       esac
     done

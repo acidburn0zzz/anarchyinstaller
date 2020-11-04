@@ -420,5 +420,5 @@ config_env() {
     ;;
   esac
 
-  echo "$(date -u "+%F %H:%M") : Configured: ${config_env}" >>"${log}"
+  log "Configured: ${config_env}"
 }

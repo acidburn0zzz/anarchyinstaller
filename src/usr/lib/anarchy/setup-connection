@@ -13,13 +13,13 @@ update_mirrors() {
         wifi-menu
         if [ "$?" -gt "0" ]; then
           msg "\n${wifi_msg1}"
-          echo "$(date -u "+%F %H:%M") : Failed to connect to wifi: Exit 1" >>"${log}"
+          log "Failed to connect to wifi: Exit 1"
           setterm -background black -store
           reset
           echo "${connect_err1}" | sed 's/\\Z1//;s/\\Zn//'
           exit 1
         else
-          echo "$(date -u "+%F %H:%M") : Connected to: ${wifi_network}" >>"${log}"
+          log "Connected to: ${wifi_network}"
           OnLine=true
         fi
       else
@@ -27,7 +27,7 @@ update_mirrors() {
       fi
     else
       msg "\n${connect_err0}"
-      echo "$(date -u "+%F %H:%M") : Failed to connect to network: Exit 1" >>"${log}"
+      log "Failed to connect to network: Exit 1"
       setterm -background black -store
       reset
       echo -e "${connect_err1}" | sed 's/\\Z1//;s/\\Zn//'
@@ -80,13 +80,13 @@ update_mirrors() {
       pid=$! pri=0.1 msg="\n$mirror_load0 \n\n \Z1> \Z2curl ${mirror_url}\Zn" load
 
       if (grep "Server" /etc/pacman.d/mirrorlist.bak &>/dev/null); then
-        echo "$(date -u "+%F %H:%M") : Updated Mirrors From: ${code}" >>"${log}"
+        log "Updated Mirrors From: ${code}"
         sed -i 's/#//' /etc/pacman.d/mirrorlist.bak
         rankmirrors -n 6 /etc/pacman.d/mirrorlist.bak >/etc/pacman.d/mirrorlist &
         pid=$! pri=0.8 msg="\n${mirror_load1} \n\n \Z1> \Z2rankmirrors -n 6 /etc/pacman.d/mirrorlist\Zn" load
       else
         msg "\n${connect_err0}"
-        echo "$(date -u "+%F %H:%M") : Failed to connect to wifi: Exit 1" >>"${log}"
+        log "Failed to connect to wifi: Exit 1"
         setterm -background black -store
         reset
         echo -e "${connect_err1}" | sed 's/\\Z1//;s/\\Zn//'
@@ -148,7 +148,7 @@ check_connection() {
   esac
 
   export connection_speed connection_rate cpu_sleep
-  echo "$(date -u "+%F %H:%M") : Ranked connection speed: ${connection_speed} ${connection_rate}" >>"${log}"
-  echo "$(date -u "+%F %H:%M") : Clocked CPU MHz: ${cpu_mhz}" >>"${log}"
+  log "Ranked connection speed: ${connection_speed} ${connection_rate}"
+  log "Clocked CPU MHz: ${cpu_mhz}"
   rm /tmp/wget.log &>/dev/null
 }

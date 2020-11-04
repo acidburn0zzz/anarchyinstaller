@@ -24,7 +24,7 @@ install_base() {
 
   until "${INSTALLED}"; do
     if (yesno "\n${install_var}" "${install}" "${cancel}"); then
-      echo "$(date -u "+%F %H:%M") : Begin base install" >>"${log}"
+      log "Begin base install"
 
       if [ "${kernel}" == "linux" ]; then
         base_install="$(pacman -Sqg base linux) ${base_install}"
@@ -35,20 +35,18 @@ install_base() {
       (
         pacstrap "${ARCH}" --overwrite $(echo "${base_install}")
         echo "$?" >/tmp/ex_status
-      ) &>>"${log}" &
+      ) | log &
       pid=$! pri=$(echo "${down}" | sed 's/\..*$//') msg="\n${install_load_var}" load_log
 
       genfstab -U -p "${ARCH}" >>"${ARCH}"/etc/fstab
 
       if [ "$(</tmp/ex_status)" -eq "0" ]; then
         INSTALLED=true
-        echo "$(date -u "+%F %H:%M") : Install Complete" >>"${log}"
-        echo "$(date -u "+%F %H:%M") : Generate fstab:\n$(<${ARCH}/etc/fstab)" >>"${log}"
+        log "Install Complete"
+        log "Generate fstab:\n$(<${ARCH}/etc/fstab)"
       else
         msg "\n${failed_msg}"
-        echo "$(date -u "+%F %H:%M") : Install failed: please report to developer" >>"${log}"
-        reset
-        tail "${log}"
+        log "Install failed: please report to developer"
         exit 1
       fi
 
@@ -60,7 +58,7 @@ install_base() {
       refind) refind_config ;;
       esac
 
-      echo "$(date -u "+%F %H:%M") : Configured bootloader: ${bootloader}" >>"${log}"
+      log "Configured bootloader: ${bootloader}"
     else
       if (yesno "\n${exit_msg}" "${yes}" "${no}"); then
         unset base_install DE
@@ -286,12 +284,12 @@ prepare_base() {
 
   if (yesno "\n\n${multilib_msg}" "${yes}" "${no}"); then
     multilib=true
-    echo "$(date -u "+%F %H:%M") : Include multilib" >>"${log}"
+    log "Include multilib repository"
   fi
 
   if (yesno "\n\n${dhcp_msg}" "${yes}" "${no}"); then
     dhcp=true
-    echo "$(date -u "+%F %H:%M") : Enable dhcp" >>"${log}"
+    log "Enable dhcp"
   fi
 
   if "${wifi}"; then

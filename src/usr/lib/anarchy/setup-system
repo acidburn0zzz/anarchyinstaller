@@ -46,7 +46,7 @@ configure_system() {
       pid=$! pri=1 msg="\n${kernel_config_load} \n\n \Z1> \Z2mkinitcpio -p ${kernel}\Zn" load
     fi
 
-    echo "$(date -u "+%F %H:%M") : Enable nvidia drm" >>"${log}"
+    log "Enable nvidia drm"
   fi
 
   if "${enable_f2fs}"; then
@@ -55,7 +55,7 @@ configure_system() {
       arch-chroot "${ARCH}" mkinitcpio -p "${kernel}" &>/dev/null &
       pid=$! pri=1 msg="\n${f2fs_config_load} \n\n \Z1> \Z2mkinitcpio -p ${kernel}\Zn" load
     fi
-    echo "$(date -u "+%F %H:%M") : Configure system for f2fs" >>"${log}"
+    log "Configure system for f2fs"
   fi
 
   if "${enable_xfs}"; then
@@ -64,7 +64,7 @@ configure_system() {
       arch-chroot "${ARCH}" mkinitcpio -p "${kernel}" &>/dev/null &
       pid=$! pri=1 msg="\n${xfs_config_load} \n\n \Z1> \Z2mkinitcpio -p ${kernel}\Zn" load
     fi
-    echo "$(date -u "+%F %H:%M") : Configure system for xfs" >>"${log}"
+    log "Configure system for xfs"
   fi
 
   if (egrep <<<"${BOOT}" "nvme.*" &>/dev/null); then
@@ -73,7 +73,7 @@ configure_system() {
       arch-chroot "${ARCH}" mkinitcpio -p "${kernel}" &>/dev/null &
       pid=$! pri=1 msg="\n${kernel_config_load} \n\n \Z1> \Z2mkinitcpio -p ${kernel}\Zn" load
     fi
-    echo "$(date -u "+%F %H:%M") : Configure system for nvme" >>"${log}"
+    log "Configure system for nvme"
   fi
 
   if "${crypted}" && "${UEFI}"; then
@@ -95,14 +95,14 @@ configure_system() {
       arch-chroot "${ARCH}" mkinitcpio -p "${kernel}"
     ) &>/dev/null &
     pid=$! pri=1 msg="\n${encrypt_load1} \n\n \Z1> \Z2mkinitcpio -p ${kernel}\Zn" load
-    echo "$(date -u "+%F %H:%M") : Configure system for encryption" >>"${log}"
+    log "Configure system for encryption"
   else
     (
       sed -i 's/HOOKS=.*/HOOKS="base udev autodetect keyboard keymap consolefont modconf block lvm2 filesystems fsck"/' "${ARCH}"/etc/mkinitcpio.conf
       arch-chroot "${ARCH}" mkinitcpio -p "${kernel}"
     ) &>/dev/null &
     pid=$! pri=1 msg="\n${kernel_config_load} \n\n \Z1> \Z2mkinitcpio -p ${kernel}\Zn" load
-    echo "$(date -u "+%F %H:%M") : Configure system with the default mkinitcpio hooks" >>"${log}"
+    log "Configure system with the default mkinitcpio hooks"
   fi
 
   (
@@ -111,7 +111,7 @@ configure_system() {
     arch-chroot "${ARCH}" locale-gen
   ) &>/dev/null &
   pid=$! pri=0.1 msg="\n${locale_load_var} \n\n \Z1> \Z2LANG=${LOCALE} ; locale-gen\Zn" load
-  echo "$(date -u "+%F %H:%M") : Set system locale: ${LOCALE}" >>"${log}"
+  log "Set system locale: ${LOCALE}"
 
   if [ "${keyboard}" != "${default}" ]; then
     echo "KEYMAP=${keyboard}" >"${ARCH}"/etc/vconsole.conf
@@ -119,7 +119,7 @@ configure_system() {
       echo -e "Section \"InputClass\"\nIdentifier \"system-keyboard\"\nMatchIsKeyboard \"on\"\nOption \"XkbLayout\" \"${keyboard}\"\nEndSection" >"${ARCH}"/etc/X11/xorg.conf.d/00-keyboard.conf
       arch-chroot "${ARCH}" localectl set-x11-keymap "${keyboard}" &>/dev/null
     fi
-    echo "$(date -u "+%F %H:%M") : Set system keymap: ${keyboard}" >>"${log}"
+    log "Set system keymap: ${keyboard}"
   fi
 
   (
@@ -127,25 +127,25 @@ configure_system() {
     sleep 0.5
   ) &
   pid=$! pri=0.1 msg="\n${zone_load_var} \n\n \Z1> \Z2ln -sf ${ZONE} /etc/localtime\Zn" load
-  echo "$(date -u "+%F %H:%M") : Set system timezone: ${ZONE}" >>"${log}"
+  log "Set system timezone: ${ZONE}"
 
   case "${net_util}" in
   networkmanager)
     arch-chroot "${ARCH}" systemctl enable NetworkManager.service &>/dev/null
     pid=$! pri=0.1 msg="\n${nwmanager_msg0} \n\n \Z1> \Z2systemctl enable NetworkManager.service\Zn" load
-    echo "$(date -u "+%F %H:%M") : Enable networkmanager" >>"${log}"
+    log "Enable NetworkManager.service"
     ;;
   netctl)
     arch-chroot "${ARCH}" systemctl enable netctl.service &>/dev/null &
     pid=$! pri=0.1 msg="\n${nwmanager_msg1} \n\n \Z1> \Z2systemctl enable netctl.service\Zn" load
-    echo "$(date -u "+%F %H:%M") : Enable netctl" >>"${log}"
+    log "Enable netctl.service"
     ;;
   esac
 
   if "${enable_bt}"; then
     arch-chroot "${ARCH}" systemctl enable bluetooth &>/dev/null &
     pid=$! pri=0.1 msg="\n${btenable_msg} \n\n \Z1> \Z2systemctl enable bluetooth.service\Zn" load
-    echo "$(date -u "+%F %H:%M") : Enable bluetooth" >>"${log}"
+    log "Enable bluetooth"
   fi
 
   if "${desktop}"; then
@@ -155,14 +155,14 @@ configure_system() {
     else
       echo "${start_term}" >"${ARCH}"/etc/skel/.xinitrc
       echo "${start_term}" >"${ARCH}"/root/.xinitrc
-      echo "$(date -u "+%F %H:%M") : Create xinitrc: ${start_term}" >>"${log}"
+      log "Create xinitrc: ${start_term}"
     fi
   fi
 
   if "${enable_dm}"; then
     arch-chroot "${ARCH}" systemctl enable "${DM}".service &>/dev/null &
     pid=$! pri="0.1" msg="${wait_load} \n\n \Z1> \Z2systemctl enable ${DM}\Zn" load
-    echo "$(date -u "+%F %H:%M") : Enable ${DM}" >>"${log}"
+    log "Enable ${DM}.service"
   fi
 
   if "${VM}"; then
@@ -170,7 +170,7 @@ configure_system() {
     vbox)
       arch-chroot "${ARCH}" systemctl enable vboxservice.service &>/dev/null &
       pid=$! pri=0.1 msg="\n${vbox_enable_msg} \n\n \Z1> \Z2systemctl enable vboxservice\Zn" load
-      echo "$(date -u "+%F %H:%M") : Enable vboxservice" >>"${log}"
+      log "Enable vboxservice.service"
       ;;
     vmware)
       (
@@ -181,7 +181,7 @@ configure_system() {
         for x in {0..6}; do mkdir -p "${ARCH}"/etc/init.d/rc${x}.d; done
       ) &>/dev/null &
       pid=$! pri=0.1 msg="\n${vbox_enable_msg} \n\n \Z1> \Z2systemctl enable vmtoolsd\Zn" load
-      echo "$(date -u "+%F %H:%M") : Enable vmware" >>"${log}"
+      log "Enable vmtoolsd.service and vmware-vmblock-fuse.service"
       ;;
     esac
   fi
@@ -199,37 +199,37 @@ configure_system() {
     sed -i '/\[multilib]$/ {
         N
         /Include/s/#//g}' "${ARCH}"/etc/pacman.conf
-    echo "$(date -u "+%F %H:%M") : Include multilib" >>"${log}"
+    log "Include multilib"
   fi
 
   if "${dhcp}"; then
     arch-chroot "${ARCH}" systemctl enable dhcpcd.service &>/dev/null &
     pid=$! pri=0.1 msg="\n${dhcp_load} \n\n \Z1> \Z2systemctl enable dhcpcd\Zn" load
-    echo "$(date -u "+%F %H:%M") : Enable dhcp" >>"${log}"
+    log "Enable dhcpcd.service"
   fi
 
   if "${enable_ssh}"; then
     arch-chroot "${ARCH}" systemctl enable sshd.service &>/dev/null &
     pid=$! pri=0.1 msg="\n${ssh_load} \n\n \Z1> \Z2systemctl enable sshd\Zn" load
-    echo "$(date -u "+%F %H:%M") : Enable ssh" >>"${log}"
+    log "Enable sshd.service"
   fi
 
   if "${enable_ftp}"; then
     arch-chroot "${ARCH}" systemctl enable ${ftp}.service &>/dev/null &
     pid=$! pri=0.1 msg="\n${ftp_load} \n\n \Z1> \Z2systemctl enable ${ftp}\Zn" load
-    echo "$(date -u "+%F %H:%M") : Enable ${ftp}" >>"${log}"
+    enable "Enable ${ftp}.service"
   fi
 
   if "${enable_cups}"; then
     arch-chroot "${ARCH}" systemctl enable org.cups.cupsd.service &>/dev/null &
     pid=$! pri=0.1 msg="\n${cups_load} \n\n \Z1> \Z2systemctl enable cups\Zn" load
-    echo "$(date -u "+%F %H:%M") : Enable cups" >>"${log}"
+    log "Enable org.cups.cupsd.service"
   fi
 
   # Enable cpupower
   arch-chroot "${ARCH}" systemctl enable cpupower.service
   pid=$! pri=0.1 msg="\n${cups_load} \n\n \Z1> \Z2systemctl enable cpupower\Zn" load
-  echo "$(date -u "+%F %H:%M") : Enable cpupower" >>"${log}"
+  log "Enable cpupower.service"
 
   if "${enable_http}"; then
     case "${config_http}" in
@@ -248,6 +248,7 @@ configure_system() {
       (
         arch-chroot "${ARCH}" systemctl enable nginx.service
         arch-chroot "${ARCH}" systemctl enable php-fpm.service
+        log "Enable nginx.service and php-fpm.service"
       ) &>/dev/null &
       pid=$! pri=0.1 msg="\n${http_load} \n\n \Z1> \Z2configure LEMP stack\Zn" load
       ;;
@@ -268,7 +269,7 @@ configure_system() {
 
   arch-chroot "${ARCH}" pacman -Sy &>/dev/null &
   pid=$! pri=0.8 msg="\n${pacman_load} \n\n \Z1> \Z2pacman -Sy\Zn" load
-  echo "$(date -u "+%F %H:%M") : Updated pacman databases" >>"${log}"
+  log "Updated pacman databases"
 
   if [ "${sh}" == "/bin/bash" ]; then
     cp "${ARCH}"/etc/skel/.bash_profile "${ARCH}"/root/
@@ -304,7 +305,7 @@ configure_system() {
   sed -i '/^VerbosePkgLists$/ a ILoveCandy' "${ARCH}"/etc/pacman.conf
 
   echo "${hostname}" >"${ARCH}"/etc/hostname
-  echo "$(date -u "+%F %H:%M") : Hostname set: ${hostname}" >>"${log}"
+  log "Set hostname: ${hostname}"
   arch-chroot "${ARCH}" chsh -s "${sh}" &>/dev/null
   input="$(echo "${root_crypt}" | openssl enc -aes-256-cbc -a -d -salt -pbkdf2 -iter 1000 -pass pass:"${ssl_key}")"
   (
@@ -313,5 +314,5 @@ configure_system() {
   ) &>/dev/null &
   pid=$! pri=0.1 msg="${wait_load} \n\n \Z1> \Z2passwd root\Zn" load
   unset input
-  echo "$(date -u "+%F %H:%M") : Password set: root" >>"${log}"
+  log "Set password for root"
 }

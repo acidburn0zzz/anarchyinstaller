@@ -14,7 +14,7 @@ auto_part() {
           swapon /dev/"${SWAP}"
         ) &>/dev/null &
         pid=$! pri=0.1 msg="\n${swap_load} \n\n \Z1> \Z2mkswap /dev/${SWAP}\Zn" load
-        echo "$(date -u "+%F %H:%M") : Created and activate swapspace: ${SWAP}" >>"${log}"
+        log "Created and activate swapspace: ${SWAP}"
       else
         echo -e "n\n\n\n512M\nef00\nn\n\n\n\n\nw\ny" | gdisk /dev/"${DRIVE}" &>/dev/null &
         pid=$! pri=0.1 msg="\n${load_var0} \n\n \Z1> \Z2gdisk /dev/${DRIVE}\Zn" load
@@ -32,7 +32,7 @@ auto_part() {
           swapon /dev/"${SWAP}"
         ) &>/dev/null &
         pid=$! pri=0.1 msg="\n${swap_load} \n\n \Z1> \Z2mkswap /dev/${SWAP}\Zn" load
-        echo "$(date -u "+%F %H:%M") : Created and activate swapspace: ${SWAP}" >>"${log}"
+        log "Created and activate swapspace: ${SWAP}"
       else
         echo -e "o\ny\nn\n1\n\n+212M\n\nn\n2\n\n+1M\nEF02\nn\n3\n\n\n\nw\ny" | gdisk /dev/"${DRIVE}" &>/dev/null &
         pid=$! pri=0.1 msg="\n${load_var0} \n\n \Z1> \Z2gdisk /dev/${DRIVE}\Zn" load
@@ -51,7 +51,7 @@ auto_part() {
         swapon /dev/"${SWAP}"
       ) &>/dev/null &
       pid=$! pri=0.1 msg="\n${swap_load} \n\n \Z1> \Z2mkswap /dev/${SWAP}\Zn" load
-      echo "$(date -u "+%F %H:%M") : Created and activate swapspace: ${SWAP}" >>"${log}"
+      log "Created and activate swapspace: ${SWAP}"
 
     else
       echo -e "o\nn\np\n1\n\n+212M\nn\np\n2\n\n\nw" | fdisk /dev/"${DRIVE}" &>/dev/null &
@@ -61,8 +61,8 @@ auto_part() {
     ROOT="${DRIVE}${PART_PREFIX}2"
   fi
 
-  echo "$(date -u "+%F %H:%M") : Create boot partition: ${BOOT}" >>"${log}"
-  echo "$(date -u "+%F %H:%M") : Create root partition: ${ROOT}" >>"${log}"
+  log "Create boot partition: ${BOOT}"
+  log "Create root partition: ${ROOT}"
 
   if "${UEFI}"; then
     (
@@ -73,9 +73,9 @@ auto_part() {
     pid=$! pri=0.1 msg="\n${efi_load1} \n\n \Z1> \Z2mkfs.vfat -F32 /dev/${BOOT}\Zn" load
     esp_part="${BOOT}"
     esp_mnt=/boot
-    echo "$(date -u "+%F %H:%M") : ESP part set to: ${esp_part}" >>"${log}"
-    echo "$(date -u "+%F %H:%M") : ESP mnt set to: ${esp_mnt}" >>"${log}"
-    echo "$(date -u "+%F %H:%M") : Created boot filesystem: vfat" >>"${log}"
+    log "ESP part set to: ${esp_part}"
+    log "ESP mnt set to: ${esp_mnt}"
+    log "Created boot filesystem: vfat"
   else
     (
       sgdisk --zap-all /dev/"${BOOT}"
@@ -83,8 +83,8 @@ auto_part() {
       mkfs.ext4 -O \^64bit /dev/"${BOOT}"
     ) &>/dev/null &
     pid=$! pri=0.1 msg="\n${boot_load} \n\n \Z1> \Z2mkfs.ext4 /dev/${BOOT}\Zn" load
-    echo "$(date -u "+%F %H:%M") : Boot set to: /boot" >>"${log}"
-    echo "$(date -u "+%F %H:%M") : Created boot filesystem: ext4" >>"${log}"
+    log "Boot set to: /boot"
+    log "Created boot filesystem: ext4"
   fi
 
   case "${FS}" in
@@ -104,7 +104,7 @@ auto_part() {
     ;;
   esac
   pid=$! pri=0.6 msg="\n${load_var1} \n\n \Z1> \Z2mkfs.${FS} /dev/${ROOT}\Zn" load
-  echo "$(date -u "+%F %H:%M") : Create root filesystem: ${FS}" >>"${log}"
+  log "Create root filesystem: ${FS}"
 
   (
     mount /dev/"${ROOT}" "${ARCH}"
@@ -113,8 +113,8 @@ auto_part() {
     mount /dev/"${BOOT}" "${ARCH}"/boot
   ) &>/dev/null &
   pid=$! pri=0.1 msg="\n${mnt_load} \n\n \Z1> \Z2mount /dev/${ROOT} ${ARCH}\Zn" load
-  echo "$(date -u "+%F %H:%M") : Root filesystem mounted: ${ARCH}" >>"${log}"
-  echo "$(date -u "+%F %H:%M") : Boot filesystem mounted: ${ARCH}/boot" >>"${log}"
+  log "Root filesystem mounted: ${ARCH}"
+  log "Boot filesystem mounted: ${ARCH}/boot"
 
   if [ "$(</tmp/ex_status.var)" -eq "0" ]; then
     mounted=true

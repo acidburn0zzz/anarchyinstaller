@@ -33,7 +33,7 @@ set_keys() {
 
   localectl set-keymap "${keyboard}"
   loadkeys "${keyboard}"
-  echo "$(date -u "+%F %H:%M") : Set keymap to: ${keyboard}" >>"${log}"
+  log "Set keymap to: ${keyboard}"
 }
 
 set_locale() {
@@ -72,7 +72,7 @@ set_locale() {
     fi
   done
 
-  echo "$(date -u "+%F %H:%M") : Set locale to: ${LOCALE}" >>"${log}"
+  log "Set locale to: ${LOCALE}"
 }
 
 set_zone() {
@@ -100,11 +100,11 @@ set_zone() {
     fi
   done
 
-  echo "$(date -u "+%F %H:%M") : Set timezone to: ${ZONE}" >>"${log}"
+  log "Set timezone to: ${ZONE}"
 }
 
 language() {
-  echo "$(date -u "+%F %H:%M") : Start anarchy installer" >"${log}"
+  log "Start anarchy installer"
   op_title=" -| Language Select |- "
   ILANG="$(dialog --nocancel --menu "\nAnarchy Installer\n\n \Z2*\Zn Select your install language:" 20 60 10 \
     "English" "-" \
