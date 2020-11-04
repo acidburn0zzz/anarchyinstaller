@@ -2,7 +2,7 @@
 # Library functions that Anarchy's scripts use
 
 # Global variables (shared between scripts and functions)
-LOG_FILE="${HOME}/anarchy-$(date '+%Y-%m-%d').log"
+LOG_FILE="/root/anarchy.log"
 export LOG_FILE
 
 # Logging library, that appends its arguments (log messages) to the LOG_FILE
