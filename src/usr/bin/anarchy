@@ -27,14 +27,7 @@ start_menu() {
         wifi-menu -o
       fi
 
-      # Download and run the update script
-      #tmp_dir="$(mktemp -d)"
-      #cd "${tmp_dir}" || exit
-      #curl -O https://gitlab.com/anarchyinstaller/installer/-/raw/add-start-menu/src/airootfs/usr/bin/anarchy-update
-      #chmod +x anarchy-update
-      #./anarchy-update &
-
-      # Update arch packages and keyring
+      # Update Arch packages and keyring
       log "Updating pacman keys"
       pacman-key --keyserver hkp://keyserver.ubuntu.com --init 2>&1 | log
       pacman-key --keyserver hkp://keyserver.ubuntu.com --populate archlinux 2>&1 | log
@@ -49,8 +42,8 @@ start_menu() {
 }
 
 init() {
-  # Prevents the installer from exiting if Ctrl-C is pressed
-  trap '' 2
+  # Execute trap when CTRL+C is pressed (SIGINT)
+  trap force_quit SIGINT
 
   anarchy_directory='/usr/share/anarchy'
 

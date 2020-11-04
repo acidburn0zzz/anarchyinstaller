@@ -83,3 +83,11 @@ report_error() {
   log_url="$(nc termbin.com 9999 </root/anarchy.log)"
   msg "\n${failed_msg} ${log_url}"
 }
+
+# Function for handling installer exits when users press CTRL+C
+force_quit() {
+  log "User force quit the installation"
+  msg "\n${force_quit_msg}"
+  reset
+  exit 1
+}
