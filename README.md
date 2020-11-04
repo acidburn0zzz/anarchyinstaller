@@ -62,7 +62,7 @@ You can also manually build Anarchy using the `Containerfile` with your preferre
 Before [reporting an issue](https://gitlab.com/anarchyinstaller/installer/issues) do the following:
 
 - Make sure you're using the latest version of Anarchy
-- **Share the logs in the issue report** (Run `cat /tmp/anarchy.log | nc termbin.com 9999` in the terminal and
+- **Share the logs in the issue report** (Run `nc termbin.com 9999 </root/anarchy.log` in the terminal and
   share the url you get returned - e.g. `https://termbin.com/xxxx`)
 - If it's a post-install issue check the [Arch Wiki](https://wiki.archlinux.org/) and
   [Arch Forums](https://bbs.archlinux.org/), since it's most likely an Arch-related issue and not connected to Anarchy
