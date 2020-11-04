@@ -17,7 +17,7 @@ start_menu() {
     menu_choice="$(dialog --menu "What do you want to do?" 18 80 5 \
       "Update" "Update anarchy and start the installation" \
       "Start" "Start the installation" \
-      "Exit" "Exit the installer and be dropped into a shell (run 'anarchy' to return)" 3>&1 1>&2 2>&3)"
+      "Exit" "Drop into a shell (run 'anarchy' to return)" 3>&1 1>&2 2>&3)"
 
     log "Start menu: chose to ${menu_choice}"
 
