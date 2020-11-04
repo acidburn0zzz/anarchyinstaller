@@ -2,3 +2,6 @@
 out
 work
 anarchy_build
+
+# Bump script backup files
+profiledef.sh.bak
