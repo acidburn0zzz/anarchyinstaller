@@ -143,7 +143,7 @@ if [ $# -eq 0 ]; then
   main
 else
   case "$1" in
-  -d)
+  -c | --container)
     check_root
     [ ! -d "${REPO_DIR}"/out ] && mkdir "${REPO_DIR}"/out
     podman build --rm -t anarchy -f ./Containerfile &&
@@ -152,8 +152,8 @@ else
     exit
     ;;
   *)
-    echo "Usage: $0 [-d]"
-    exit
+    echo "Usage: $0 [-c | --container]"
+    exit 1
     ;;
   esac
 fi
