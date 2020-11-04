@@ -17,11 +17,6 @@ log() {
   fi
 }
 
-# Automatically upload log to termbin and print info to user on fatal error
-fatal() {
-  echo "Install failed, please report to developer"
-}
-
 # Enable systemd services
 enable_service() {
   systemctl enable "$1"
@@ -64,4 +59,11 @@ yesno() {
       --yesno "${_body}" 0 0
   fi
   return $?
+}
+
+# Automatically upload log to termbin and print info to user on fatal error
+report_error() {
+  log "Installation failed, uploading log to termbin.com"
+  log_url="$(nc termbin.com 9999 </root/anarchy.log)"
+  msg "\n${failed_msg} ${log_url}"
 }
