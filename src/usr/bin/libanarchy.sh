@@ -34,6 +34,22 @@ is_online() {
   fi
 }
 
+dialog() {
+  # If terminal height is more than 25 lines add extra info at the top
+  if "${screen_h}"; then
+    if "${LAPTOP}"; then
+      # Show battery charge next to Anarchy heading
+      backtitle="${backtitle} $(acpi)"
+    fi
+
+    # op_title is the current menu title
+    /usr/bin/dialog --colors --backtitle "${backtitle}" --title "${op_title}" "$@"
+  else
+    # title is the main title (Anarchy)
+    /usr/bin/dialog --colors --title "${title}" "$@"
+  fi
+}
+
 # Puts off or on some dialog field
 offon() {
   [[ "$2" == *"$1"* ]] && printf "on" || printf "off"
