@@ -17,6 +17,17 @@ log() {
   fi
 }
 
+# Automatically upload log to termbin and print info to user on fatal error
+fatal() {
+  echo "Install failed, please report to developer"
+}
+
+# Enable systemd services
+enable_service() {
+  systemctl enable "$1"
+  log "Enabled systemd service: $1"
+}
+
 # Check if user has an internet connection
 is_online() {
   if nc -zw1 1.1.1.1 443; then
