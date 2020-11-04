@@ -45,8 +45,7 @@ install_base() {
         log "Install Complete"
         log "Generate fstab:\n$(<${ARCH}/etc/fstab)"
       else
-        msg "\n${failed_msg}"
-        log "Install failed: please report to developer"
+        report_error
         exit 1
       fi
 
