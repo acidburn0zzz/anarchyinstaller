@@ -53,7 +53,7 @@ The default password is `anarchy`.
 You have two options for compiling the installer:
 
 - If on Arch Linux: run `build.sh` with root permissions (e.g. with `sudo`)
-- If elsewhere: run `build.sh -d`, which will build it with `podman` in a container
+- If elsewhere: run `build.sh -c`, which will build it with `podman` in a container
 
 You can also manually build Anarchy using the `Containerfile` with your preferred arguments.
 
