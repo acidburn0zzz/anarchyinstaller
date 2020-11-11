@@ -34,7 +34,7 @@ start_menu() {
       touch /root/.anarchy_updated
       ;;
     Start) touch /root/.anarchy_updated ;; # Pretend user has updated
-    Exit) exit ;;
+    Exit) reset && exit ;;
     esac
   fi
 }
