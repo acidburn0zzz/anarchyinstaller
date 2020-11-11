@@ -42,8 +42,7 @@ install_base() {
 
       if [ "$(</tmp/ex_status)" -eq "0" ]; then
         INSTALLED=true
-        log "Install Complete"
-        log "Generate fstab:\n$(<${ARCH}/etc/fstab)"
+        log "Installed packages to system"
       else
         report_error
         exit 1
