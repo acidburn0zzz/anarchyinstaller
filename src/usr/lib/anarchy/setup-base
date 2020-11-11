@@ -170,7 +170,7 @@ prepare_base() {
         sh="/bin/bash" shell="bash-completion"
         ;;
       fish)
-        sh="/bin/fish"
+        sh="/usr/bin/fish"
         ;;
       zsh)
         shrc=$(dialog --ok-button "${ok}" --cancel-button "${cancel}" --menu "\n${shrc_msg}" 13 65 4 \
