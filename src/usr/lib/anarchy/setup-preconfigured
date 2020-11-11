@@ -17,14 +17,17 @@ quick_install() {
     if "${bluetooth}"; then
       base_install+="bluez bluez-utils pulseaudio-bluetooth "
       enable_bt=true
+      log "Added bluetooth support"
     fi
 
     if "${enable_f2fs}"; then
       base_install+="f2fs-tools "
+      log "Added f2fs-tools"
     fi
 
     if "${UEFI}"; then
       base_install+="efibootmgr "
+      log "Added efibootmgr"
     fi
 
     quick_desktop
@@ -45,14 +48,17 @@ quick_install() {
     if "${bluetooth}"; then
       base_install+="bluez bluez-utils pulseaudio-bluetooth "
       enable_bt=true
+      log "Added bluetooth support"
     fi
 
     if "${enable_f2fs}"; then
       base_install+="f2fs-tools "
+      log "Added f2fs-tools"
     fi
 
     if "${UEFI}"; then
       base_install+="efibootmgr "
+      log "Added efibootmgr"
     fi
 
     quick_desktop
@@ -72,14 +78,17 @@ quick_install() {
     if "${bluetooth}"; then
       base_install+="bluez bluez-utils pulseaudio-bluetooth "
       enable_bt=true
+      log "Added bluetooth support"
     fi
 
     if "${enable_f2fs}"; then
       base_install+="f2fs-tools "
+      log "Added f2fs-tools"
     fi
 
     if "${UEFI}"; then
       base_install+="efibootmgr "
+      log "Added efibootmgr"
     fi
     ;;
   Anarchy-Server-LTS)
@@ -96,14 +105,17 @@ quick_install() {
     if "${bluetooth}"; then
       base_install+="bluez bluez-utils pulseaudio-bluetooth "
       enable_bt=true
+      log "Added bluetooth support"
     fi
 
     if "${enable_f2fs}"; then
       base_install+="f2fs-tools "
+      log "Added f2fs-tools"
     fi
 
     if "${UEFI}"; then
       base_install+="efibootmgr "
+      log "Added efibootmgr"
     fi
     ;;
   esac
@@ -158,17 +170,25 @@ quick_desktop() {
   while (true); do
     if "${VM}"; then
       case "${virt}" in
+      qemu)
+        GPU="spice-vdagent"
+        log "Added QEMU guest utils"
+        ;;
       vbox)
-        GPU="virtualbox-guest-utils virtualbox-guest-dkms "
+        GPU="virtualbox-guest-utils virtualbox-guest-dkms"
+        log "Added VirtualBox guest utils"
         ;;
       vmware)
         GPU="xf86-video-vmware xf86-input-vmmouse open-vm-tools net-tools gtkmm mesa mesa-libgl"
+        log "Added VMWare guest utils"
         ;;
       hyper-v)
         GPU="xf86-video-fbdev mesa-libgl"
+        log "Added HyperV guest utils"
         ;;
       *)
         GPU="xf86-video-fbdev mesa-libgl"
+        log "Added generic VM guest utils"
         ;;
       esac
       break
@@ -194,4 +214,5 @@ quick_desktop() {
 
   DM="lightdm"
   enable_dm=true
+  log "Enabled lightdm"
 }
