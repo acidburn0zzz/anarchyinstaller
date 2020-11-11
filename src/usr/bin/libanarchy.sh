@@ -39,7 +39,8 @@ dialog() {
   if "${screen_h}"; then
     if "${LAPTOP}"; then
       # Show battery charge next to Anarchy heading
-      local backtitle="${backtitle} $(acpi)"
+      local backtitle
+      backtitle="${backtitle} $(acpi)"
     fi
 
     # op_title is the current menu title
