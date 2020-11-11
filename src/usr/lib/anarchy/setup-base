@@ -282,12 +282,12 @@ prepare_base() {
 
   if (yesno "\n\n${multilib_msg}" "${yes}" "${no}"); then
     multilib=true
-    log "Include multilib repository"
+    log "Added multilib repository"
   fi
 
   if (yesno "\n\n${dhcp_msg}" "${yes}" "${no}"); then
     dhcp=true
-    log "Enable dhcp"
+    log "Enabled dhcp"
   fi
 
   if "${wifi}"; then
@@ -295,6 +295,7 @@ prepare_base() {
   else
     if (yesno "\n${wifi_option_msg}" "${yes}" "${no}" 1); then
       base_install+="wireless_tools wpa_supplicant "
+      log "Added wireless utilities"
     fi
   fi
 
@@ -302,22 +303,22 @@ prepare_base() {
     if (yesno "\n${bluetooth_msg}" "${yes}" "${no}" 1); then
       base_install+="bluez bluez-utils pulseaudio-bluetooth "
       enable_bt=true
+      log "Added bluetooth support"
     fi
-  fi
-
-  if (yesno "\n${pppoe_msg}" "${yes}" "${no}" 1); then
-    base_install+="rp-pppoe "
   fi
 
   if (yesno "\n${os_prober_msg}" "${yes}" "${no}" 1); then
     base_install+="os-prober "
+    log "Added os-prober"
   fi
 
   if "${enable_f2fs}"; then
     base_install+="f2fs-tools "
+    log "Added f2fs-tools"
   fi
 
   if "${UEFI}"; then
     base_install+="efibootmgr "
+    log "Added efibootmgr"
   fi
 }
