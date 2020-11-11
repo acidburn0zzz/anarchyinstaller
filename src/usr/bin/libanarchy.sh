@@ -6,18 +6,19 @@ LOG_FILE="/root/anarchy.log"
 export LOG_FILE
 
 # Logging library, that appends its arguments (log messages) to the LOG_FILE
+# It logs messages and command output but also prints command output to stdout
 log() {
   if [ -n "$1" ]; then
     # Manual logging
     message="$1"
-    echo "[$(date '+%H:%M:%S')]: ${message}" | tee -a "${LOG_FILE}"
+    echo "[$(date '+%H:%M:%S')]: ${message}" >>"${LOG_FILE}"
   else
     # Command output
-    echo "*** COMMAND OUTPUT ***" | tee -a "${LOG_FILE}"
+    echo "*** COMMAND OUTPUT ***" >>"${LOG_FILE}"
     while read -r message; do
       echo "${message}" | tee -a "${LOG_FILE}"
     done
-    echo "*** END OF COMMAND OUTPUT ***" | tee -a "${LOG_FILE}"
+    echo "*** END OF COMMAND OUTPUT ***" >>"${LOG_FILE}"
   fi
 }
 
