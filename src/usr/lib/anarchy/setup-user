@@ -298,7 +298,6 @@ add_user() {
       (printf "${input}\n${input}" | arch-chroot "${ARCH}" passwd "$(cut <<<"${i}" -d: -f1)") &>/dev/null &
       pid=$! pri=0.1 msg="${wait_load} \n\n \Z1> \Z2passwd $(cut <<<"${i}" -d: -f1)\Zn" load
       unset input
-      echo "Password set: $(cut <<<"${i}" -d: -f1)" | log
 
       if [ "$(cut <<<"${i}" -d: -f3)" == "yes" ]; then
         (
