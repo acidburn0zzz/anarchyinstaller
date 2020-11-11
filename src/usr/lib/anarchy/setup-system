@@ -131,21 +131,18 @@ configure_system() {
 
   case "${net_util}" in
   networkmanager)
-    arch-chroot "${ARCH}" systemctl enable NetworkManager.service &>/dev/null
+    enable_service NetworkManager.service
     pid=$! pri=0.1 msg="\n${nwmanager_msg0} \n\n \Z1> \Z2systemctl enable NetworkManager.service\Zn" load
-    log "Enable NetworkManager.service"
     ;;
   netctl)
-    arch-chroot "${ARCH}" systemctl enable netctl.service &>/dev/null &
+    enable_service netctl.service
     pid=$! pri=0.1 msg="\n${nwmanager_msg1} \n\n \Z1> \Z2systemctl enable netctl.service\Zn" load
-    log "Enable netctl.service"
     ;;
   esac
 
   if "${enable_bt}"; then
-    arch-chroot "${ARCH}" systemctl enable bluetooth &>/dev/null &
+    enable_service bluetooth.service
     pid=$! pri=0.1 msg="\n${btenable_msg} \n\n \Z1> \Z2systemctl enable bluetooth.service\Zn" load
-    log "Enable bluetooth"
   fi
 
   if "${desktop}"; then
@@ -160,28 +157,25 @@ configure_system() {
   fi
 
   if "${enable_dm}"; then
-    arch-chroot "${ARCH}" systemctl enable "${DM}".service &>/dev/null &
+    enable_service "${DM}".service
     pid=$! pri="0.1" msg="${wait_load} \n\n \Z1> \Z2systemctl enable ${DM}\Zn" load
-    log "Enable ${DM}.service"
   fi
 
   if "${VM}"; then
     case "${virt}" in
     vbox)
-      arch-chroot "${ARCH}" systemctl enable vboxservice.service &>/dev/null &
+      enable_service vboxservice.service
       pid=$! pri=0.1 msg="\n${vbox_enable_msg} \n\n \Z1> \Z2systemctl enable vboxservice\Zn" load
-      log "Enable vboxservice.service"
       ;;
     vmware)
       (
         cat "${ARCH}"/proc/version >"${ARCH}"/etc/arch-release
-        arch-chroot "${ARCH}" systemctl enable vmtoolsd.service
-        arch-chroot "${ARCH}" systemctl enable vmware-vmblock-fuse.service
+        enable_service vmtoolsd.service
+        enable_service vmware-vmblock-fuse.service
         mkdir "${ARCH}"/etc/init.d
         for x in {0..6}; do mkdir -p "${ARCH}"/etc/init.d/rc${x}.d; done
       ) &>/dev/null &
       pid=$! pri=0.1 msg="\n${vbox_enable_msg} \n\n \Z1> \Z2systemctl enable vmtoolsd\Zn" load
-      log "Enable vmtoolsd.service and vmware-vmblock-fuse.service"
       ;;
     esac
   fi
@@ -203,39 +197,33 @@ configure_system() {
   fi
 
   if "${dhcp}"; then
-    arch-chroot "${ARCH}" systemctl enable dhcpcd.service &>/dev/null &
+    enable_service dhcpcd.service
     pid=$! pri=0.1 msg="\n${dhcp_load} \n\n \Z1> \Z2systemctl enable dhcpcd\Zn" load
-    log "Enable dhcpcd.service"
   fi
 
   if "${enable_ssh}"; then
-    arch-chroot "${ARCH}" systemctl enable sshd.service &>/dev/null &
+    enable_service sshd.service
     pid=$! pri=0.1 msg="\n${ssh_load} \n\n \Z1> \Z2systemctl enable sshd\Zn" load
-    log "Enable sshd.service"
   fi
 
   if "${enable_ftp}"; then
-    arch-chroot "${ARCH}" systemctl enable ${ftp}.service &>/dev/null &
+    enable_service "${ftp}".service
     pid=$! pri=0.1 msg="\n${ftp_load} \n\n \Z1> \Z2systemctl enable ${ftp}\Zn" load
-    enable "Enable ${ftp}.service"
   fi
 
   if "${enable_cups}"; then
-    arch-chroot "${ARCH}" systemctl enable org.cups.cupsd.service &>/dev/null &
+    enable_service org.cups.cupsd.service
     pid=$! pri=0.1 msg="\n${cups_load} \n\n \Z1> \Z2systemctl enable cups\Zn" load
-    log "Enable org.cups.cupsd.service"
   fi
 
-  # Enable cpupower
-  arch-chroot "${ARCH}" systemctl enable cpupower.service
+  enable_service cpupower.service
   pid=$! pri=0.1 msg="\n${cups_load} \n\n \Z1> \Z2systemctl enable cpupower\Zn" load
-  log "Enable cpupower.service"
 
   if "${enable_http}"; then
     case "${config_http}" in
     "LAMP")
       (
-        arch-chroot "${ARCH}" systemctl enable httpd.service
+        enable_service httpd.service
         sed -i 's!LoadModule mpm_event_module modules/mod_mpm_event.so!LoadModule mpm_prefork_module modules/mod_mpm_prefork.so!' "${ARCH}"/etc/httpd/conf/httpd.conf
         tac "${ARCH}"/etc/httpd/conf/httpd.conf | awk '!p && /LoadModule/{print "AddHandler php7-script php\nLoadModule php7_module modules/libphp7.so\n# PHP Modules\n"; p=1} 1' | tac >"${ARCH}"/etc/httpd/conf/httpd.conf.bak
         tac "${ARCH}"/etc/httpd/conf/httpd.conf | awk '!p && /Include/{print "\nInclude conf/extra/php7_module.conf\n# PHP Modules\n"; p=1} 1' | tac >"${ARCH}"/etc/httpd/conf/httpd.conf.bak
@@ -246,18 +234,17 @@ configure_system() {
       ;;
     "LEMP")
       (
-        arch-chroot "${ARCH}" systemctl enable nginx.service
-        arch-chroot "${ARCH}" systemctl enable php-fpm.service
-        log "Enable nginx.service and php-fpm.service"
+        enable_service nginx.service
+        enable_service php-fpm.service
       ) &>/dev/null &
       pid=$! pri=0.1 msg="\n${http_load} \n\n \Z1> \Z2configure LEMP stack\Zn" load
       ;;
     "apache")
-      arch-chroot "${ARCH}" systemctl enable httpd.service &>/dev/null &
+      enable_service httpd.service
       pid=$! pri=0.1 msg="\n${http_load} \n\n \Z1> \Z2systemctl enable httpd\Zn" load
       ;;
     "nginx")
-      arch-chroot "${ARCH}" systemctl enable nginx.service &>/dev/null &
+      enable_service nginx.service
       pid=$! pri=0.1 msg="\n${http_load} \n\n \Z1> \Z2systemctl enable nginx\Zn" load
       ;;
     esac

@@ -23,7 +23,7 @@ log() {
 
 # Enable systemd services
 enable_service() {
-  systemctl enable "$1"
+  arch-chroot "${ARCH}" systemctl enable "$1"
   log "Enabled systemd service: $1"
 }
 
