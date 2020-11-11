@@ -35,13 +35,19 @@ prepare_build_dir() {
   # Create temporary directory if not exists
   [ ! -d "${PROFILE_DIR}" ] && mkdir "${PROFILE_DIR}"
 
-  # Copy archiso files to tmp dir
+  # Copy Archiso files to tmp dir
   cp -r "${ARCHISO_DIR}"/* "${PROFILE_DIR}"/
 
-  # Copy anarchy files to tmp dir
+  # Copy Anarchy files to tmp dir
   cp -rf "${SRC_DIR}"/root/. "${PROFILE_DIR}"/airootfs/root/
   cp -rf "${SRC_DIR}"/usr/. "${PROFILE_DIR}"/airootfs/usr/
   cp -rf "${SRC_DIR}"/etc/. "${PROFILE_DIR}"/airootfs/etc/
+
+  # Copy splash.png to bootloader directory
+  cp -f "${REPO_DIR}"/assets/splash.png "${PROFILE_DIR}"/airootfs/usr/share/anarchy/boot/splash.png
+
+  # Copy Anarchy logo to extras
+  cp -f "${REPO_DIR}"/assets/logo.png "${PROFILE_DIR}"/airootfs/usr/share/anarchy/extra/anarchy-icon.png
 
   echo "anarchy" >>"${PROFILE_DIR}"/airootfs/root/.zlogin
 
@@ -60,7 +66,7 @@ prepare_build_dir() {
   cat "${REPO_DIR}"/anarchy-packages.x86_64 >>"${PROFILE_DIR}"/packages.x86_64
 
   # Re-add custom bootloader entries
-  cp -rf "${REPO_DIR}"/assets/splash.png "${PROFILE_DIR}"/syslinux/splash.png
+  cp -f "${REPO_DIR}"/assets/splash.png "${PROFILE_DIR}"/syslinux/splash.png
   sed -i 's/Arch Linux install medium/Anarchy Installer/' "${PROFILE_DIR}"/efiboot/loader/entries/archiso-x86_64-linux.conf
   sed -i 's/Arch Linux install medium/Anarchy Installer/' "${PROFILE_DIR}"/syslinux/archiso_sys-linux.cfg
   sed -i 's/Arch Linux/Anarchy/' "${PROFILE_DIR}"/syslinux/archiso_sys-linux.cfg
