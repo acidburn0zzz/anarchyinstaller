@@ -23,9 +23,7 @@ start_menu() {
 
     case "${menu_choice}" in
     Update)
-      if ! is_online; then
-        wifi-menu -o
-      fi
+      check_connection
 
       # Update Arch packages and keyring
       log "Updating pacman keys"
@@ -66,7 +64,7 @@ main() {
   start_menu
   set_keys
   update_mirrors
-  check_connection
+  get_connection_info
   set_locale
   set_zone
   prepare_drives

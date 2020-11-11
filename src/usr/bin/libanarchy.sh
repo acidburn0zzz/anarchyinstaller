@@ -27,14 +27,11 @@ enable_service() {
   log "Enabled systemd service: $1"
 }
 
-# Check if user has an internet connection
-is_online() {
-  if nc -zw1 1.1.1.1 443; then
-    # Sucessfully connected
-    return 0
-  else
-    # No internet connection
-    return 1
+# Check if user has an internet connection, if not connect to wifi
+check_connection() {
+  if ! nc -zw1 1.1.1.1 443; then
+    # No connection, use wifi
+    wifi-menu -o
   fi
 }
 

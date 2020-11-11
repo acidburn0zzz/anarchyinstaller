@@ -4,9 +4,7 @@
 . libanarchy.sh
 . /etc/anarchy.conf
 
-if ! is_online; then
-  wifi-menu -o
-fi
+check_connection
 
 tmp_dir="$(mktemp -d)"
 

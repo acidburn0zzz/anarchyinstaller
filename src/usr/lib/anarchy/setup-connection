@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Copyright (C) 2017 Dylan Schacht
 
-check_connection() {
+get_connection_info() {
   op_title="${connection_op_msg}"
   (
     test_mirror="$(grep </etc/pacman.d/mirrorlist "^Server" | awk 'NR==1{print $3}' | sed 's/$.*//')"

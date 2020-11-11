@@ -1,11 +1,7 @@
 #!/usr/bin/env bash
 
 update_mirrors() {
-  # Connect to wifi if we're not online
-  if ! is_online; then
-    log "Not online, connecting using wifi"
-    wifi-menu -o
-  fi
+  check_connection
 
   op_title="${mirror_op_msg}"
 
