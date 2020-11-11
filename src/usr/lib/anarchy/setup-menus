@@ -45,11 +45,11 @@ reboot_system() {
         exit
         ;;
       "${reboot2}") # Anarchy Chroot function
-        clear
+        reset
         echo -e "${arch_chroot_msg}"
         echo "/root" >/tmp/chroot_dir.var
         anarchy_chroot
-        clear
+        reset
         ;;
       "${reboot3}") # Edit users
         menu_enter=true
@@ -60,8 +60,9 @@ reboot_system() {
         add_software
         ;;
       "${reboot4}") # Show install log
-        clear
-        less "${LOG_FILE}" clear
+        reset
+        less "${LOG_FILE}"
+        reset
         ;;
       esac
     done
@@ -135,10 +136,10 @@ main_menu() {
       ;;
     "${menu13}") # Start command line session
       echo "alias anarchy=exit ; echo -e \"${return_msg}\"" >/tmp/.zshrc
-      clear
+      reset
       ZDOTDIR=/tmp/ zsh
       rm /tmp/.zshrc
-      clear
+      reset
       ;;
     esac
   done
