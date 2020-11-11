@@ -6,7 +6,6 @@ LOG_FILE="/root/anarchy.log"
 export LOG_FILE
 
 # Logging library, that appends its arguments (log messages) to the LOG_FILE
-# It logs messages and command output but also prints command output to stdout
 log() {
   if [ -n "$1" ]; then
     # Manual logging
@@ -16,10 +15,19 @@ log() {
     # Command output
     echo "*** COMMAND OUTPUT ***" >>"${LOG_FILE}"
     while read -r message; do
-      echo "${message}" | tee -a "${LOG_FILE}"
+      echo "${message}" >>"${LOG_FILE}"
     done
     echo "*** END OF COMMAND OUTPUT ***" >>"${LOG_FILE}"
   fi
+}
+
+printlog() {
+  # Save output of command to log but also print it to stdout
+  echo "*** COMMAND OUTPUT ***" >>"${LOG_FILE}"
+  while read -r message; do
+    echo "${message}" | tee -a "${LOG_FILE}"
+  done
+  echo "*** END OF COMMAND OUTPUT ***" >>"${LOG_FILE}"
 }
 
 # Enable systemd services
