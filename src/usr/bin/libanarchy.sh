@@ -8,12 +8,16 @@ export LOG_FILE
 # Logging library, that appends its arguments (log messages) to the LOG_FILE
 log() {
   if [ -n "$1" ]; then
-    message="$1" # Manual log messages that use arguments (e.g. 'log "My message"')
-    echo "--- [$(date '+%H:%M:%S')]: ${message} ---" | tee -a "${LOG_FILE}"
+    # Manual logging
+    message="$1"
+    echo "[$(date '+%H:%M:%S')]: ${message}" | tee -a "${LOG_FILE}"
   else
-    while read -r message; do # Command output
-      echo "[$(date '+%H:%M:%S')]: ${message}" | tee -a "${LOG_FILE}"
+    # Command output
+    echo "*** COMMAND OUTPUT ***" | tee -a "${LOG_FILE}"
+    while read -r message; do
+      echo "${message}" | tee -a "${LOG_FILE}"
     done
+    echo "*** END OF COMMAND OUTPUT ***" | tee -a "${LOG_FILE}"
   fi
 }
 
