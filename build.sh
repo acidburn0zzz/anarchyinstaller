@@ -21,17 +21,12 @@ check_root() {
 
 # Check if dependencies are installed
 check_deps() {
-  echo "Checking dependencies"
-
   if ! pacman -Qi archiso >/dev/null 2>&1 || ! pacman -Qi mkinitcpio-archiso >/dev/null 2>&1; then
-    echo "archiso and or mkinitcpio-archiso are not installed, installing"
     pacman -Sy --noconfirm archiso mkinitcpio-archiso
   fi
 }
 
 prepare_build_dir() {
-  echo "Preparing build directory"
-
   # Create temporary directory if not exists
   [ ! -d "${PROFILE_DIR}" ] && mkdir "${PROFILE_DIR}"
 
@@ -76,8 +71,6 @@ prepare_build_dir() {
 }
 
 ssh_config() {
-  echo "Adding SSH config"
-
   # Check optional configuration file for SSH connection
   if [ -f autoconnect.sh ]; then
     . autoconnect.sh
@@ -93,14 +86,11 @@ ssh_config() {
 }
 
 geniso() {
-  echo "Generating iso"
   cd "${REPO_DIR}" || exit
   mkarchiso -v "${PROFILE_DIR}" || exit
 }
 
 checksum_gen() {
-  echo "Generating checksum"
-
   cd "${REPO_DIR}"/out || exit
   filename="$(basename "$(find . -name 'anarchy-*.iso')")"
 
@@ -110,7 +100,6 @@ checksum_gen() {
   fi
 
   sha512sum --tag "${filename}" >"${filename}".sha512sum || exit
-  echo "Created checksum file ${filename}.sha512sum"
 }
 
 main() {
