@@ -52,6 +52,10 @@ prepare_build_dir() {
   # Remove motd since it's not useful in Anarchy
   rm "${PROFILE_DIR}"/airootfs/etc/motd
 
+  # Set installer's hostname and console font
+  echo "anarchy" >"${PROFILE_DIR}"/airootfs/etc/hostname
+  echo "FONT=ter-v16n" >"${PROFILE_DIR}"/airootfs/etc/vconsole.conf
+
   # Add anarchy packages
   cat "${REPO_DIR}"/anarchy-packages.x86_64 >>"${PROFILE_DIR}"/packages.x86_64
 
