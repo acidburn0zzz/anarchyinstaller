@@ -1,69 +1,24 @@
 #!/usr/bin/env bash
 # Copyright (C) 2017 Dylan Schacht
 
-update_mirrors() {
-  # Connect to wifi if we're not online
-  if ! is_online; then
-    log "Not online, connecting using wifi"
-    wifi-menu -o
-  fi
-
-  op_title="${mirror_op_msg}"
-
-  while (true); do
-    if ! edit_mirrors="$(dialog --ok-button "${ok}" --menu "\n${mirror_msg0}\n" 12 60 3 \
-      "${update_mirrors_msg}" "->" \
-      "${manual_mirrors}" "->" \
-      "${cancel_mirrors}" "->" \
-      3>&1 1>&2 2>&3)" || [ "${edit_mirrors}" == "${cancel_mirrors}" ]; then
-      if (yesno "\n${mirror_cancel_msg}" "${yes}" "${no}"); then
-        break
-      fi
-    fi
-
-    case "${edit_mirrors}" in
-    # Automatically update mirrors with reflector
-    "${update_mirrors_msg}")
-      log "Automatically updating mirrors"
-      reflector --verbose --latest 50 --sort rate --save /etc/pacman.d/mirrorlist | log
-      ;;
-
-      # Manually update mirrors with a text editor
-    "${manual_mirrors}")
-      if ! EDITOR="$(dialog --ok-button "${ok}" --menu "${mirror_editor_msg}" 10 60 3 \
-        "nano" "${nano_msg}" \
-        "vim" "${vim_msg}" \
-        "${cancel}" "->" 3>&1 1>&2 2>&3)" || [ "${EDITOR}" == "${cancel}" ]; then
-        if (yesno "\n${mirror_cancel_msg}" "${yes}" "${no}"); then
-          break
-        fi
-      else
-        "${EDITOR}" /etc/pacman.d/mirrorlist
-        break
-      fi
-      ;;
-    esac
-  done
-}
-
 check_connection() {
   op_title="${connection_op_msg}"
   (
-    test_mirror=$(grep </etc/pacman.d/mirrorlist "^Server" | awk 'NR==1{print $3}' | sed 's/$.*//')
-    test_pkg=$(curl -s https://www.archlinux.org/packages/extra/x86_64/bluez-utils/ | grep "<title>" | awk '{print $4"-"$5}')
+    test_mirror="$(grep </etc/pacman.d/mirrorlist "^Server" | awk 'NR==1{print $3}' | sed 's/$.*//')"
+    test_pkg="$(curl -s https://www.archlinux.org/packages/extra/x86_64/bluez-utils/ | grep "<title>" | awk '{print $4"-"$5}')"
     test_link="${test_mirror}extra/os/x86_64/${test_pkg}-x86_64.pkg.tar.zst"
     wget -4 --no-check-certificate --append-output=/tmp/wget.log -O /dev/null "${test_link}"
   ) &
   pid=$! pri=0.3 msg="\n${connection_load} \n\n \Z1> \Z2wget -O /dev/null test_link/test1Mb.db\Zn" load
 
   sed -i 's/\,/\./' /tmp/wget.log
-  connection_speed=$(tail /tmp/wget.log | grep -oP '(?<=\().*(?=\))' | awk '{print $1}')
-  connection_rate=$(tail /tmp/wget.log | grep -oP '(?<=\().*(?=\))' | awk '{print $2}')
+  connection_speed="$(tail /tmp/wget.log | grep -oP '(?<=\().*(?=\))' | awk '{print $1}')"
+  connection_rate="$(tail /tmp/wget.log | grep -oP '(?<=\().*(?=\))' | awk '{print $2}')"
 
   if (lscpu | grep "max MHz" &>/dev/null); then
-    cpu_mhz=$(lscpu | grep "CPU max MHz" | awk '{print $4}' | sed 's/\..*//')
+    cpu_mhz="$(lscpu | grep "CPU max MHz" | awk '{print $4}' | sed 's/\..*//')"
   else
-    cpu_mhz=$(lscpu | grep "CPU MHz" | awk '{print $3}' | sed 's/\..*//')
+    cpu_mhz="$(lscpu | grep "CPU MHz" | awk '{print $3}' | sed 's/\..*//')"
   fi
 
   case "${cpu_mhz}" in
