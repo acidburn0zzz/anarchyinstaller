@@ -222,6 +222,7 @@ graphics() {
   while (true); do
     if "${VM}"; then
       case "${virt}" in
+      qemu) GPU="spice-vdagent " ;;
       vbox)
         msg "\n${vbox_msg}"
         GPU="virtualbox-guest-utils virtualbox-guest-dkms "
