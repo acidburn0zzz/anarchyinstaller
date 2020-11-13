@@ -64,8 +64,8 @@ main() {
     exit 1
   fi
 
+  set_keyboard_layout
   start_menu
-  set_keys
   update_mirrors
   get_connection_info
   set_locale
