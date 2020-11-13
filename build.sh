@@ -129,7 +129,7 @@ else
     check_root
     [ ! -d "${REPO_DIR}"/out ] && mkdir "${REPO_DIR}"/out
     podman build --rm -t anarchy --no-cache -f ./Containerfile &&
-      podman run --rm -v "${REPO_DIR}"/out:/anarchy/out --tmpfs /anarchy/work -t -i --privileged localhost/anarchy &&
+      podman run --rm -v "${REPO_DIR}"/out:/anarchy/out -t -i --privileged localhost/anarchy &&
       podman image rm localhost/anarchy
     exit
     ;;
