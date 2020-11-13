@@ -27,7 +27,7 @@ start_menu() {
 
       # Update Arch packages and keyring
       log "Updating pacman keys"
-      pacman -Sy archlinux-keyring | printlog
+      pacman -Sy archlinux-keyring --noconfirm | printlog
       pacman-key --keyserver hkp://keyserver.ubuntu.com --init | printlog
       pacman-key --keyserver hkp://keyserver.ubuntu.com --populate archlinux | printlog
       pacman-key --keyserver hkp://keyserver.ubuntu.com --refresh-keys | printlog
