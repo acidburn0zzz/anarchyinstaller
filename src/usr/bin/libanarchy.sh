@@ -50,7 +50,7 @@ dialog() {
     if "${LAPTOP}"; then
       # Show battery charge next to Anarchy heading
       local backtitle
-      backtitle="${backtitle} $(acpi)"
+      backtitle="${backtitle} BAT: $(cat /sys/class/power_supply/BAT0/capacity)%"
     fi
 
     # op_title is the current menu title
