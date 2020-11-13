@@ -27,10 +27,15 @@ start_menu() {
 
       # Update Arch packages and keyring
       log "Updating pacman keys"
-      pacman -Sy archlinux-keyring --noconfirm | printlog
-      pacman-key --keyserver hkp://keyserver.ubuntu.com --init | printlog
-      pacman-key --keyserver hkp://keyserver.ubuntu.com --populate archlinux | printlog
-      pacman-key --keyserver hkp://keyserver.ubuntu.com --refresh-keys | printlog
+
+      (
+        pacman -Sy archlinux-keyring --noconfirm | log
+        pacman-key --keyserver hkp://keyserver.ubuntu.com --init | log
+        pacman-key --keyserver hkp://keyserver.ubuntu.com --populate archlinux | log
+        pacman-key --keyserver hkp://keyserver.ubuntu.com --refresh-keys | log
+      ) &>/dev/null &
+      pid=$! pri=0.3 msg="\n${pacman_load} \n\n \Z1> \Z2pacman-key --refresh-keys\Zn" load
+
       touch /root/.anarchy_updated
       ;;
     Start) touch /root/.anarchy_updated ;; # Pretend user has updated
