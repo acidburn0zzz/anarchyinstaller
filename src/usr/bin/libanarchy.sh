@@ -40,7 +40,7 @@ enable_service() {
 check_connection() {
   if ! nc -zw1 1.1.1.1 443; then
     # No connection, use wifi
-    wifi-menu -o
+    nmtui
   fi
 }
 
