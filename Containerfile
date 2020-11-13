@@ -8,5 +8,5 @@ ENV iscontainer="yes"
 
 RUN pacman -Sy --noconfirm archiso mkinitcpio-archiso reflector
 COPY assets /anarchy/assets
-COPY src anarchy-packages.x86_64 build.sh profiledef.sh /anarchy/
+COPY src build.sh profiledef.sh /anarchy/
 ENTRYPOINT ["/anarchy/build.sh"]

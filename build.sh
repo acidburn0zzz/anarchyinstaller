@@ -55,10 +55,20 @@ prepare_build_dir() {
 
   # Set installer's hostname and console font
   echo "anarchy" >"${PROFILE_DIR}"/airootfs/etc/hostname
-  echo "FONT=ter-v16n" >"${PROFILE_DIR}"/airootfs/etc/vconsole.conf
+  echo "FONT=ter-v16n" >>"${PROFILE_DIR}"/airootfs/etc/vconsole.conf
 
   # Add anarchy packages
-  cat "${REPO_DIR}"/anarchy-packages.x86_64 >>"${PROFILE_DIR}"/packages.x86_64
+  packages=(
+    'dialog'
+    'git'
+    'networkmanager'
+    'wget'
+    'zsh-syntax-highlighting'
+  )
+
+  for package in "${packages[@]}"; do
+    echo "${package}" >>"${PROFILE_DIR}"/packages.x86_64
+  done
 
   # Re-add custom bootloader entries
   cp -f "${REPO_DIR}"/assets/splash.png "${PROFILE_DIR}"/syslinux/splash.png
