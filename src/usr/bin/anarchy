@@ -52,6 +52,9 @@ init() {
   language
   . "${lang_file}"
   export reload=true
+
+  # Start NetworkManager
+  systemctl start NetworkManager.service
 }
 
 main() {
