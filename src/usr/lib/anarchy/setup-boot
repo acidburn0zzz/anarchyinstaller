@@ -40,6 +40,8 @@ syslinux_config() {
       mkdir -p "${ARCH}${esp_mnt}"/EFI/syslinux
       cp -r "${ARCH}"/usr/lib/syslinux/efi64/* "${ARCH}${esp_mnt}/"EFI/syslinux/
       cp "${anarchy_directory}"/boot/loader/syslinux/syslinux_efi.cfg "${ARCH}${esp_mnt}"/EFI/syslinux/syslinux.cfg
+      sed -i s#"INITRD ../initramfs-linux.img"#"$([[ $UCODE ]] && printf "%s" "INITRD ../$UCODE.img,../initramfs-linux.img")"# "${ARCH}${esp_mnt}"/EFI/syslinux/syslinux.cfg
+      sed -i s#"INITRD ../initramfs-linux-fallback.img"#"$([[ $UCODE ]] && printf "%s" "INITRD ../$UCODE.img,../initramfs-linux-fallback.img")"# "${ARCH}${esp_mnt}"/EFI/syslinux/syslinux.cfg
       cp "${anarchy_directory}"/boot/splash.png "${ARCH}${esp_mnt}"/EFI/syslinux
 
       if [ "${kernel}" == "linux-lts" ]; then
@@ -74,6 +76,8 @@ syslinux_config() {
     (
       syslinux-install_update -i -a -m -c "${ARCH}"
       cp "${anarchy_directory}"/boot/loader/syslinux/syslinux.cfg "${ARCH}"/boot/syslinux/
+      sed -i s#"INITRD ../initramfs-linux.img"#"$([[ $UCODE ]] && printf "%s" "INITRD ../$UCODE.img,../initramfs-linux.img")"# "${ARCH}"/boot/syslinux/syslinux.cfg
+      sed -i s#"INITRD ../initramfs-linux-fallback.img"#"$([[ $UCODE ]] && printf "%s" "INITRD ../$UCODE.img,../initramfs-linux-fallback.img")"# "${ARCH}"/boot/syslinux/syslinux.cfg
       cp "${anarchy_directory}"/boot/splash.png "${ARCH}"/boot/syslinux/
     ) &>/dev/null &
     pid=$! pri=0.1 msg="\n${syslinux_load} \n\n \Z1> \Z2syslinux-install_update -i -a -m -c ${ARCH}\Zn" load
@@ -114,13 +118,13 @@ systemd_config() {
   pid=$! pri=0.1 msg="\n${syslinux_load} \n\n \Z1> \Z2bootctl --path=${esp_mnt} install\Zn" load
 
   if [ "${kernel}" == "linux" ]; then
-    echo -e "title          Arch Linux\nlinux          /vmlinuz-linux\ninitrd         /initramfs-linux.img" >"${ARCH}${esp_mnt}"/loader/entries/arch.conf
+      echo -e "title          Arch Linux\nlinux          /vmlinuz-linux\n$([[ $UCODE ]] && printf 'initrd=\%s.img ' "$UCODE")\ninitrd         /initramfs-linux.img" >"${ARCH}${esp_mnt}"/loader/entries/arch.conf
   elif [ "${kernel}" == "linux-lts" ]; then
-    echo -e "title          Arch Linux\nlinux          /vmlinuz-linux-lts\ninitrd         /initramfs-linux-lts.img" >"${ARCH}${esp_mnt}"/loader/entries/arch.conf
+    echo -e "title          Arch Linux\nlinux          /vmlinuz-linux-lts\n$([[ $UCODE ]] && printf 'initrd=\%s.img ' "$UCODE")\ninitrd         /initramfs-linux-lts.img" >"${ARCH}${esp_mnt}"/loader/entries/arch.conf
   elif [ "${kernel}" == "linux-hardened" ]; then
-    echo -e "title          Arch Linux\nlinux          /vmlinuz-linux-hardened\ninitrd         /initramfs-linux-hardened.img" >"${ARCH}${esp_mnt}"/loader/entries/arch.conf
+    echo -e "title          Arch Linux\nlinux          /vmlinuz-linux-hardened\n$([[ $UCODE ]] && printf 'initrd=\%s.img ' "$UCODE")\ninitrd         /initramfs-linux-hardened.img" >"${ARCH}${esp_mnt}"/loader/entries/arch.conf
   elif [ "${kernel}" == "linux-zen" ]; then
-    echo -e "title          Arch Linux\nlinux          /vmlinuz-linux-zen\ninitrd         /initramfs-linux-zen.img" >"${ARCH}${esp_mnt}"/loader/entries/arch.conf
+    echo -e "title          Arch Linux\nlinux          /vmlinuz-linux-zen\n$([[ $UCODE ]] && printf 'initrd=\%s.img ' "$UCODE")\ninitrd         /initramfs-linux-zen.img" >"${ARCH}${esp_mnt}"/loader/entries/arch.conf
   fi
 
   if "${crypted}"; then
@@ -155,7 +159,8 @@ efistub_config() {
   fi
 
   # -p: boot partition number (is always "1")
-  efibootmgr -d /dev/"${DRIVE}" -p 1 -c -L "Arch Linux" -l \vmlinuz-linux -u "${efi_root} rw initrd=/${initramfs} ${drm}"
+  efibootmgr -d /dev/"${DRIVE}" -p 1 -c -L "Arch Linux" -l \vmlinuz-linux -u "${efi_root} rw $([[ ${UCODE} ]] && printf 'initrd=\%s.img ' "${UCODE}"
+  )initrd=/${initramfs} ${drm}"
 }
 
 refind_config() {
