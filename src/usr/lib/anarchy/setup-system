@@ -212,7 +212,7 @@ configure_system() {
   fi
 
   if "${enable_cups}"; then
-    enable_service org.cups.cupsd.service
+    enable_service cups.service
     pid=$! pri=0.1 msg="\n${cups_load} \n\n \Z1> \Z2systemctl enable cups\Zn" load
   fi
 
