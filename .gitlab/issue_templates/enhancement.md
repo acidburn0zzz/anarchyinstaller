@@ -7,5 +7,3 @@ When requesting features add as much external info as possible, such as Arch Lin
 on the subject, examples or implementation info.
 
 -->
-
-/label ~enhancement

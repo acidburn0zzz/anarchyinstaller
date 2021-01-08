@@ -37,5 +37,3 @@ Any extra useful info, at minimum the log url, which you can get by running
 of the live system, after the installation fails
 
 -->
-
-/label ~bug
