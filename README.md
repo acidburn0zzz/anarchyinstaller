@@ -66,6 +66,11 @@ Before [reporting an issue](https://gitlab.com/anarchyinstaller/installer/issues
 - If it's a post-install issue check the [Arch Wiki](https://wiki.archlinux.org/) and
   [Arch Forums](https://bbs.archlinux.org/), since it's most likely an Arch-related issue and not connected to Anarchy
 
+If the installer stops responding, but doesn't report an error (e.g. stuck at the progress bar), you can force quit by
+pressing `CTRL+C`, then in the terminal you can manually run `nc termbin.com 9999 < /root/anarchy.log` (usually
+the installer will upload a log automatically).
+Then share the link you got as a response in the terminal.
+
 If you don't want to sign up for Gitlab, you can also report issues
 [over email](mailto:incoming+anarchyinstaller-installer-18524601-issue-@incoming.gitlab.com).
 
