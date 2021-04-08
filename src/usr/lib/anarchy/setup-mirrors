@@ -20,7 +20,8 @@ update_mirrors() {
     # Automatically update mirrors with reflector
     "${update_mirrors_msg}")
       log "Automatically updating mirrors"
-      reflector --verbose --latest 50 --sort rate --save /etc/pacman.d/mirrorlist
+      reflector --verbose --latest 10 --sort rate --save /etc/pacman.d/mirrorlist 3>&1 1>&2 2>&3 | log &
+      pid=$! pri=1 msg="\n$mirror_load0 \n\n \Z1> \Z2reflector --latest 10 --sort rate \Zn" load
       break
       ;;
 
