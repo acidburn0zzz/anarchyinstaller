@@ -1,6 +1,7 @@
 # Archiso build artifacts
 out
 work
+profile
 anarchy_build
 
 # Bump script backup files
