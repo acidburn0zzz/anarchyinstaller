@@ -3,7 +3,7 @@
 
 iso_name="anarchy"
 iso_label="ANARCHY131"
-iso_publisher="Anarchy Installer <https://anarchyinstaller.org>"
+iso_publisher="Anarchy Installer <https://anarchyinstaller.gitlab.io>"
 iso_application="Anarchy Installer"
 iso_version="1.3.1"
 install_dir="anarchy"
