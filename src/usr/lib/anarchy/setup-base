@@ -33,7 +33,7 @@ install_base() {
       fi
 
       (
-        pacstrap "${ARCH}" $(echo "${base_install}")
+        pacstrap "${ARCH}" $(echo "${base_install}") 2>/dev/null
         echo "$?" >/tmp/ex_status
       ) | log &
       pid=$! pri=$(echo "${down}" | sed 's/\..*$//') msg="\n${install_load_var}" load_log
