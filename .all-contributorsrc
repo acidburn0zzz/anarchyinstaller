@@ -61,6 +61,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "alexandrewurtzfr",
+      "name": "Alexandre Wurtz",
+      "avatar_url": "https://secure.gravatar.com/avatar/22b32aeadbb75cccc711443fdcf4796f?s=80&d=identicon",
+      "profile": "https://gitlab.com/alexandrewurtzfr",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7
