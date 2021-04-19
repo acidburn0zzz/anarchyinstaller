@@ -19,6 +19,20 @@
         "code",
         "ideas"
       ]
+    },
+    {
+      "login": "erazemk",
+      "name": "Erazem Kokot",
+      "avatar_url": "https://assets.gitlab-static.net/uploads/-/system/user/avatar/2411685/avatar.png",
+      "profile": "https://gitlab.com/erazemk",
+      "contributions": [
+        "code",
+        "ideas",
+        "infra",
+        "content",
+        "maintenance",
+        "translation"
+      ]
     }
   ],
   "contributorsPerLine": 7
