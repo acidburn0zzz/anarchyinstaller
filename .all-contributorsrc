@@ -70,6 +70,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "fredbezies",
+      "name": "Frederic Bezies",
+      "avatar_url": "https://secure.gravatar.com/avatar/b80dd52da6b4e3e7aad1ee09c856fd81?s=80&d=identicon",
+      "profile": "https://gitlab.com/fredbezies",
+      "contributions": [
+        "code",
+        "translation"
+      ]
     }
   ],
   "contributorsPerLine": 7
