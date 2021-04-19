@@ -80,6 +80,20 @@
         "code",
         "translation"
       ]
+    },
+    {
+      "login": "PandaFoss",
+      "name": "Max Ferrer",
+      "avatar_url": "https://assets.gitlab-static.net/uploads/-/system/user/avatar/4029596/avatar.png",
+      "profile": "https://gitlab.com/PandaFoss",
+      "contributions": [
+        "code",
+        "ideas",
+        "design",
+        "content",
+        "maintenance",
+        "translation"
+      ]
     }
   ],
   "contributorsPerLine": 7

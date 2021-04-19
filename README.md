@@ -1,6 +1,6 @@
 ![Anarchy Installer's banner](assets/banner.svg)
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-7-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-8-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 # About
@@ -103,6 +103,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://gitlab.com/AvinashReddy3108"><img src="https://assets.gitlab-static.net/uploads/-/system/user/avatar/2603938/avatar.png?s=100" width="100px;" alt=""/><br /><sub><b>Avinash Reddy</b></sub></a><br /><a href="https://gitlab.com/anarchyinstaller/Anarchy Installer/commits/master" title="Code">💻</a></td>
     <td align="center"><a href="https://gitlab.com/alexandrewurtzfr"><img src="https://secure.gravatar.com/avatar/22b32aeadbb75cccc711443fdcf4796f?s=80&d=identicon?s=100" width="100px;" alt=""/><br /><sub><b>Alexandre Wurtz</b></sub></a><br /><a href="https://gitlab.com/anarchyinstaller/Anarchy Installer/commits/master" title="Code">💻</a></td>
     <td align="center"><a href="https://gitlab.com/fredbezies"><img src="https://secure.gravatar.com/avatar/b80dd52da6b4e3e7aad1ee09c856fd81?s=80&d=identicon?s=100" width="100px;" alt=""/><br /><sub><b>Frederic Bezies</b></sub></a><br /><a href="https://gitlab.com/anarchyinstaller/Anarchy Installer/commits/master" title="Code">💻</a> <a href="#translation-fredbezies" title="Translation">🌍</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://gitlab.com/PandaFoss"><img src="https://assets.gitlab-static.net/uploads/-/system/user/avatar/4029596/avatar.png?s=100" width="100px;" alt=""/><br /><sub><b>Max Ferrer</b></sub></a><br /><a href="https://gitlab.com/anarchyinstaller/Anarchy Installer/commits/master" title="Code">💻</a> <a href="#ideas-PandaFoss" title="Ideas, Planning, & Feedback">🤔</a> <a href="#design-PandaFoss" title="Design">🎨</a> <a href="#content-PandaFoss" title="Content">🖋</a> <a href="#maintenance-PandaFoss" title="Maintenance">🚧</a> <a href="#translation-PandaFoss" title="Translation">🌍</a></td>
   </tr>
 </table>
 
