@@ -52,6 +52,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "AvinashReddy3108",
+      "name": "Avinash Reddy",
+      "avatar_url": "https://assets.gitlab-static.net/uploads/-/system/user/avatar/2603938/avatar.png",
+      "profile": "https://gitlab.com/AvinashReddy3108",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7

@@ -1,6 +1,6 @@
 ![Anarchy Installer's banner](assets/banner.svg)
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-5-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 # About
@@ -100,6 +100,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://gitlab.com/erazemk"><img src="https://assets.gitlab-static.net/uploads/-/system/user/avatar/2411685/avatar.png?s=100" width="100px;" alt=""/><br /><sub><b>Erazem Kokot</b></sub></a><br /><a href="https://gitlab.com/anarchyinstaller/Anarchy Installer/commits/master" title="Code">💻</a> <a href="#ideas-erazemk" title="Ideas, Planning, & Feedback">🤔</a> <a href="#infra-erazemk" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="#content-erazemk" title="Content">🖋</a> <a href="#maintenance-erazemk" title="Maintenance">🚧</a> <a href="#translation-erazemk" title="Translation">🌍</a></td>
     <td align="center"><a href="https://github.com/condor2"><img src="https://avatars.githubusercontent.com/u/14251939?v=4?s=100" width="100px;" alt=""/><br /><sub><b>condor2</b></sub></a><br /><a href="https://gitlab.com/anarchyinstaller/Anarchy Installer/commits/master" title="Code">💻</a> <a href="#ideas-condor2" title="Ideas, Planning, & Feedback">🤔</a></td>
     <td align="center"><a href="https://gitlab.com/theDrake"><img src="https://secure.gravatar.com/avatar/4466db71b610aad5e041e730917ea53e?s=80&d=identicon?s=100" width="100px;" alt=""/><br /><sub><b>David C. Drake</b></sub></a><br /><a href="https://gitlab.com/anarchyinstaller/Anarchy Installer/commits/master" title="Code">💻</a></td>
+    <td align="center"><a href="https://gitlab.com/AvinashReddy3108"><img src="https://assets.gitlab-static.net/uploads/-/system/user/avatar/2603938/avatar.png?s=100" width="100px;" alt=""/><br /><sub><b>Avinash Reddy</b></sub></a><br /><a href="https://gitlab.com/anarchyinstaller/Anarchy Installer/commits/master" title="Code">💻</a></td>
   </tr>
 </table>
 
