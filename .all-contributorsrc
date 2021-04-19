@@ -36,12 +36,21 @@
     },
     {
       "login": "condor2",
-      "name": "everton henrique de lemos",
-      "avatar_url": "https://secure.gravatar.com/avatar/3fcb53ac7b109b5de9ec0de1c7d1a084?s=80&d=identicon",
-      "profile": "https://gitlab.com/condor2",
+      "name": "condor2",
+      "avatar_url": "https://avatars.githubusercontent.com/u/14251939?v=4",
+      "profile": "https://github.com/condor2",
       "contributions": [
         "code",
         "ideas"
+      ]
+    },
+    {
+      "login": "theDrake",
+      "name": "David C. Drake",
+      "avatar_url": "https://secure.gravatar.com/avatar/4466db71b610aad5e041e730917ea53e?s=80&d=identicon",
+      "profile": "https://gitlab.com/theDrake",
+      "contributions": [
+        "code"
       ]
     }
   ],
