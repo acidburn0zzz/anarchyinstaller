@@ -33,6 +33,16 @@
         "maintenance",
         "translation"
       ]
+    },
+    {
+      "login": "condor2",
+      "name": "everton henrique de lemos",
+      "avatar_url": "https://secure.gravatar.com/avatar/3fcb53ac7b109b5de9ec0de1c7d1a084?s=80&d=identicon",
+      "profile": "https://gitlab.com/condor2",
+      "contributions": [
+        "code",
+        "ideas"
+      ]
     }
   ],
   "contributorsPerLine": 7

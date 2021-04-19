@@ -1,6 +1,6 @@
 ![Anarchy Installer's banner](assets/banner.svg)
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 # About
@@ -98,6 +98,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   <tr>
     <td align="center"><a href="https://gitlab.com/deadhead420"><img src="https://assets.gitlab-static.net/uploads/-/system/user/avatar/7466478/avatar.png?s=100" width="100px;" alt=""/><br /><sub><b>Dylan James</b></sub></a><br /><a href="https://gitlab.com/anarchyinstaller/Anarchy Installer/commits/master" title="Code">💻</a> <a href="#ideas-deadhead420" title="Ideas, Planning, & Feedback">🤔</a></td>
     <td align="center"><a href="https://gitlab.com/erazemk"><img src="https://assets.gitlab-static.net/uploads/-/system/user/avatar/2411685/avatar.png?s=100" width="100px;" alt=""/><br /><sub><b>Erazem Kokot</b></sub></a><br /><a href="https://gitlab.com/anarchyinstaller/Anarchy Installer/commits/master" title="Code">💻</a> <a href="#ideas-erazemk" title="Ideas, Planning, & Feedback">🤔</a> <a href="#infra-erazemk" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="#content-erazemk" title="Content">🖋</a> <a href="#maintenance-erazemk" title="Maintenance">🚧</a> <a href="#translation-erazemk" title="Translation">🌍</a></td>
+    <td align="center"><a href="https://gitlab.com/condor2"><img src="https://secure.gravatar.com/avatar/3fcb53ac7b109b5de9ec0de1c7d1a084?s=80&d=identicon?s=100" width="100px;" alt=""/><br /><sub><b>everton henrique de lemos</b></sub></a><br /><a href="https://gitlab.com/anarchyinstaller/Anarchy Installer/commits/master" title="Code">💻</a> <a href="#ideas-condor2" title="Ideas, Planning, & Feedback">🤔</a></td>
   </tr>
 </table>
 
