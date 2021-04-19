@@ -1,4 +1,7 @@
 ![Anarchy Installer's banner](assets/banner.svg)
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 # About
 
@@ -83,3 +86,23 @@ for more info.
 ## License
 
 The project is licensed under the [GNU GPLv2 license](LICENSE).
+
+## Contributors ✨
+
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tr>
+    <td align="center"><a href="https://gitlab.com/deadhead420"><img src="https://assets.gitlab-static.net/uploads/-/system/user/avatar/7466478/avatar.png?s=100" width="100px;" alt=""/><br /><sub><b>Dylan James</b></sub></a><br /><a href="https://gitlab.com/anarchyinstaller/Anarchy Installer/commits/master" title="Code">💻</a> <a href="#ideas-deadhead420" title="Ideas, Planning, & Feedback">🤔</a></td>
+  </tr>
+</table>
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
