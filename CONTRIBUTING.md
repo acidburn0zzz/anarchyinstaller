@@ -45,15 +45,18 @@ Example of maintainer info:
 
 # Add yourself to the contributors table
 
-The Anarchy Installer team follows the (All Contributor specification)[https://allcontributors.org/docs/en/specification], which is why we consider the contribution of more than just code as extremely important for the stability and improvement of the project.
-You can see the table of (emoji key)[https://allcontributors.org/docs/en/emoji-key] with the different types of contributions they represent and add yourself using the emoji you consider appropriate. For that you need to install the `all-contributors-cli` tool from the (AUR)[https://aur.archlinux.org/packages/all-contributors-cli], or by following the instructions on the (website)[https://allcontributors.org/docs/en/cli/installation].
-We recommend reading the (documentation)[https://allcontributors.org/docs/en/cli/usage] from their website, but the easiest way to add yourself as a contributor is as follows:
+The Anarchy Installer team follows the [All Contributor specification](https://allcontributors.org/docs/en/specification), which is why we consider the contribution of more than just code as extremely important for the stability and improvement of the project.
+You can see the table of [emoji key](https://allcontributors.org/docs/en/emoji-key) with the different types of contributions they represent and add yourself using the emoji you consider appropriate. For that you need to install the `all-contributors-cli` tool from the [AUR](https://aur.archlinux.org/packages/all-contributors-cli), or by following the instructions on the [website](https://allcontributors.org/docs/en/cli/installation).
+We recommend reading the [documentation](https://allcontributors.org/docs/en/cli/usage) from their website, but the easiest way to add yourself as a contributor is as follows:
+
 ```sh
 # Add new contributor <username>, who made a contribution of type <contribution>
 all-contributors add <username> <contribution>
 # Example:
 all-contributors add jfmengels code,doc
 ```
+
 Finally the table must be generated:
+
 `all-contributors generate`
 
