@@ -83,10 +83,6 @@ If you don't want to sign up for Gitlab, you can also report issues
 We're always looking for new contributors to the project, so check out our [contributing guide](CONTRIBUTING.md)
 for more info.
 
-## License
-
-The project is licensed under the [GNU GPLv2 license](LICENSE).
-
 ## Contributors ✨
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
@@ -185,7 +181,10 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 <!-- markdownlint-restore -->
 <!-- prettier-ignore-end -->
-
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
+
+## License
+
+The project is licensed under the [GNU GPLv2 license](LICENSE).
