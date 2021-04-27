@@ -3,8 +3,8 @@
 # TODO: Doesn't work with numbers larger than 9 (e.g. 1.10.1)
 
 # Read current version from iso_version variable
-CURR_SEM_VER="$(cat profiledef.sh | grep 'iso_version' | cut -d'=' -f2)"
-CURR_LAB_VER="$(cat profiledef.sh | grep 'iso_label' | cut -d'=' -f2)"
+CURR_SEM_VER="$(grep 'iso_version' profiledef.sh | cut -d'=' -f2)"
+CURR_LAB_VER="$(grep 'iso_label' profiledef.sh | cut -d'=' -f2)"
 
 # Remove extra text from version numbers
 CURR_SEM_VER="$(echo ${CURR_SEM_VER} | sed s/\"//g)"
