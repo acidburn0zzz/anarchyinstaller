@@ -55,7 +55,7 @@ The default password is `anarchy`.
 
 You have two options for compiling the installer:
 
-- If on Arch Linux: run `build.sh` with root permissions (e.g. with `sudo`)
+- If on Arch Linux: run `build.sh -a x86_64` with root permissions (e.g. with `sudo`) to build a 64-bit ISO image or run `build.sh -a i686` in case you want to build a 32-bit iso image (the latter option is based on the [Arch Linux 32](https://www.archlinux32.org/) project)
 - If elsewhere: run `build.sh -c`, which will build it with `podman` in a container
 
 You can also manually build Anarchy using the `Containerfile` with your preferred arguments.
