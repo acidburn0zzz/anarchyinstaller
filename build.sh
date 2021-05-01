@@ -8,6 +8,15 @@ SRC_DIR="${REPO_DIR}"/src
 GETOPT=$(getopt -o ca: --long container,arch: -- "$@")
 ARCHITECTURE='x86_64'
 
+# Anarchy required packages
+PACKAGES=(
+  'dialog'
+  'git'
+  'networkmanager'
+  'wget'
+  'zsh-syntax-highlighting'
+)
+
 if [ "${iscontainer}" = "yes" ]; then
   REPO_DIR=/anarchy
   SRC_DIR=/anarchy
@@ -30,7 +39,9 @@ check_deps() {
   fi
 }
 
-prepare_build_dir() {
+# Note: prepare_build_dir function will be split into prepare_build_dir_common,
+# prepare_build_dir_i686 and prepare_build_dir_x86_64
+prepare_build_dir_common() {
   # Show message with architecture
   echo "Building for architecture: ${ARCHITECTURE}"
 
@@ -64,28 +75,6 @@ prepare_build_dir() {
   echo "anarchy" >"${PROFILE_DIR}"/airootfs/etc/hostname
   echo "FONT=ter-v16n" >>"${PROFILE_DIR}"/airootfs/etc/vconsole.conf
 
-  # Add anarchy packages
-  packages=(
-    'dialog'
-    'git'
-    'networkmanager'
-    'wget'
-    'zsh-syntax-highlighting'
-  )
-
-  if [ "${ARCHITECTURE}" == 'i686' ]; then
-    mv "${PROFILE_DIR}"/packages.x86_64 "${PROFILE_DIR}"/packages.i686
-    sed -i '/^edk2-shell$/d' "${PROFILE_DIR}"/packages.i686
-  fi
-
-  for package in "${packages[@]}"; do
-    if [ "${ARCHITECTURE}" == 'x86_64' ]; then
-        echo "${package}" >>"${PROFILE_DIR}"/packages.x86_64
-    else
-        echo "${package}" >>"${PROFILE_DIR}"/packages.i686
-    fi
-  done
-
   # Re-add custom bootloader entries
   cp -f "${REPO_DIR}"/assets/splash.png "${PROFILE_DIR}"/syslinux/splash.png
   sed -i 's/Arch Linux install medium/Anarchy Installer/' "${PROFILE_DIR}"/efiboot/loader/entries/archiso-x86_64-linux.conf
@@ -94,25 +83,40 @@ prepare_build_dir() {
   sed -i 's/Arch Linux install medium/Anarchy Installer/' "${PROFILE_DIR}"/syslinux/archiso_pxe-linux.cfg
   sed -i 's/Arch Linux/Anarchy/' "${PROFILE_DIR}"/syslinux/archiso_pxe-linux.cfg
   sed -i 's/Arch Linux/Anarchy Installer/' "${PROFILE_DIR}"/syslinux/archiso_head.cfg
+}
 
-  # If arquitecture is i686, add extra changes
-  if [ "${ARCHITECTURE}" == 'i686' ]; then
-    sed -i -e 's@\bx86_64\b@i686@g'                                                                 \
-           -e '/^bootmodes=/ s@\(\s\+'"'"'uefi-x64\.systemd-boot\.\S\+'"'"'\)\+@@'                  \
-           "${PROFILE_DIR}"/profiledef.sh
-    find "${PROFILE_DIR}"/airootfs "${PROFILE_DIR}"/efiboot "${PROFILE_DIR}"/syslinux -type f -exec \
-      sed -i -e 's@\bx86_64\b@i686@g' -e 's@pacman-key --populate archlinux@\032@g' {} +
+prepare_build_dir_i686() {
+  # Add Anarchy packages
+  mv "${PROFILE_DIR}"/packages.x86_64 "${PROFILE_DIR}"/packages.i686
+  sed -i '/^edk2-shell$/d' "${PROFILE_DIR}"/packages.i686
 
-    # Add mirrorlist32 for i686 build and edit pacman.conf
-    wget --no-verbose "https://www.archlinux32.org/mirrorlist/?country=all&protocol=http&protocol=https&ip_version=4&use_mirror_status=on" -O /etc/pacman.d/mirrorlist32 &&
-        sed -i -e 's/#//' /etc/pacman.d/mirrorlist32
-        sed -i -e 's/\/mirrorlist/\032/' -e 's/ auto/ i686/' "${PROFILE_DIR}"/pacman.conf
+  for package in "${PACKAGES[@]}"; do
+    echo "${package}" >>"${PROFILE_DIR}"/packages.i686
+  done
 
-    # Add archlinux32 keyring and clean pacman database
-    wget --no-verbose "http://pool.mirror.archlinux32.org/i686/core/archlinux32-keyring-20210331-1.0-any.pkg.tar.zst" -O /var/cache/pacman/pkg/archlinux32-keyring.pkg.tar.zst
-    pacman -U /var/cache/pacman/pkg/archlinux32-keyring.pkg.tar.zst --needed --noconfirm
-    pacman -Scc --noconfirm
-  fi
+  # Some extra changes for i686 architecture
+  sed -i -e 's@\bx86_64\b@i686@g'                                                                 \
+    -e '/^bootmodes=/ s@\(\s\+'"'"'uefi-x64\.systemd-boot\.\S\+'"'"'\)\+@@'                       \
+    "${PROFILE_DIR}"/profiledef.sh
+  find "${PROFILE_DIR}"/airootfs "${PROFILE_DIR}"/efiboot "${PROFILE_DIR}"/syslinux -type f -exec \
+    sed -i -e 's@\bx86_64\b@i686@g' -e 's@pacman-key --populate archlinux@\032@g' {} +
+
+  # Add mirrorlist32 for i686 build and edit pacman.conf
+  wget --no-verbose "https://www.archlinux32.org/mirrorlist/?country=all&protocol=http&protocol=https&ip_version=4&use_mirror_status=on" -O /etc/pacman.d/mirrorlist32 &&
+    sed -i -e 's/#//' /etc/pacman.d/mirrorlist32
+    sed -i -e 's/\/mirrorlist/\032/' -e 's/ auto/ i686/' "${PROFILE_DIR}"/pacman.conf
+
+  # Add archlinux32 keyring and clean pacman database
+  wget --no-verbose "http://pool.mirror.archlinux32.org/i686/core/archlinux32-keyring-20210331-1.0-any.pkg.tar.zst" -O /var/cache/pacman/pkg/archlinux32-keyring.pkg.tar.zst
+  pacman -U /var/cache/pacman/pkg/archlinux32-keyring.pkg.tar.zst --needed --noconfirm
+  pacman -Scc --noconfirm
+}
+
+prepare_build_dir_x86_64() {
+  # Add Anarchy packages
+  for package in "${PACKAGES[@]}"; do
+    echo "${package}" >>"${PROFILE_DIR}"/packages.x86_64
+  done
 }
 
 ssh_config() {
@@ -150,7 +154,12 @@ checksum_gen() {
 main() {
   check_root
   check_deps
-  prepare_build_dir
+  prepare_build_dir_common
+  if [ "${ARCHITECTURE}" == 'i686' ]; then
+    prepare_build_dir_i686
+  else
+    prepare_build_dir_x86_64
+  fi
   ssh_config
   geniso
   checksum_gen
