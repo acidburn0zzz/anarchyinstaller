@@ -5,7 +5,6 @@ ARCHISO_DIR=/usr/share/archiso/configs/releng
 SRC_DIR="${REPO_DIR}"/src
 
 # Getopt variables
-GETOPT=$(getopt -o ca: --long container,arch: -- "$@")
 ARCHITECTURE='x86_64'
 
 # Anarchy required packages
@@ -26,6 +25,7 @@ if [ "${iscontainer}" = "yes" ]; then
 fi
 
 PROFILE_DIR="${REPO_DIR}"/profile
+WORK_DIR="${REPO_DIR}"/work
 
 # Check root permission
 check_root() {
@@ -119,6 +119,11 @@ prepare_build_dir_x86_64() {
   done
 }
 
+# Remove build artifacts like work and profile dirs
+purge() {
+    rm -fr "${PROFILE_DIR}" "${WORK_DIR}"
+}
+
 ssh_config() {
   # Check optional configuration file for SSH connection
   if [ -f autoconnect.sh ]; then
@@ -151,6 +156,17 @@ checksum_gen() {
   sha512sum --tag "${filename}" >"${filename}".sha512sum || exit
 }
 
+# Show usage info
+usage() {
+cat <<END
+Usage: $0 [options]
+Options:
+  -c, --container         Create Anarchy in a container using podman.
+  -a, --arch <ARCH>       Generates the ISO with the specified architecture ('x86_64' or 'i686').
+  -p, --purge             Remove build artefacts.
+END
+}
+
 main() {
   check_root
   check_deps
@@ -165,30 +181,50 @@ main() {
   checksum_gen
 }
 
+# Parse getopt
+GETOPT=$(getopt -o ca:ph --long container,arch:,purge,help -- "$@" 2>error)
+GETOPT_ERR=$(<error)
+if [ "${GETOPT_ERR}" ]; then
+  sed -i "s/getopt: u/U/g" error
+  cat error
+  usage
+  rm error
+fi
+
 eval set -- "${GETOPT}"
 
-case "$1" in
-  -c | --container)
-    check_root
-    [ ! -d "${REPO_DIR}"/out ] && mkdir "${REPO_DIR}"/out
-    podman build --rm -t anarchy --no-cache -f ./Containerfile &&
-      podman run --rm -v "${REPO_DIR}"/out:/anarchy/out -t -i --privileged localhost/anarchy &&
-      podman image rm localhost/anarchy
-    exit
-    ;;
-  -a | --arch)
-    [ "$2" == 'x86_64' ] ||
-    [ "$2" == 'i686' ] &&
-    ARCHITECTURE="$2"
-    main
-    exit
-    ;;
-  *)
-    echo "Usage: $0 [-c | --container]"
-    echo "       $0 [-a <ARCH> | --arch=<ARCH>]"
-    echo
-    echo "ARCH can take 'x86_64' or 'i686' value."
-    echo "Default value: 'x86_64'"
-    exit 1
-    ;;
-esac
+while true; do
+  case "$1" in
+    -c | --container)
+      check_root
+      [ ! -d "${REPO_DIR}"/out ] && mkdir "${REPO_DIR}"/out
+      podman build --rm -t anarchy --no-cache -f ./Containerfile &&
+        podman run --rm -v "${REPO_DIR}"/out:/anarchy/out -t -i --privileged localhost/anarchy &&
+        podman image rm localhost/anarchy
+      exit
+      ;;
+    -a | --arch)
+      [ "$2" == 'x86_64' ] ||
+      [ "$2" == 'i686' ] &&
+      ARCHITECTURE="$2"
+      main
+      shift 2
+      ;;
+    -p | --purge)
+      [ -d "${PROFILE_DIR}" ] && purge
+      [ -d "${WORK_DIR}" ] && purge
+      shift
+      ;;
+    -h | --help)
+        usage
+        exit 0
+      ;;
+    --)
+      shift
+      break
+      ;;
+    *)
+      usage
+      ;;
+  esac
+done
