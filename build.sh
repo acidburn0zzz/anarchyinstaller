@@ -146,7 +146,7 @@ geniso() {
 
 checksum_gen() {
   cd "${REPO_DIR}"/out || exit
-  filename="$(basename "$(find . -name 'anarchy-*.iso')")"
+  filename="$(basename "$(find . -name "anarchy-*${ARCHITECTURE}.iso")")"
 
   if [ ! -f "${filename}" ]; then
     echo "Mising file ${filename}"
@@ -164,6 +164,7 @@ Options:
   -c, --container         Create Anarchy in a container using podman.
   -a, --arch <ARCH>       Generates the ISO with the specified architecture ('x86_64' or 'i686').
   -p, --purge             Remove build artefacts.
+  -h, --help              Display this help message and exit.
 END
 }
 
@@ -182,14 +183,14 @@ main() {
 }
 
 # Parse getopt
-GETOPT=$(getopt -o ca:ph --long container,arch:,purge,help -- "$@" 2>error)
-GETOPT_ERR=$(<error)
+GETOPT=$(getopt -o ca:ph --long container,arch:,purge,help -- "$@" 2>/tmp/error)
+GETOPT_ERR=$(</tmp/error)
 if [ "${GETOPT_ERR}" ]; then
-  sed -i "s/getopt: u/U/g" error
-  cat error
+  sed -i "s/getopt: u/U/g" /tmp/error
+  cat /tmp/error
   usage
-  rm error
 fi
+rm error
 
 eval set -- "${GETOPT}"
 
@@ -205,9 +206,15 @@ while true; do
       ;;
     -a | --arch)
       [ "$2" == 'x86_64' ] ||
-      [ "$2" == 'i686' ] &&
+      [ "$2" == 'i686' ] ||
+      [ "$2" == 'both' ] &&
       ARCHITECTURE="$2"
-      main
+      if [ "${ARCHITECTURE}" == 'both' ]; then
+        ARCHITECTURE='i686' && main && purge &&
+        ARCHITECTURE='x86_64' && main
+      else
+        main
+      fi
       shift 2
       ;;
     -p | --purge)
