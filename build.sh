@@ -162,7 +162,7 @@ cat <<END
 Usage: $0 [options]
 Options:
   -c, --container         Create Anarchy in a container using podman.
-  -a, --arch <ARCH>       Generates the ISO with the specified architecture ('x86_64' or 'i686').
+  -a, --arch <ARCH>       Generates the ISO with the specified architecture ('x86_64', 'i686' or 'both').
   -p, --purge             Remove build artefacts.
   -h, --help              Display this help message and exit.
 END
@@ -190,7 +190,6 @@ if [ "${GETOPT_ERR}" ]; then
   cat /tmp/error
   usage
 fi
-rm error
 
 eval set -- "${GETOPT}"
 

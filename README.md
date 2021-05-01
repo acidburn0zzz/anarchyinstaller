@@ -60,6 +60,17 @@ You have two options for compiling the installer:
 
 You can also manually build Anarchy using the `Containerfile` with your preferred arguments.
 
+Finally, you can use the -h (or --help) option to see other available options:
+
+```sh
+Usage: ./build.sh [options]
+Options:
+  -c, --container         Create Anarchy in a container using podman.
+  -a, --arch <ARCH>       Generates the ISO with the specified architecture ('x86_64', 'i686' or 'both').
+  -p, --purge             Remove build artefacts.
+  -h, --help              Display this help message and exit.
+```
+
 ## Reporting issues
 
 Before [reporting an issue](https://gitlab.com/anarchyinstaller/installer/issues) do the following:
