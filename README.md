@@ -68,6 +68,7 @@ Options:
   -c, --container         Create Anarchy in a container using podman (only for 'x86_64' architecture).
   -a, --arch <ARCH>       Generates the ISO with the specified architecture ('x86_64', 'i686' or 'both').
   -p, --purge             Remove build artefacts.
+  -k, --keep              Retain the packages, mirrorlist and other things required to build the 32-bit ISO.
   -h, --help              Display this help message and exit.
 ```
 

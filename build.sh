@@ -6,8 +6,10 @@ SRC_DIR="${REPO_DIR}"/src
 
 # Getopt variables
 ARCHITECTURE='x86_64'
+BUILD='false'
 CONTAINER='false'
 PURGE='false'
+KEEP='false'
 
 # Anarchy required packages
 PACKAGES=(
@@ -111,7 +113,6 @@ prepare_build_dir_i686() {
   # Add archlinux32 keyring and clean pacman database
   wget --no-verbose "http://pool.mirror.archlinux32.org/i686/core/archlinux32-keyring-20210331-1.0-any.pkg.tar.zst" -O /var/cache/pacman/pkg/archlinux32-keyring.pkg.tar.zst
   pacman -U /var/cache/pacman/pkg/archlinux32-keyring.pkg.tar.zst --needed --noconfirm
-  pacman -Scc --noconfirm
 }
 
 prepare_build_dir_x86_64() {
@@ -123,7 +124,26 @@ prepare_build_dir_x86_64() {
 
 # Remove build artifacts like work and profile dirs
 purge() {
-    rm -fr "${PROFILE_DIR}" "${WORK_DIR}"
+  rm -fr "${PROFILE_DIR}" "${WORK_DIR}"
+  return 0
+}
+
+# Remove i686 packages and stuff
+purge_all_i686() {
+  echo "Removing the mirrorlist and 32-bit packages..."
+  # Remove mirrorlist32
+  rm -f /etc/pacman.d/mirrorlist32 && echo "  /etc/pacman.d/mirrorlist32"
+  # Remove i686 packages from pacman cache
+  find /var/cache/pacman/pkg/ -name '*i686.pkg.tar.zst' -exec rm -f {} \;
+  # Some packages are downloaded as "any" architecture but belong to ArchLinux32.
+  # I'm still investigating the best way to detect and delete them.
+  while IFS= read -r -d '' file; do
+    if grep -q 'arch32' <(tar -axf "${file}" .PKGINFO -O 2>/dev/null); then
+      echo "  ${file}"
+      rm -f "${file}"
+    fi
+  done < <(find /var/cache/pacman/pkg/ -type f)
+  return 0
 }
 
 ssh_config() {
@@ -166,6 +186,7 @@ Options:
   -c, --container         Create Anarchy in a container using podman (only for 'x86_64' architecture).
   -a, --arch <ARCH>       Generates the ISO with the specified architecture ('x86_64', 'i686' or 'both').
   -p, --purge             Remove build artefacts.
+  -k, --keep              Retain the packages, mirrorlist and other things required to build the 32-bit ISO.
   -h, --help              Display this help message and exit.
 END
 }
@@ -185,12 +206,14 @@ main() {
 }
 
 # Parse getopt
-GETOPT=$(getopt -o ca:ph --long container,arch:,purge,help -- "$@" 2>/tmp/error)
-GETOPT_ERR=$(</tmp/error)
+error_file=$(mktemp)
+GETOPT=$(getopt -o ca:pkh --long container,arch:,purge,keep,help -- "$@" 2>"${error_file}")
+GETOPT_ERR=$(<"${error_file}")
 if [ "${GETOPT_ERR}" ]; then
-  sed -i "s/getopt: u/U/g" /tmp/error
-  cat /tmp/error
+  sed -i "s/getopt: u/U/g" "${error_file}"
+  cat "${error_file}"
   usage
+  exit 1
 fi
 
 eval set -- "${GETOPT}"
@@ -206,11 +229,16 @@ while true; do
       [ "$2" == 'i686' ] ||
       [ "$2" == 'both' ] &&
       ARCHITECTURE="$2"
+      BUILD='true'
       shift 2
       ;;
     -p | --purge)
       PURGE='true'
       shift
+      ;;
+    -k | --keep)
+        KEEP='true'
+        shift
       ;;
     -h | --help)
         usage
@@ -222,6 +250,7 @@ while true; do
       ;;
     *)
       usage
+      exit 0
       ;;
   esac
 done
@@ -243,16 +272,16 @@ if [ "${CONTAINER}" == 'true' ]; then
     exit 1
   fi
 else
-  if [ "${ARCHITECTURE}" == 'both' ]; then
+  if [ "${ARCHITECTURE}" == 'both' ] && [ "${BUILD}" == 'true' ]; then
     # CONTAINER == 'false' | ARCHITECTURE == 'both'
-    ARCHITECTURE='i686' && main && purge &&
-    ARCHITECTURE='x86_64' && main
-    [ "${PURGE}" == 'true' ] && [ -d "${PROFILE_DIR}" ] && purge
-    [ "${PURGE}" == 'true' ] && [ -d "${WORK_DIR}" ] && purge
+    ARCHITECTURE='i686' && BUILD='true' && main && purge &&
+    ARCHITECTURE='x86_64' && BUILD='true' && main
+    [ "${KEEP}" == 'false' ] && [ "${BUILD}" == 'true' ] && purge_all_i686
+    [ "${PURGE}" == 'true' ] && purge
   else
     # CONTAINER == 'false' | ARCHITECTURE != 'both'
-    main
-    [ "${PURGE}" == 'true' ] && [ -d "${PROFILE_DIR}" ] && purge
-    [ "${PURGE}" == 'true' ] && [ -d "${WORK_DIR}" ] && purge
+    [ "${BUILD}" == 'true' ] && main
+    [ "${KEEP}" == 'false' ] && [ "${BUILD}" == 'true' ] && purge_all_i686
+    [ "${PURGE}" == 'true' ] && purge
   fi
 fi
