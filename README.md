@@ -17,7 +17,7 @@ The easiest way to flash Anarchy onto a USB drive is to use `dd`:
 ```sh
 # Do NOT copy and paste the following, manually type the command, filling in the appropriate information
 # Replace sdx with the name of your USB
-dd if=anarchy-<version>-x86_64.iso of=/dev/sdx status=progress conv=sync
+dd if=anarchy-<version>-<architecture>.iso of=/dev/sdx status=progress conv=sync
 ```
 
 If you're more comfortable with GUI-based programs, you can use [Etcher](https://www.balena.io/etcher/) or
@@ -71,7 +71,7 @@ Options:
   -h, --help              Display this help message and exit.
 ```
 
-__Warning:__ While the build script supports the generation of 64-bit and 32-bit ISO images, __it was designed to be run on a 64-bit machine only__. Possibly on a 32-bit machine it may only allow 32-bit ISO generation, but ___this has not been tested yet__.
+__Warning:__ While the build script supports the generation of 64-bit and 32-bit ISO images, __it was designed to be run on a 64-bit machine only__. Possibly on a 32-bit machine it may only allow 32-bit ISO generation, but ___this has not been tested yet___.
 
 ## Reporting issues
 
