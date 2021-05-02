@@ -6,6 +6,8 @@ SRC_DIR="${REPO_DIR}"/src
 
 # Getopt variables
 ARCHITECTURE='x86_64'
+CONTAINER='false'
+PURGE='false'
 
 # Anarchy required packages
 PACKAGES=(
@@ -161,7 +163,7 @@ usage() {
 cat <<END
 Usage: $0 [options]
 Options:
-  -c, --container         Create Anarchy in a container using podman.
+  -c, --container         Create Anarchy in a container using podman (only for 'x86_64' architecture).
   -a, --arch <ARCH>       Generates the ISO with the specified architecture ('x86_64', 'i686' or 'both').
   -p, --purge             Remove build artefacts.
   -h, --help              Display this help message and exit.
@@ -196,11 +198,7 @@ eval set -- "${GETOPT}"
 while true; do
   case "$1" in
     -c | --container)
-      check_root
-      [ ! -d "${REPO_DIR}"/out ] && mkdir "${REPO_DIR}"/out
-      podman build --rm -t anarchy --no-cache -f ./Containerfile &&
-        podman run --rm -v "${REPO_DIR}"/out:/anarchy/out -t -i --privileged localhost/anarchy &&
-        podman image rm localhost/anarchy
+      CONTAINER='true'
       exit
       ;;
     -a | --arch)
@@ -208,17 +206,10 @@ while true; do
       [ "$2" == 'i686' ] ||
       [ "$2" == 'both' ] &&
       ARCHITECTURE="$2"
-      if [ "${ARCHITECTURE}" == 'both' ]; then
-        ARCHITECTURE='i686' && main && purge &&
-        ARCHITECTURE='x86_64' && main
-      else
-        main
-      fi
       shift 2
       ;;
     -p | --purge)
-      [ -d "${PROFILE_DIR}" ] && purge
-      [ -d "${WORK_DIR}" ] && purge
+      PURGE='true'
       shift
       ;;
     -h | --help)
@@ -234,3 +225,34 @@ while true; do
       ;;
   esac
 done
+
+# The options are evaluated outside the 'case' statement and the 'while' loop to allow
+# the options to be entered in different order. For example, "--arch=x86_64 --container"
+# and "--container --arch=x86_64" should return the same action.
+if [ "${CONTAINER}" == 'true' ]; then
+  if [ "${ARCHITECTURE}" == 'x86_64' ]; then
+    # CONTAINER == 'true' | ARCHITECTURE == 'x86_64'
+    check_root
+    [ ! -d "${REPO_DIR}"/out ] && mkdir "${REPO_DIR}"/out
+    podman build --rm -t anarchy --no-cache -f ./Containerfile &&
+      podman run --rm -v "${REPO_DIR}"/out:/anarchy/out -t -i --privileged localhost/anarchy &&
+      podman image rm localhost/anarchy
+  else
+    # CONTAINER == 'true' | ARCHITECTURE != 'x86_64'
+    echo "The --container option is only available for 64-bit architecture."
+    exit 1
+  fi
+else
+  if [ "${ARCHITECTURE}" == 'both' ]; then
+    # CONTAINER == 'false' | ARCHITECTURE == 'both'
+    ARCHITECTURE='i686' && main && purge &&
+    ARCHITECTURE='x86_64' && main
+    [ "${PURGE}" == 'true' ] && [ -d "${PROFILE_DIR}" ] && purge
+    [ "${PURGE}" == 'true' ] && [ -d "${WORK_DIR}" ] && purge
+  else
+    # CONTAINER == 'false' | ARCHITECTURE != 'both'
+    main
+    [ "${PURGE}" == 'true' ] && [ -d "${PROFILE_DIR}" ] && purge
+    [ "${PURGE}" == 'true' ] && [ -d "${WORK_DIR}" ] && purge
+  fi
+fi

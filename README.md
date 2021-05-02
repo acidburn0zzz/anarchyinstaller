@@ -65,11 +65,13 @@ Finally, you can use the -h (or --help) option to see other available options:
 ```sh
 Usage: ./build.sh [options]
 Options:
-  -c, --container         Create Anarchy in a container using podman.
+  -c, --container         Create Anarchy in a container using podman (only for 'x86_64' architecture).
   -a, --arch <ARCH>       Generates the ISO with the specified architecture ('x86_64', 'i686' or 'both').
   -p, --purge             Remove build artefacts.
   -h, --help              Display this help message and exit.
 ```
+
+__Warning:__ While the build script supports the generation of 64-bit and 32-bit ISO images, __it was designed to be run on a 64-bit machine only__. Possibly on a 32-bit machine it may only allow 32-bit ISO generation, but ___this has not been tested yet__.
 
 ## Reporting issues
 
