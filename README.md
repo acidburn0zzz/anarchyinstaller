@@ -8,6 +8,10 @@
 Anarchy is a simple and intuitive Terminal based (TUI) [Arch Linux](https://archlinux.org) installer.
 It guides you through every aspect of the installation procedure, from partitioning to installing your favorite DE/WM.
 
+**Currently [anarchyinstaller.gitlab.io](https://anarchyinstaller.gitlab.io) is the only official website for Anarchy, do NOT download releases from other sites.
+You can also directly download latest releases using the [Releases](https://gitlab.com/anarchyinstaller/installer/-/releases) section on our Gitlab, which will lead
+you to OSDN.**
+
 ## Installation
 
 ### Linux
