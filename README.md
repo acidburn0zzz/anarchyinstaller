@@ -1,6 +1,6 @@
 ![Anarchy Installer's banner](assets/banner.svg)
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-66-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-67-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 # About
@@ -194,11 +194,13 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://github.com/satory-ra"><img src="https://avatars.githubusercontent.com/u/21138526?v=4?s=100" width="100px;" alt=""/><br /><sub><b>satory-ra</b></sub></a><br /><a href="https://gitlab.com/anarchyinstaller/Anarchy Installer/commits/master" title="Code">💻</a></td>
     <td align="center"><a href="https://jona3717.gitlab.io/"><img src="https://avatars.githubusercontent.com/u/42119681?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jonathan Córdova</b></sub></a><br /><a href="https://gitlab.com/anarchyinstaller/Anarchy Installer/commits/master" title="Code">💻</a></td>
     <td align="center"><a href="https://liberapay.com/Bond_009/"><img src="https://avatars.githubusercontent.com/u/21289123?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Bond-009</b></sub></a><br /><a href="#translation-Bond-009" title="Translation">🌍</a></td>
+    <td align="center"><a href="https://gitlab.com/Neo-29"><img src="https://assets.gitlab-static.net/uploads/-/system/user/avatar/5928500/avatar.png?s=100" width="100px;" alt=""/><br /><sub><b>Neo Twenty-Nine </b></sub></a><br /><a href="https://gitlab.com/anarchyinstaller/Anarchy Installer/commits/master" title="Tests">⚠️</a> <a href="#question-Neo-29" title="Answering Questions">💬</a></td>
   </tr>
 </table>
 
 <!-- markdownlint-restore -->
 <!-- prettier-ignore-end -->
+
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!

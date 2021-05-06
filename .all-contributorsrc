@@ -623,6 +623,16 @@
       "contributions": [
         "translation"
       ]
+    },
+    {
+      "login": "Neo-29",
+      "name": "Neo Twenty-Nine ",
+      "avatar_url": "https://assets.gitlab-static.net/uploads/-/system/user/avatar/5928500/avatar.png",
+      "profile": "https://gitlab.com/Neo-29",
+      "contributions": [
+        "test",
+        "question"
+      ]
     }
   ],
   "contributorsPerLine": 7
