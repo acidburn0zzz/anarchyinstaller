@@ -4,6 +4,22 @@ REPO_DIR="$(pwd)"
 ARCHISO_DIR=/usr/share/archiso/configs/releng
 SRC_DIR="${REPO_DIR}"/src
 
+# Getopt variables
+ARCHITECTURE='x86_64'
+BUILD='false'
+CONTAINER='false'
+PURGE='false'
+KEEP='false'
+
+# Anarchy required packages
+PACKAGES=(
+  'dialog'
+  'git'
+  'networkmanager'
+  'wget'
+  'zsh-syntax-highlighting'
+)
+
 if [ "${iscontainer}" = "yes" ]; then
   REPO_DIR=/anarchy
   SRC_DIR=/anarchy
@@ -13,6 +29,7 @@ if [ "${iscontainer}" = "yes" ]; then
 fi
 
 PROFILE_DIR="${REPO_DIR}"/profile
+WORK_DIR="${REPO_DIR}"/work
 
 # Check root permission
 check_root() {
@@ -26,7 +43,12 @@ check_deps() {
   fi
 }
 
-prepare_build_dir() {
+# Note: prepare_build_dir function will be split into prepare_build_dir_common,
+# prepare_build_dir_i686 and prepare_build_dir_x86_64
+prepare_build_dir_common() {
+  # Show message with architecture
+  echo "Building for architecture: ${ARCHITECTURE}"
+
   # Create temporary directory if not exists
   [ ! -d "${PROFILE_DIR}" ] && mkdir "${PROFILE_DIR}"
 
@@ -57,19 +79,6 @@ prepare_build_dir() {
   echo "anarchy" >"${PROFILE_DIR}"/airootfs/etc/hostname
   echo "FONT=ter-v16n" >>"${PROFILE_DIR}"/airootfs/etc/vconsole.conf
 
-  # Add anarchy packages
-  packages=(
-    'dialog'
-    'git'
-    'networkmanager'
-    'wget'
-    'zsh-syntax-highlighting'
-  )
-
-  for package in "${packages[@]}"; do
-    echo "${package}" >>"${PROFILE_DIR}"/packages.x86_64
-  done
-
   # Re-add custom bootloader entries
   cp -f "${REPO_DIR}"/assets/splash.png "${PROFILE_DIR}"/syslinux/splash.png
   sed -i 's/Arch Linux install medium/Anarchy Installer/' "${PROFILE_DIR}"/efiboot/loader/entries/archiso-x86_64-linux.conf
@@ -78,6 +87,64 @@ prepare_build_dir() {
   sed -i 's/Arch Linux install medium/Anarchy Installer/' "${PROFILE_DIR}"/syslinux/archiso_pxe-linux.cfg
   sed -i 's/Arch Linux/Anarchy/' "${PROFILE_DIR}"/syslinux/archiso_pxe-linux.cfg
   sed -i 's/Arch Linux/Anarchy Installer/' "${PROFILE_DIR}"/syslinux/archiso_head.cfg
+}
+
+prepare_build_dir_i686() {
+  # Add Anarchy packages
+  mv "${PROFILE_DIR}"/packages.x86_64 "${PROFILE_DIR}"/packages.i686
+  sed -i '/^edk2-shell$/d' "${PROFILE_DIR}"/packages.i686
+
+  for package in "${PACKAGES[@]}"; do
+    echo "${package}" >>"${PROFILE_DIR}"/packages.i686
+  done
+
+  # Some extra changes for i686 architecture
+  sed -i -e 's@\bx86_64\b@i686@g'                                                                 \
+    -e '/^bootmodes=/ s@\(\s\+'"'"'uefi-x64\.systemd-boot\.\S\+'"'"'\)\+@@'                       \
+    "${PROFILE_DIR}"/profiledef.sh
+  find "${PROFILE_DIR}"/airootfs "${PROFILE_DIR}"/efiboot "${PROFILE_DIR}"/syslinux -type f -exec \
+    sed -i -e 's@\bx86_64\b@i686@g' -e 's@pacman-key --populate archlinux@\032@g' {} +
+
+  # Add mirrorlist32 for i686 build and edit pacman.conf
+  wget --no-verbose "https://www.archlinux32.org/mirrorlist/?country=all&protocol=http&protocol=https&ip_version=4&use_mirror_status=on" -O /etc/pacman.d/mirrorlist32 &&
+    sed -i -e 's/#//' /etc/pacman.d/mirrorlist32
+    sed -i -e 's/\/mirrorlist/\032/' -e 's/ auto/ i686/' "${PROFILE_DIR}"/pacman.conf
+
+  # Add archlinux32 keyring and clean pacman database
+  # TODO: I need to figure out how to use regex to download the package, as the version may vary and crash the script
+  wget --no-verbose "http://pool.mirror.archlinux32.org/i686/core/archlinux32-keyring-20210331-1.0-any.pkg.tar.zst" -O /var/cache/pacman/pkg/archlinux32-keyring.pkg.tar.zst
+  pacman -U /var/cache/pacman/pkg/archlinux32-keyring.pkg.tar.zst --needed --noconfirm
+}
+
+prepare_build_dir_x86_64() {
+  # Add Anarchy packages
+  for package in "${PACKAGES[@]}"; do
+    echo "${package}" >>"${PROFILE_DIR}"/packages.x86_64
+  done
+}
+
+# Remove build artifacts like work and profile dirs
+purge() {
+  rm -fr "${PROFILE_DIR}" "${WORK_DIR}"
+  return 0
+}
+
+# Remove i686 packages and stuff
+purge_all_i686() {
+  echo "Removing the mirrorlist and 32-bit packages..."
+  # Remove mirrorlist32
+  rm -f /etc/pacman.d/mirrorlist32 && echo "  /etc/pacman.d/mirrorlist32"
+  # Remove i686 packages from pacman cache
+  find /var/cache/pacman/pkg/ -name '*i686.pkg.tar.zst' -exec rm -f {} \;
+  # Some packages are downloaded as "any" architecture but belong to ArchLinux32.
+  # I'm still investigating the best way to detect and delete them.
+  while IFS= read -r -d '' file; do
+    if grep -q 'arch32' <(tar -axf "${file}" .PKGINFO -O 2>/dev/null); then
+      echo "  ${file}"
+      rm -f "${file}"
+    fi
+  done < <(find /var/cache/pacman/pkg/ -type f)
+  return 0
 }
 
 ssh_config() {
@@ -102,7 +169,7 @@ geniso() {
 
 checksum_gen() {
   cd "${REPO_DIR}"/out || exit
-  filename="$(basename "$(find . -name 'anarchy-*.iso')")"
+  filename="$(basename "$(find . -name "anarchy-*${ARCHITECTURE}.iso")")"
 
   if [ ! -f "${filename}" ]; then
     echo "Mising file ${filename}"
@@ -112,30 +179,110 @@ checksum_gen() {
   sha512sum --tag "${filename}" >"${filename}".sha512sum || exit
 }
 
+# Show usage info
+usage() {
+cat <<END
+Usage: $0 [options]
+Options:
+  -c, --container         Create Anarchy in a container using podman (only for 'x86_64' architecture).
+  -a, --arch <ARCH>       Generates the ISO with the specified architecture ('x86_64', 'i686' or 'both').
+  -p, --purge             Remove build artefacts.
+  -k, --keep              Retain the packages, mirrorlist and other things required to build the 32-bit ISO.
+  -h, --help              Display this help message and exit.
+END
+}
+
 main() {
   check_root
   check_deps
-  prepare_build_dir
+  prepare_build_dir_common
+  if [ "${ARCHITECTURE}" == 'i686' ]; then
+    prepare_build_dir_i686
+  else
+    prepare_build_dir_x86_64
+  fi
   ssh_config
   geniso
   checksum_gen
 }
 
-if [ $# -eq 0 ]; then
-  main
-else
+# Parse getopt
+error_file=$(mktemp)
+GETOPT=$(getopt -o ca:pkh --long container,arch:,purge,keep,help -- "$@" 2>"${error_file}")
+GETOPT_ERR=$(<"${error_file}")
+if [ "${GETOPT_ERR}" ]; then
+  sed -i "s/getopt: u/U/g" "${error_file}"
+  cat "${error_file}"
+  usage
+  exit 1
+fi
+
+eval set -- "${GETOPT}"
+
+while true; do
   case "$1" in
-  -c | --container)
+    -c | --container)
+      CONTAINER='true'
+      exit
+      ;;
+    -a | --arch)
+      [ "$2" == 'x86_64' ] ||
+      [ "$2" == 'i686' ] ||
+      [ "$2" == 'both' ] &&
+      ARCHITECTURE="$2"
+      BUILD='true'
+      shift 2
+      ;;
+    -p | --purge)
+      PURGE='true'
+      shift
+      ;;
+    -k | --keep)
+        KEEP='true'
+        shift
+      ;;
+    -h | --help)
+        usage
+        exit 0
+      ;;
+    --)
+      shift
+      break
+      ;;
+    *)
+      usage
+      exit 0
+      ;;
+  esac
+done
+
+# The options are evaluated outside the 'case' statement and the 'while' loop to allow
+# the options to be entered in different order. For example, "--arch=x86_64 --container"
+# and "--container --arch=x86_64" should return the same action.
+if [ "${CONTAINER}" == 'true' ]; then
+  if [ "${ARCHITECTURE}" == 'x86_64' ]; then
+    # CONTAINER == 'true' | ARCHITECTURE == 'x86_64'
     check_root
     [ ! -d "${REPO_DIR}"/out ] && mkdir "${REPO_DIR}"/out
     podman build --rm -t anarchy --no-cache -f ./Containerfile &&
       podman run --rm -v "${REPO_DIR}"/out:/anarchy/out -t -i --privileged localhost/anarchy &&
       podman image rm localhost/anarchy
-    exit
-    ;;
-  *)
-    echo "Usage: $0 [-c | --container]"
+  else
+    # CONTAINER == 'true' | ARCHITECTURE != 'x86_64'
+    echo "The --container option is only available for 64-bit architecture."
     exit 1
-    ;;
-  esac
+  fi
+else
+  if [ "${ARCHITECTURE}" == 'both' ] && [ "${BUILD}" == 'true' ]; then
+    # CONTAINER == 'false' | ARCHITECTURE == 'both'
+    ARCHITECTURE='i686' && BUILD='true' && main && purge &&
+    ARCHITECTURE='x86_64' && BUILD='true' && main
+    [ "${KEEP}" == 'false' ] && [ "${BUILD}" == 'true' ] && purge_all_i686
+    [ "${PURGE}" == 'true' ] && purge
+  else
+    # CONTAINER == 'false' | ARCHITECTURE != 'both'
+    [ "${BUILD}" == 'true' ] && main
+    [ "${KEEP}" == 'false' ] && [ "${BUILD}" == 'true' ] && purge_all_i686
+    [ "${PURGE}" == 'true' ] && purge
+  fi
 fi

@@ -21,7 +21,7 @@ The easiest way to flash Anarchy onto a USB drive is to use `dd`:
 ```sh
 # Do NOT copy and paste the following, manually type the command, filling in the appropriate information
 # Replace sdx with the name of your USB
-dd if=anarchy-<version>-x86_64.iso of=/dev/sdx status=progress conv=sync
+dd if=anarchy-<version>-<architecture>.iso of=/dev/sdx status=progress conv=sync
 ```
 
 If you're more comfortable with GUI-based programs, you can use [Etcher](https://www.balena.io/etcher/) or
@@ -59,10 +59,24 @@ The default password is `anarchy`.
 
 You have two options for compiling the installer:
 
-- If on Arch Linux: run `build.sh` with root permissions (e.g. with `sudo`)
+- If on Arch Linux: run `build.sh -a x86_64` with root permissions (e.g. with `sudo`) to build a 64-bit ISO image or run `build.sh -a i686` in case you want to build a 32-bit iso image (the latter option is based on the [Arch Linux 32](https://www.archlinux32.org/) project)
 - If elsewhere: run `build.sh -c`, which will build it with `podman` in a container
 
 You can also manually build Anarchy using the `Containerfile` with your preferred arguments.
+
+Finally, you can use the -h (or --help) option to see other available options:
+
+```sh
+Usage: ./build.sh [options]
+Options:
+  -c, --container         Create Anarchy in a container using podman (only for 'x86_64' architecture).
+  -a, --arch <ARCH>       Generates the ISO with the specified architecture ('x86_64', 'i686' or 'both').
+  -p, --purge             Remove build artefacts.
+  -k, --keep              Retain the packages, mirrorlist and other things required to build the 32-bit ISO.
+  -h, --help              Display this help message and exit.
+```
+
+__Warning:__ While the build script supports the generation of 64-bit and 32-bit ISO images, __it was designed to be run on a 64-bit machine only__. Possibly on a 32-bit machine it may only allow 32-bit ISO generation, but ___this has not been tested yet___.
 
 ## Reporting issues
 
@@ -188,7 +202,10 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
+<<<<<<< HEAD
 
 ## License
 
 The project is licensed under the [GNU GPLv2 license](LICENSE).
+=======
+>>>>>>> arch32
