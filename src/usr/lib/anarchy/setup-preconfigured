@@ -175,7 +175,7 @@ quick_desktop() {
         log "Added QEMU guest utils"
         ;;
       vbox)
-        GPU="virtualbox-guest-utils virtualbox-guest-dkms"
+        GPU="virtualbox-guest-utils "
         log "Added VirtualBox guest utils"
         ;;
       vmware)

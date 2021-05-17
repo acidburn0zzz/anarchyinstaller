@@ -225,7 +225,7 @@ graphics() {
       qemu) GPU="spice-vdagent " ;;
       vbox)
         msg "\n${vbox_msg}"
-        GPU="virtualbox-guest-utils virtualbox-guest-dkms "
+        GPU="virtualbox-guest-utils "
         ;;
       vmware)
         msg "\n${vmware_msg}"
