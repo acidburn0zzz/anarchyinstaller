@@ -34,7 +34,7 @@ prepare_drives() {
             fi
 
 			cat <<-EOF >> "$tmp_menu"
-				$(lsblk -nio NAME,SIZE,TYPE | egrep "disk|raid[0-9]+$" | sed 's/[^[:alnum:]_., ]//g' | column -t | sort -k 1,1 | uniq | awk '{print "\""$1"\"""  ""\"| "$2" | "$3" |==>\""" \\"}' | column -t)
+				$(lsblk -nio NAME,SIZE,TYPE | grep -E "disk|raid[0-9]+$" | sed 's/[^[:alnum:]_., ]//g' | column -t | sort -k 1,1 | uniq | awk '{print "\""$1"\"""  ""\"| "$2" | "$3" |==>\""" \\"}' | column -t)
 				3>&1 1>&2 2>&3
 			EOF
 
@@ -42,7 +42,7 @@ prepare_drives() {
             rm "$tmp_menu"
 
             if [ -n "$DRIVE" ]; then
-                if (<<<"$DRIVE" egrep "nvme.*|mmc.*|md.*" &> /dev/null) then
+                if (<<<"$DRIVE" grep -E "nvme.*|mmc.*|md.*" &> /dev/null) then
                     PART_PREFIX="p"
                 fi
 
@@ -370,7 +370,7 @@ part_menu() {
     op_title="$manual_op_msg"
     unset part
     dev_menu="|  Device:  |  Size:  |  Used:  |  FS:  |  Mount:  |  Type:  |"
-    device_list=$(lsblk -no NAME,SIZE,TYPE,FSTYPE | egrep -v "$USB|loop[0-9]+|sr[0-9]+|fd[0-9]+" | sed 's/[^[:alnum:]_., -]//g' | column -t | sort -k 1,1 | uniq)
+    device_list=$(lsblk -no NAME,SIZE,TYPE,FSTYPE | grep -E -v "$USB|loop[0-9]+|sr[0-9]+|fd[0-9]+" | sed 's/[^[:alnum:]_., -]//g' | column -t | sort -k 1,1 | uniq)
     device_count=$(<<<"$device_list" wc -l)
 
     if "$screen_h" ; then
@@ -441,7 +441,7 @@ part_class() {
 
     if [ "$part_fs" == "linux_raid_member" ]; then # do nothing
         part_menu
-    elif ([ "$part_type" == "disk" ]) || ( (<<<"$part_type" egrep "raid[0-9]+" &> /dev/null) && [ -z "$part_fs" ] ); then # Partition
+    elif ([ "$part_type" == "disk" ]) || ( (<<<"$part_type" grep -E "raid[0-9]+" &> /dev/null) && [ -z "$part_fs" ] ); then # Partition
 
         source "$lang_file"
 

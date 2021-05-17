@@ -277,7 +277,7 @@ graphics() {
 
       if [ "$?" -eq "0" ]; then
         if [ "${GPU}" == "${gr0}" ]; then
-          pci_id=$(lspci -nn | grep "VGA" | egrep -o '\[.*\]' | awk '{print $NF}' | sed 's/.*://;s/]//')
+          pci_id=$(lspci -nn | grep "VGA" | grep -E -o '\[.*\]' | awk '{print $NF}' | sed 's/.*://;s/]//')
           if (grep <"${anarchy_directory}"/etc/nvidia390.xx "${pci_id}" &>/dev/null); then
             if (yesno "\n${nvidia_390msg}" "${yes}" "${no}"); then
               if [ "${kernel}" == "lts" ]; then

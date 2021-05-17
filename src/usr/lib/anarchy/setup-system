@@ -67,7 +67,7 @@ configure_system() {
     log "Configure system for xfs"
   fi
 
-  if (egrep <<<"${BOOT}" "nvme.*" &>/dev/null); then
+  if (grep -E <<<"${BOOT}" "nvme.*" &>/dev/null); then
     sed -i '/^MODULES=/ s/.$/ nvme )/;s/" /"/' "${ARCH}"/etc/mkinitcpio.conf
     if ! "${crypted}"; then
       arch-chroot "${ARCH}" mkinitcpio -p "${kernel}" &>/dev/null &
