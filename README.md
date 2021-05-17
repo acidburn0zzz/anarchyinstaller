@@ -64,7 +64,7 @@ You have two options for compiling the installer:
 
 You can also manually build Anarchy using the `Containerfile` with your preferred arguments.
 
-Finally, you can use the -h (or --help) option to see other available options:
+Finally, you can use the `-h` (or`--help``) option to see other available options:
 
 ```sh
 Usage: ./build.sh [options]
@@ -204,10 +204,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
-<<<<<<< HEAD
 
 ## License
 
 The project is licensed under the [GNU GPLv2 license](LICENSE).
-=======
->>>>>>> arch32
