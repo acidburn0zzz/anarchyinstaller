@@ -124,7 +124,7 @@ graphics() {
       DE+="gnome-flashback "
 
       if (yesno "\n${extra_msg1}" "${yes}" "${no}"); then
-        DE+="gnome-backgrounds gnome-control-center gnome-screensaver gnome-applets sensors-applet "
+        DE+="gnome-backgrounds gnome-control-center gnome-applets sensors-applet "
       fi
       ;;
     "mate")

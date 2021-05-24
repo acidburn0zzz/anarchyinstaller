@@ -434,7 +434,7 @@ add_software() {
 
         if (grep <<<"${software}" "gnome-flashback"); then
           if (yesno "\n${extra_msg1}" "${yes}" "${no}"); then
-            software+=" gnome-backgrounds gnome-control-center gnome-screensaver gnome-applets sensors-applet"
+            software+=" gnome-backgrounds gnome-control-center gnome-applets sensors-applet"
           fi
         fi
 
