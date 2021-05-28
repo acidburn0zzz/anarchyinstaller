@@ -119,35 +119,35 @@ prepare_base() {
 
   case "${install_menu}" in
   "Arch-Linux-Base")
-    base_install="base linux linux-headers ${base_defaults} "
+    base_install="${pkglist_archlinux_base} "
     kernel="linux"
     ;;
   "Arch-Linux-Base-Devel")
-    base_install="base-devel linux linux-headers ${base_defaults} "
+    base_install="${pkglist_archlinux_base_devel} "
     kernel="linux"
     ;;
   "Arch-Linux-Hardened")
-    base_install="base linux-hardened linux-hardened-headers ${base_defaults} "
+    base_install="${pkglist_archlinux_hardened} "
     kernel="linux-hardened"
     ;;
   "Arch-Linux-Hardened-Devel")
-    base_install="base-devel linux-hardened linux-hardened-headers linux-firmware ${base_defaults} "
+    base_install="${pkglist_archlinux_hardened_devel} "
     kernel="linux-hardened"
     ;;
   "Arch-Linux-LTS-Base")
-    base_install="base linux-lts linux-lts-headers ${base_defaults} "
+    base_install="${pkglist_archlinux_lts_base} "
     kernel="linux-lts"
     ;;
   "Arch-Linux-LTS-Base-Devel")
-    base_install="base-devel linux-lts linux-lts-headers ${base_defaults} "
+    base_install="${pkglist_archlinux_lts_base_devel} "
     kernel="linux-lts"
     ;;
   "Arch-Linux-Zen")
-    base_install="base linux-zen linux-zen-headers ${base_defaults} "
+    base_install="${pkglist_archlinux_zen} "
     kernel="linux-zen"
     ;;
   "Arch-Linux-Zen-Devel")
-    base_install="base-devel linux-zen linux-zen-headers ${base_defaults} "
+    base_install="${pkglist_archlinux_zen_devel} "
     kernel="linux-zen"
     ;;
   esac
@@ -167,7 +167,7 @@ prepare_base() {
     else
       case "${shell}" in
       bash)
-        sh="/bin/bash" shell="bash-completion"
+        sh="/bin/bash" shell="${pkglist_bash_completion}"
         ;;
       fish)
         sh="/usr/bin/fish"
@@ -181,10 +181,10 @@ prepare_base() {
           shrc="${default}"
         fi
 
-        sh="/usr/bin/${shell}" shell="zsh zsh-syntax-highlighting"
+        sh="/usr/bin/${shell}" shell="${pkglist_zsh}"
 
         if [ "${shrc}" == "grml-zsh-config" ]; then
-          shell+=" grml-zsh-config zsh-completions"
+          shell+="${pkglist_grml_zsh}"
         fi
         ;;
       *)
@@ -274,7 +274,7 @@ prepare_base() {
       fi
     else
       if [ "${net_util}" == "netctl" ] || [ "${net_util}" == "networkmanager" ]; then
-        base_install+="${net_util} dialog " enable_nm=true
+        base_install+="${net_util} ${pkglist_dialog}" enable_nm=true
       fi
       break
     fi
@@ -291,34 +291,34 @@ prepare_base() {
   fi
 
   if "${wifi}"; then
-    base_install+="wireless_tools wpa_supplicant "
+    base_install+="${pkglist_wifi}"
   else
     if (yesno "\n${wifi_option_msg}" "${yes}" "${no}" 1); then
-      base_install+="wireless_tools wpa_supplicant "
+      base_install+="${pkglist_wifi}"
       log "Added wireless utilities"
     fi
   fi
 
   if "${bluetooth}"; then
     if (yesno "\n${bluetooth_msg}" "${yes}" "${no}" 1); then
-      base_install+="bluez bluez-utils pulseaudio-bluetooth "
+      base_install+="${pkglist_bluetooth}"
       enable_bt=true
       log "Added bluetooth support"
     fi
   fi
 
   if (yesno "\n${os_prober_msg}" "${yes}" "${no}" 1); then
-    base_install+="os-prober "
+    base_install+="${pkglist_osprober}"
     log "Added os-prober"
   fi
 
   if "${enable_f2fs}"; then
-    base_install+="f2fs-tools "
+    base_install+="${pkglist_f2fstools}"
     log "Added f2fs-tools"
   fi
 
   if "${UEFI}"; then
-    base_install+="efibootmgr "
+    base_install+="${pkglist_efibootmgr}"
     log "Added efibootmgr"
   fi
 }

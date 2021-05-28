@@ -3,6 +3,7 @@
 
 . libanarchy.sh
 . /etc/anarchy.conf
+. /etc/anarchy-packages.ini
 . /usr/share/anarchy/lang/english.conf
 
 # Starts on bootup

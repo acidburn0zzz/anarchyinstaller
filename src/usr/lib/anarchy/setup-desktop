@@ -73,148 +73,148 @@ graphics() {
     "Anarchy-xfce4")
       config_env="${env}"
       start_term="exec startxfce4"
-      DE+="xfce4 xfce4-goodies file-roller p7zip zip unrar ${extras} "
+      DE+="${pkglist_anarchy_xfce4} ${pkglist_extras} "
       ;;
     "Anarchy-budgie")
       config_env="${env}"
       start_term="export XDG_CURRENT_DESKTOP=Budgie:GNOME ; exec budgie-desktop"
-      DE+="budgie-desktop mousepad terminator nautilus gnome-backgrounds gnome-control-center ${extras} "
+      DE+="${pkglist_anarchy_budgie} ${pkglist_extras} "
       ;;
     "Anarchy-cinnamon")
       config_env="${env}"
-      DE+="cinnamon cinnamon-translations gnome-screenshot gnome-terminal file-roller p7zip zip unrar terminator ${extras} "
+      DE+="${pkglist_anarchy_cinnamon} ${pkglist_extras} "
       start_term="exec cinnamon-session"
       ;;
     "Anarchy-gnome")
       config_env="${env}"
       start_term="exec gnome-session"
-      DE+="gnome gnome-extra terminator ${extras} "
+      DE+="${pkglist_anarchy_gnome} ${pkglist_extras} "
       ;;
     "Anarchy-openbox")
       config_env="${env}"
       start_term="exec openbox-session"
-      DE+="openbox thunar thunar-volman xfce4-terminal xfce4-panel xfce4-whiskermenu-plugin xcompmgr obconf lxappearance-obconf wmctrl gxmessage xfce4-pulseaudio-plugin xfdesktop xdotool ristretto polkit-gnome tumbler ${extras} "
+      DE+="${pkglist_anarchy_openbox} ${pkglist_extras} "
       ;;
     "xfce4")
       start_term="exec startxfce4"
-      DE+="xfce4 "
+      DE+="${pkglist_xfce4} "
 
       if (yesno "\n${extra_msg0}" "${yes}" "${no}"); then
-        DE+="xfce4-goodies "
+        DE+="${pkglist_xfce4_goodies} "
       fi
       ;;
     "budgie")
       start_term="export XDG_CURRENT_DESKTOP=Budgie:GNOME ; exec budgie-desktop"
-      DE+="budgie-desktop arc-icon-theme arc-gtk-theme elementary-icon-theme "
+      DE+="${pkglist_budgie} "
 
       if (yesno "\n${extra_msg6}" "${yes}" "${no}"); then
-        DE+="gnome "
+        DE+="${pkglist_gnome} "
       fi
       ;;
     "gnome")
       start_term="exec gnome-session"
-      DE+="gnome "
+      DE+="${pkglist_gnome} "
 
       if (yesno "\n${extra_msg1}" "${yes}" "${no}"); then
-        DE+="gnome-extra "
+        DE+="${pkglist_gnome_extra} "
       fi
       ;;
     "gnome-flashback")
       start_term="export XDG_CURRENT_DESKTOP=GNOME-Flashback:GNOME ; exec gnome-session --session=gnome-flashback-metacity"
-      DE+="gnome-flashback "
+      DE+="${pkglist_gnome_flashback} "
 
       if (yesno "\n${extra_msg1}" "${yes}" "${no}"); then
-        DE+="gnome-backgrounds gnome-control-center gnome-applets sensors-applet "
+        DE+="${pkglist_gnome_extra}"
       fi
       ;;
     "mate")
       start_term="exec mate-session"
 
       if (yesno "\n${extra_msg2}" "${yes}" "${no}"); then
-        DE+="mate mate-extra gtk-engine-murrine "
+        DE+="${pkglist_mate} ${pkglist_mate_extra}"
       else
-        DE+="mate gtk-engine-murrine "
+        DE+="${pkglist_mate}"
       fi
       ;;
     "KDE plasma")
       start_term="exec startplasma-x11"
 
       if (yesno "\n${extra_msg3}" "${yes}" "${no}"); then
-        DE+="plasma-desktop konsole dolphin plasma-nm plasma-pa libxshmfence kscreen "
+        DE+="${pkglist_kde_plasma}"
 
         if "${LAPTOP}"; then
-          DE+="powerdevil "
+          DE+="${pkglist_laptop}"
         fi
       else
-        DE+="plasma ark aspell-en cdrdao clementine dolphin dolphin-plugins ffmpegthumbs gwenview k3b kate kcalc kdialog kfind kdeconnect kdegraphics-thumbnailers kdenetwork-filesharing kdesu kdelibs4support kipi-plugins khelpcenter konsole kwalletmanager okular spectacle transmission-qt krita kolourpaint korganizer falkon kdenlive "
+        DE+="${pkglist_kde_plasma_extra}"
       fi
       ;;
     "deepin")
       start_term="exec startdde"
-      DE+="deepin "
+      DE+="${pkglist_deepin}"
 
       if (yesno "\n${extra_msg4}" "${yes}" "${no}"); then
-        DE+="deepin-extra ${kernel}-headers "
+        DE+="${pkglist_deepin_extra}"
       fi
       ;;
     "xmonad")
       start_term="exec xmonad"
-      DE+="xmonad "
+      DE+="${pkglist_xmonad}"
 
       if (yesno "\n${extra_msg5}" "${yes}" "${no}"); then
-        DE+="xmonad-contrib "
+        DE+="${pkglist_xmonad_extra}"
       fi
       ;;
     "cinnamon")
-      DE+="cinnamon cinnamon-translations gnome-terminal file-roller p7zip zip unrar "
+      DE+="${pkglist_cinnamon} ${pkglist_cinnamon_extra}"
       start_term="exec cinnamon-session"
       ;;
     "lxde")
       start_term="exec startlxde"
 
       if (yesno "\n${gtk3_var}" "${yes}" "${no}"); then
-        DE+="lxde-gtk3 "
+        DE+="${pkglist_lxde_gtk3}"
         GTK3=true
       else
-        DE+="lxde "
+        DE+="${pkglist_lxde}"
       fi
       ;;
     "lxqt")
       start_term="exec startlxqt"
-      DE+="lxqt oxygen-icons breeze-icons "
+      DE+="${pkglist_lxqt}"
       ;;
     "enlightenment")
       start_term="exec enlightenment_start"
-      DE+="enlightenment terminology "
+      DE+="${pkglist_enlightenment}"
       ;;
     "bspwm")
       start_term="sxhkd & ; exec bspwm"
-      DE+="bspwm sxhkd "
+      DE+="${pkglist_bspwm}"
       ;;
     "fluxbox")
       start_term="exec startfluxbox"
-      DE+="fluxbox "
+      DE+="${pkglist_fluxbox}"
       ;;
     "openbox")
       start_term="exec openbox-session"
-      DE+="openbox "
+      DE+="${pkglist_openbox}"
       ;;
     "awesome")
       start_term="exec awesome"
-      DE+="awesome "
+      DE+="${pkglist_awesome} "
       ;;
     "i3")
       start_term="exec i3"
-      DE+="i3 "
+      DE+="${pkglist_i3}"
       ;;
     "sway")
       start_term="sway"
-      DE+="sway "
+      DE+="${pkglist_sway}"
       ;;
     "qtile")
       config_env="${env}"
       start_term="exec qtile"
-      DE+="qtile "
+      DE+="${pkglist_qtile}"
       ;;
     esac
   done <<<"${de}"
@@ -222,22 +222,22 @@ graphics() {
   while (true); do
     if "${VM}"; then
       case "${virt}" in
-      qemu) GPU="spice-vdagent " ;;
+      qemu) GPU="${pkglist_vm_qemu}" ;;
       vbox)
         msg "\n${vbox_msg}"
-        GPU="virtualbox-guest-utils "
+        GPU="${pkglist_vm_vbox}"
         ;;
       vmware)
         msg "\n${vmware_msg}"
-        GPU="xf86-video-vmware xf86-input-vmmouse open-vm-tools net-tools gtkmm mesa mesa-libgl"
+        GPU="${pkglist_vm_vmware}"
         ;;
       hyper-v)
         msg "\n${hyperv_msg}"
-        GPU="xf86-video-fbdev mesa-libgl"
+        GPU="${pkglist_vm_hyperv}"
         ;;
       *)
         msg "\n${vm_msg}"
-        GPU="xf86-video-fbdev mesa-libgl"
+        GPU="${pkglist_vm_any}"
         ;;
       esac
       break
@@ -340,7 +340,7 @@ graphics() {
     fi
   done
 
-  DE+="${GPU} ${de_defaults} "
+  DE+="${GPU} ${pkglist_de_defaults} "
 
   if [ "${net_util}" == "networkmanager" ]; then
     if (grep <<<"${DE}" "plasma" &>/dev/null); then
