@@ -10,18 +10,10 @@ tmp_dir="$(mktemp -d)"
 
 log 'Updating Anarchy scripts'
 git clone https://gitlab.com/anarchyinstaller/installer "${tmp_dir}" 2>&1 | log
-cp -f "${tmp_dir}"/src/airootfs/usr/bin/* /usr/bin/ 2>&1 | log
-
-cp -f "${tmp_dir}"/src/airootfs/etc/anarchy.conf /etc/ 2>&1 | log
-cp -f "${tmp_dir}"/src/airootfs/etc/hostname /etc/ 2>&1 | log
-cp -f "${tmp_dir}"/src/airootfs/etc/locale.gen /etc/ 2>&1 | log
-cp -f "${tmp_dir}"/src/airootfs/etc/vconsole.conf /etc/ 2>&1 | log
-cp -fr "${tmp_dir}"/src/airootfs/etc/zsh /etc/ 2>&1 | log
-
-cp -f "${tmp_dir}"/src/airootfs/root/.dialogrc /root/ 2>&1 | log
-cp -f "${tmp_dir}"/src/airootfs/root/.zlogin /root/ 2>&1 | log
-
-cp -f "${tmp_dir}"/src/airootfs/usr/lib/anarchy/* /usr/lib/anarchy/ 2>&1 | log
+cp -fr "${tmp_dir}"/src/airootfs/usr/bin/* /usr/bin/ 2>&1 | log
+cp -fr "${tmp_dir}"/src/airootfs/etc/* /etc/ 2>&1 | log
+cp -fr "${tmp_dir}"/src/airootfs/root/* /root/ 2>&1 | log
+cp -fr "${tmp_dir}"/src/airootfs/usr/lib/anarchy/* /usr/lib/anarchy/ 2>&1 | log
 cp -fr "${tmp_dir}"/src/airootfs/usr/share/anarchy/* /usr/share/anarchy/ 2>&1 | log
 
 log 'Updating pacman keys'
