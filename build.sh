@@ -223,7 +223,7 @@ while true; do
   case "$1" in
     -c | --container)
       CONTAINER='true'
-      exit
+      shift
       ;;
     -a | --arch)
       [ "$2" == 'x86_64' ] ||
