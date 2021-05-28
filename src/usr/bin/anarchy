@@ -80,7 +80,6 @@ main() {
   install_options
   set_hostname
   set_user
-  add_software
   install_base
   configure_system
   add_user
