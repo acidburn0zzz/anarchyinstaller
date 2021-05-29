@@ -9,12 +9,12 @@ check_connection
 tmp_dir="$(mktemp -d)"
 
 log 'Updating Anarchy scripts'
-git clone https://gitlab.com/anarchyinstaller/installer "${tmp_dir}" 2>&1 | log
-cp -fr "${tmp_dir}"/src/airootfs/usr/bin/* /usr/bin/ 2>&1 | log
-cp -fr "${tmp_dir}"/src/airootfs/etc/* /etc/ 2>&1 | log
-cp -fr "${tmp_dir}"/src/airootfs/root/* /root/ 2>&1 | log
-cp -fr "${tmp_dir}"/src/airootfs/usr/lib/anarchy/* /usr/lib/anarchy/ 2>&1 | log
-cp -fr "${tmp_dir}"/src/airootfs/usr/share/anarchy/* /usr/share/anarchy/ 2>&1 | log
+git clone https://gitlab.com/anarchyinstaller/installer.git "${tmp_dir}" 2>&1 | log
+rsync -rv "${tmp_dir}"/src/usr/bin/ /usr/bin/ 2>&1 | log
+rsync -rv "${tmp_dir}"/src/etc/ /etc/ 2>&1 | log
+rsync -rv "${tmp_dir}"/src/root/ /root/ 2>&1 | log
+rsync -rv "${tmp_dir}"/src/usr/lib/anarchy/ /usr/lib/anarchy/ 2>&1 | log
+rsync -rv "${tmp_dir}"/src/usr/share/anarchy/ /usr/share/anarchy/ 2>&1 | log
 
 log 'Updating pacman keys'
 pacman-key --keyserver hkp://keyserver.ubuntu.com --init 2>&1 | log
