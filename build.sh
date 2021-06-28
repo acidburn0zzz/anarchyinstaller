@@ -111,8 +111,8 @@ prepare_build_dir_i686() {
     sed -i -e 's/\/mirrorlist/\032/' -e 's/ auto/ i686/' "${PROFILE_DIR}"/pacman.conf
 
   # Add archlinux32 keyring and clean pacman database
-  # TODO: I need to figure out how to use regex to download the package, as the version may vary and crash the script
-  wget --no-verbose "http://pool.mirror.archlinux32.org/i686/core/archlinux32-keyring-20210429-1.0-any.pkg.tar.zst" -O /var/cache/pacman/pkg/archlinux32-keyring.pkg.tar.zst
+  archlinux32_keyring_pkg=$(curl -s 'https://www.archlinux32.org/packages/i686/core/archlinux32-keyring/' | grep 'Download From Mirror' | cut -d'"' -f2)
+  wget --no-verbose "${archlinux32_keyring_pkg}" -O /var/cache/pacman/pkg/archlinux32-keyring.pkg.tar.zst
   pacman -U /var/cache/pacman/pkg/archlinux32-keyring.pkg.tar.zst --needed --noconfirm
 }
 
