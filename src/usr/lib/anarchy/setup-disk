@@ -839,7 +839,7 @@ fs_select() {
 select_util() {
     gpart=false
 
-    UTIL=$(dialog --menu "$vfat_msg" 13 65 3 \
+    UTIL=$(dialog --menu "${select_disk_utility_msg}" 13 65 3 \
         "cfdisk"	"$part_util0" \
         "fdisk"		"$part_util1" \
         "gdisk"		"$part_util2" 3>&1 1>&2 2>&3)
