@@ -27,7 +27,7 @@ configure_system() {
   fi
 
   if "${drm}"; then
-    sed -i '/^MODULES=/ s/.$/ nvidia nvidia_modeset nvidia_uvm nvidia_drm )/;s/" /"/'
+    sed -i '/^MODULES=/ s/.$/ nvidia nvidia_modeset nvidia_uvm nvidia_drm )/;s/" /"/' "${ARCH}"/etc/mkinitcpio.conf
     sed -i 's!FILES=""!FILES="/etc/modprobe.d/nvidia.conf"!' "${ARCH}"/etc/mkinitcpio.conf
     echo "options nvidia_drm modeset=1" >"${ARCH}"/etc/modprobe.d/nvidia.conf
 
